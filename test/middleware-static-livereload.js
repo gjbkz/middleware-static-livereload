@@ -1,0 +1,87 @@
+const assert = require('assert');
+const path = require('path');
+const fs = require('fs');
+const http = require('http');
+const connect = require('connect');
+const readStream = require('@kei-ito/read-stream');
+
+describe('middleware-static-livereload', function () {
+
+	const documentRoot = path.join(__dirname, 'doc');
+	const serverPort = 7654;
+	const livereloadPort = 7655;
+	const getURL = (pathname = '') => {
+		return `http://127.0.0.1:${serverPort}${pathname}`;
+	};
+
+	let server;
+	let watcher;
+
+	before(function () {
+		server = connect()
+			.use(require('../middleware-static-livereload')({
+				documentRoot: documentRoot,
+				livereload: {
+					port: livereloadPort
+				},
+				onStartWatcher: (startedWatcher) => {
+					watcher = startedWatcher;
+				}
+			}))
+			.listen(serverPort);
+	});
+
+	after(function () {
+		server.close();
+	});
+
+	it('should inject a script tag', function (done) {
+		const expectedHTML = [
+			'<!doctype html>',
+			`<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':${livereloadPort}/livereload.js?snipver=1"></' + 'script>')</script>`,
+			'<title>middleware-static-livereload</title>',
+			''
+		].join('\n');
+		http.get(getURL('/'), (res) => {
+			readStream(res)
+				.then((receivedHTML) => {
+					assert.equal(receivedHTML, expectedHTML);
+					done();
+				})
+				.catch(done);
+		});
+	});
+
+	it('should behave as a static file server', function (done) {
+		const expectedJS = [
+			'console.log(\'app.js\');',
+			''
+		].join('\n');
+		http.get(getURL('/app.js'), (res) => {
+			readStream(res)
+				.then((receivedJS) => {
+					assert.equal(receivedJS, expectedJS);
+					done();
+				})
+				.catch(done);
+		});
+	});
+
+	it('should watch the files', function (done) {
+		watcher
+			.once('all', (eventType, filePath) => {
+				try {
+					assert.deepEqual([eventType, filePath], ['change', path.join(documentRoot, 'app.js')]);
+					done();
+				} catch (error) {
+					done(error);
+				}
+			});
+		fs.utimes(path.join(documentRoot, 'app.js'), NaN, NaN, (error) => {
+			if (error) {
+				done(error);
+			}
+		});
+	});
+
+});
