@@ -13,7 +13,8 @@
     "node": ">=6"
   },
   "scripts": {
-    "test": "istanbul cover _mocha"
+    "test": "mocha",
+    "test_coverage": "istanbul cover _mocha"
   },
   "main": "middleware-static-livereload.js",
   "dependencies": {
