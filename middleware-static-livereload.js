@@ -36,7 +36,7 @@ module.exports = (options = {}) => {
 	return function (req, res, next) {
 		const reqUrl = req.url.split(/\?/)[0];
 		if (!path.extname(reqUrl) && /[^\/]$/.test(reqUrl)) {
-			res.writeHead(200, {
+			res.writeHead(301, {
 				Location: reqUrl + '/'
 			});
 			res.end();

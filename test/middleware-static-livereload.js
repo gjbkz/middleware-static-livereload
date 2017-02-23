@@ -35,36 +35,44 @@ describe('middleware-static-livereload', function () {
 		server.close();
 	});
 
-	it('should inject a script tag', function (done) {
+	it('should inject a script tag', function () {
 		const expectedHTML = [
 			'<!doctype html>',
 			`<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':${livereloadPort}/livereload.js?snipver=1"></' + 'script>')</script>`,
 			'<title>middleware-static-livereload</title>',
 			''
 		].join('\n');
-		http.get(getURL('/'), (res) => {
-			readStream(res)
-				.then((receivedHTML) => {
-					assert.equal(receivedHTML, expectedHTML);
-					done();
-				})
-				.catch(done);
-		});
+		return new Promise((resolve) => {
+			http.get(getURL('/'), resolve);
+		})
+			.then(readStream)
+			.then((receivedHTML) => {
+				assert.equal(receivedHTML, expectedHTML);
+			});
 	});
 
-	it('should behave as a static file server', function (done) {
+	it('should redirect to / if a directory is requested', function () {
+		return new Promise((resolve) => {
+			http.get(getURL('/directory'), resolve);
+		})
+			.then((res) => {
+				assert.equal(res.statusCode, 301);
+				assert.equal(res.headers.location, '/directory/');
+			});
+	});
+
+	it('should behave as a static file server', function () {
 		const expectedJS = [
 			'console.log(\'app.js\');',
 			''
 		].join('\n');
-		http.get(getURL('/app.js'), (res) => {
-			readStream(res)
-				.then((receivedJS) => {
-					assert.equal(receivedJS, expectedJS);
-					done();
-				})
-				.catch(done);
-		});
+		return new Promise((resolve) => {
+			http.get(getURL('/app.js'), resolve);
+		})
+			.then(readStream)
+			.then((receivedJS) => {
+				assert.equal(receivedJS, expectedJS);
+			});
 	});
 
 	it('should watch the files', function (done) {
