@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const livereload = require('livereload');
-const promisify = require('@kei-ito/promisify');
-const mime = require('@kei-ito/mime');
+const promisify = require('j1/promisify');
+const mime = require('j1/mime');
 const readFile = promisify(fs.readFile, fs);
 const stat = promisify(fs.stat, fs);
 
