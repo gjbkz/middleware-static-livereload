@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const connect = require('connect');
-const readStream = require('@kei-ito/read-stream');
+const readStream = require('j1/readStream');
 
 describe('middleware-static-livereload', function () {
 
