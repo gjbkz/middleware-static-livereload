@@ -6,24 +6,22 @@ const connect = require('connect');
 const readStream = require('j1/readStream');
 
 describe('middleware-static-livereload', function () {
-
 	const documentRoot = path.join(__dirname, 'doc');
 	const serverPort = 7654;
 	const livereloadPort = 7655;
-	const getURL = (pathname = '') => {
+	const HTTPREDIRECT = 301;
+	function getURL(pathname = '') {
 		return `http://127.0.0.1:${serverPort}${pathname}`;
-	};
+	}
 
-	let server;
-	let watcher;
+	let server = null;
+	let watcher = null;
 
 	before(function () {
 		server = connect()
 			.use(require('../middleware-static-livereload')({
 				documentRoot: documentRoot,
-				livereload: {
-					port: livereloadPort
-				},
+				livereload: {port: livereloadPort},
 				onStartWatcher: (startedWatcher) => {
 					watcher = startedWatcher;
 				}
@@ -56,7 +54,7 @@ describe('middleware-static-livereload', function () {
 			http.get(getURL('/directory'), resolve);
 		})
 			.then((res) => {
-				assert.equal(res.statusCode, 301);
+				assert.equal(res.statusCode, HTTPREDIRECT);
 				assert.equal(res.headers.location, '/directory/');
 			});
 	});
@@ -91,5 +89,4 @@ describe('middleware-static-livereload', function () {
 			}
 		});
 	});
-
 });

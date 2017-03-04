@@ -6,9 +6,13 @@ const mime = require('j1/mime');
 const readFile = promisify(fs.readFile, fs);
 const stat = promisify(fs.stat, fs);
 
-const getScript = (port) => {
+const DEFAULTPORT = 35729;
+const HTTPREDIRECT = 301;
+const HTTPOK = 200;
+
+function getScript(port = DEFAULTPORT) {
 	return `\n<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':${port}/livereload.js?snipver=1"></' + 'script>')</script>`;
-};
+}
 
 module.exports = (options = {}) => {
 	const {
@@ -17,28 +21,23 @@ module.exports = (options = {}) => {
 		include = [/\.html(\?.*)?$/],
 		insertAt = [
 			{
-				match: /<\!DOCTYPE.+?>/i,
+				match: /<!DOCTYPE.+?>/i,
 				fn: (match) => {
-					return match + getScript(port);
+					return match + getScript(livereloadOption.port);
 				}
 			}
 		],
 		onStartWatcher
 	} = options;
-	const {
-		port = 35729
-	} = livereloadOption;
 	const watcher = livereload.createServer(livereloadOption)
 		.watch(documentRoot);
 	if (onStartWatcher) {
 		onStartWatcher(watcher);
 	}
 	return function (req, res, next) {
-		const reqUrl = req.url.split(/\?/)[0];
-		if (!path.extname(reqUrl) && /[^\/]$/.test(reqUrl)) {
-			res.writeHead(301, {
-				Location: reqUrl + '/'
-			});
+		const [reqUrl] = req.url.split(/\?/);
+		if (!path.extname(reqUrl) && (/[^/]$/).test(reqUrl)) {
+			res.writeHead(HTTPREDIRECT, {Location: `${reqUrl}/`});
 			res.end();
 			return;
 		}
@@ -50,7 +49,7 @@ module.exports = (options = {}) => {
 			readFile(reqPath, 'utf8')
 				.then((body) => {
 					insertAt.find(({match, fn}) => {
-						let inserted;
+						let inserted = false;
 						body = body.replace(match, (...args) => {
 							inserted = true;
 							return fn(...args);
@@ -58,18 +57,17 @@ module.exports = (options = {}) => {
 						return inserted;
 					});
 					body = Buffer.from(body);
-					res.writeHead(200, {
+					res.writeHead(HTTPOK, {
 						'Content-Length': body.length,
 						'Content-Type': mime(reqPath)
 					});
 					res.end(body);
 				})
 				.catch(next);
-			return;
 		} else {
 			stat(reqPath)
 				.then((stats) => {
-					res.writeHead(200, {
+					res.writeHead(HTTPOK, {
 						'Content-Length': stats.size,
 						'Content-Type': mime(reqPath)
 					});
