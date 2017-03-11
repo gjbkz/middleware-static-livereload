@@ -25,10 +25,6 @@ require('connect')()
 	.listen(3000);
 ```
 
-## API
-
-See [the code](https://github.com/kei-ito/middleware-static-livereload/blob/master/changeExt.js).
-
 ## License
 
 MIT
