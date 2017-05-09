@@ -1,28 +1,28 @@
 {
-	"name": "middleware-static-livereload",
-	"version": "0.0.3",
-	"description": "A middleware for connect and livereload",
-	"license": "MIT",
-	"repository": "kei-ito/middleware-static-livereload",
-	"author": {
-		"name": "Kei Ito",
-		"email": "kei.itof@gmail.com",
-		"url": "https://github.com/kei-ito"
-	},
-	"engines": {
-		"node": ">=6"
-	},
-	"scripts": {
-		"test": "mocha",
-		"test_coverage": "istanbul cover _mocha"
-	},
-	"dependencies": {
-		"j1": "0.0.20",
-		"livereload": "^0.6.0"
-	},
-	"devDependencies": {
-		"connect": "^3.5.1",
-		"istanbul": "^1.1.0-alpha.1",
-		"mocha": "^3.2.0"
-	}
+  "name": "middleware-static-livereload",
+  "version": "0.0.3",
+  "description": "A middleware for connect and livereload",
+  "license": "MIT",
+  "repository": "kei-ito/middleware-static-livereload",
+  "author": {
+    "name": "Kei Ito",
+    "email": "kei.itof@gmail.com",
+    "url": "https://github.com/kei-ito"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "scripts": {
+    "test": "mocha",
+    "test_coverage": "istanbul cover _mocha"
+  },
+  "dependencies": {
+    "j1": "0.0.31",
+    "livereload": "^0.6.2"
+  },
+  "devDependencies": {
+    "connect": "^3.5.1",
+    "istanbul": "^1.1.0-alpha.1",
+    "mocha": "^3.2.0"
+  }
 }

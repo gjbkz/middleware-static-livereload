@@ -14,7 +14,7 @@ function getScript(port = DEFAULTPORT) {
 	return `\n<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':${port}/livereload.js?snipver=1"></' + 'script>')</script>`;
 }
 
-module.exports = (options = {}) => {
+function middleware(options = {}) {
 	const {
 		documentRoot = process.cwd(),
 		livereload: livereloadOption = {},
@@ -29,8 +29,7 @@ module.exports = (options = {}) => {
 		],
 		onStartWatcher
 	} = options;
-	const watcher = livereload.createServer(livereloadOption)
-		.watch(documentRoot);
+	const watcher = livereload.createServer(livereloadOption).watch(documentRoot);
 	if (onStartWatcher) {
 		onStartWatcher(watcher);
 	}
@@ -47,34 +46,36 @@ module.exports = (options = {}) => {
 		});
 		if (isMatched) {
 			readFile(reqPath, 'utf8')
-				.then((body) => {
-					insertAt.find(({match, fn}) => {
-						let inserted = false;
-						body = body.replace(match, (...args) => {
-							inserted = true;
-							return fn(...args);
-						});
-						return inserted;
+			.then((body) => {
+				insertAt.find(({match, fn}) => {
+					let inserted = false;
+					body = body.replace(match, (...args) => {
+						inserted = true;
+						return fn(...args);
 					});
-					body = Buffer.from(body);
-					res.writeHead(HTTPOK, {
-						'Content-Length': body.length,
-						'Content-Type': mime(reqPath)
-					});
-					res.end(body);
-				})
-				.catch(next);
+					return inserted;
+				});
+				body = Buffer.from(body);
+				res.writeHead(HTTPOK, {
+					'Content-Length': body.length,
+					'Content-Type': mime(reqPath)
+				});
+				res.end(body);
+			})
+			.catch(next);
 		} else {
 			stat(reqPath)
-				.then((stats) => {
-					res.writeHead(HTTPOK, {
-						'Content-Length': stats.size,
-						'Content-Type': mime(reqPath)
-					});
-					fs.createReadStream(reqPath)
-						.pipe(res);
-				})
-				.catch(next);
+			.then((stats) => {
+				res.writeHead(HTTPOK, {
+					'Content-Length': stats.size,
+					'Content-Type': mime(reqPath)
+				});
+				fs.createReadStream(reqPath)
+					.pipe(res);
+			})
+			.catch(next);
 		}
 	};
-};
+}
+
+module.exports = middleware;
