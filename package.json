@@ -16,7 +16,6 @@
 		"test": "mocha",
 		"test_coverage": "istanbul cover _mocha"
 	},
-	"main": "middleware-static-livereload.js",
 	"dependencies": {
 		"j1": "0.0.20",
 		"livereload": "^0.6.0"
