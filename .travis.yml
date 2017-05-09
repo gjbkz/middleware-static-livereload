@@ -1,7 +1,6 @@
 language: node_js
 node_js:
 - '7'
-- '6'
 notifications:
   slack:
     secure: wGs80FdmskJafpZ13KjJbBShGRgrqJQxKJkxl9JhYm45Y5zwXz5OtSdktPBuQmITzNmXbhrSykrmMSl2FzyBFa0FO1tYX6TbK4YEiP2wGtahMyvhvYWJCQvTJKPWYFjtHdw6Xs1xiTI5ly4k4+8lKvvs/yU/zla+1+NYkmBrFo7Gy/8HBbV/K2vlgA3N0q2MKmsDvu/Ua3igtxDPiq/cOYXwWc1/sHZ4Jc24mwSfl3pEtgZRqMRAU73ifB7ZnAtmkMkjHlVGCSiQbJ6fPql29mMaGqf29xLcTP+mreGUUM/Mpl7fQeXgDZYalxl12n2BPsdtXbFieW7f5MgcmC1YNmetgqY4aHrmmS0y4iRPjtxzKa6ZZmZOeSTnTYEBETZxQL0O5O9xfcxVmUXjSivd8ECdMKdJf9ZpwDZ0y0guL29Oh9NDx40Q+UCkKnNrLp7vRJhp8enOZKwCx1cObudOwwob0NrHnxvnUZbFzfT+QPjssaR4ZUTORDk6L/qRwTO5MWeSdG3mso14u3+/kyePPGZOq0jh8SRH5Az2Pmwd9ae5pMelBu3OvE4BGa7YdfcznyGqyvF4xZCTr3nbmv/SpL0BogRU2xh0Fx+M4BassTgtfWnhRe7KKtq0trDnjIKhveU8TtDHEL+TUo5dI/7+Pt1ytn7jbbvlZpwTPGoGDVI=
@@ -10,4 +9,14 @@ addons:
 script: npm run test_coverage
 after_success:
 - npm install -g codeclimate-test-reporter
-- CODECLIMATE_REPO_TOKEN=041548b6d058929420c64c0ef2f4d247203e61de822588e5f497a314f64f09ae codeclimate-test-reporter < ./coverage/lcov.info
+- CODECLIMATE_REPO_TOKEN=041548b6d058929420c64c0ef2f4d247203e61de822588e5f497a314f64f09ae
+  codeclimate-test-reporter < ./coverage/lcov.info
+deploy:
+  provider: npm
+  email: kei.itof@gmail.com
+  api_key:
+    secure: YG99Ha7DdLyEcDoByPXuHp0wM7J5bQltFhS4OMtTwFTRI2dIDRs8IrERwzr9n1mtc4l6xtdSgU2uBS0QaozUlNEn7OUN9HenDdP9OTpWXggpGdVtyiWoIsTU/SpnnTTfdHVrD6LJ5Bad1ur9hK67ZXKQIn15iloY7ik4eLNQjRz2sDrQwtQeCCT0EPO4a7GrqdDLnxrMj7Snk/OG1NxoBWxM93dXb8CMvaEUzsrjnI35VLr+9DMCI4dLR7vhs0VEm36d97e98Nfg6T2owSxOwOWP4z8S56vioYfhRwkKEs+h/CjC0sTXrWXJBSGGRv/IDWVNUwULwIe1jWjJVnPBV4nIwKdiBPeQHkS7rvdbUFwbf09F+/rwBNs8TehjmR3IJ6WsHWSAK1xJioMAlxC2hWFoam8qfOV5T56hZCKz02EKEcoeiKqdqAoAW8D1m56Gpty3XHWiSU6Cvx5FADetFJp0ayWHor3k7/xKOXBlOoZ0aR6jybd28rPogPRl7rz0gU8ZSCwfQWtX2rPSSf30MaE/BIiyMTxdnX+SuXy6cVrg6epE2OlD5aZezFj8NQVU25PL2PyHrsdSPoR6BETjMc4YUKpsXUj4ae2iyzBt/zrqk0xpgdwDettqWQWsiGlfsyM7/Ai4W3DQ+jCERhWYvvb+I0GesCEgv5jIGodRYW0=
+  on:
+    tags: true
+    branch: master
+    repo: kei-ito/middleware-static-livereload
