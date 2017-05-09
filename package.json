@@ -1,6 +1,6 @@
 {
   "name": "middleware-static-livereload",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A middleware for connect and livereload",
   "license": "MIT",
   "repository": "kei-ito/middleware-static-livereload",
