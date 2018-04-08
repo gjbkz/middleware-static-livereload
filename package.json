@@ -17,12 +17,12 @@
     "test_coverage": "istanbul cover _mocha"
   },
   "dependencies": {
-    "j1": "0.0.31",
-    "livereload": "^0.6.2"
+    "j1": "0.0.48",
+    "livereload": "^0.7.0"
   },
   "devDependencies": {
     "connect": "^3.5.1",
     "istanbul": "^1.1.0-alpha.1",
-    "mocha": "^3.2.0"
+    "mocha": "^5.0.5"
   }
 }
