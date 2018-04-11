@@ -5,7 +5,6 @@ const livereload = require('livereload');
 const {promisify} = require('@nlib/util');
 const {ContentType} = require('@nlib/content-type');
 const {ReplaceStream} = require('@nlib/replace-stream');
-const readFile = promisify(fs.readFile, fs);
 const stat = promisify(fs.stat, fs);
 
 module.exports = function middleware({
@@ -26,7 +25,7 @@ module.exports = function middleware({
 	.then(() => server.server._server.address().port);
 	const watcher = server.watch(documentRoot);
 	return Object.assign(
-		function (req, res, next) {
+		(req, res, next) => {
 			const parsed = url.parse(req.url);
 			const filePath = path.join(documentRoot, parsed.pathname.replace(/\/$/, '/index.html'));
 			Promise.all([
@@ -39,7 +38,7 @@ module.exports = function middleware({
 					newURL.pathname += '/';
 					res.writeHead(301, {'location': url.format(newURL)});
 					res.end();
-					return;
+					return null;
 				}
 				if (include.some((regexp) => regexp.test(filePath)) && exclude.every((regexp) => !regexp.test(filePath))) {
 					res.writeHead(200, {'content-type': contentType.get(filePath)});
@@ -65,10 +64,7 @@ module.exports = function middleware({
 					.once('finish', resolve);
 				});
 			})
-			.catch((error) => {
-				console.log(error);
-				next();
-			});
+			.catch(next);
 		},
 		{server, watcher}
 	);
