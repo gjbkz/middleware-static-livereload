@@ -2,8 +2,8 @@
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/kei-ito/middleware-static-livereload.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/kei-ito/middleware-static-livereload.svg?branch=master)](https://travis-ci.org/kei-ito/middleware-static-livereload)
-[![Code Climate](https://lima.codeclimate.com/github/kei-ito/middleware-static-livereload/badges/gpa.svg)](https://lima.codeclimate.com/github/kei-ito/middleware-static-livereload)
-[![Test Coverage](https://lima.codeclimate.com/github/kei-ito/middleware-static-livereload/badges/coverage.svg)](https://lima.codeclimate.com/github/kei-ito/middleware-static-livereload/coverage)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/kei-ito/middleware-static-livereload?branch=master&svg=true)](https://ci.appveyor.com/project/kei-ito/middleware-static-livereload/branch/master)
+[![codecov](https://codecov.io/gh/kei-ito/middleware-static-livereload/branch/master/graph/badge.svg)](https://codecov.io/gh/kei-ito/middleware-static-livereload)
 
 A middleware for [connect](https://github.com/senchalabs/connect) server.
 It injects the [livereload](https://github.com/napcs/node-livereload) script
