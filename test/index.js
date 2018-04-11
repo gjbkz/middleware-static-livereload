@@ -32,34 +32,38 @@ test('middleware-static-livereload', (test) => {
 		.listen(serverPort);
 	});
 
-	test('inject a script tag', async (test) => {
+	test('inject a script tag', (test) => {
 		const expectedHTML = [
 			'<!doctype html>',
 			`<script>document.write('<script src="http://'+(location.host||'localhost').split(':')[0]+':${livereloadPort}/livereload.js?snipver=1"></'+'script>')</script>`,
 			'<title>middleware-static-livereload</title>',
 			'',
 		].join('\n');
-		const res = await new Promise((resolve) => http.get(getURL('/'), resolve));
-		const receivedHTML = `${await readStream(res)}`;
-		test.compare(receivedHTML, expectedHTML);
+		return new Promise((resolve) => http.get(getURL('/'), resolve))
+		.then((res) => readStream(res))
+		.then((receivedHTML) => test.compare(`${receivedHTML}`, expectedHTML));
 	});
 
-	test('redirect to / if a directory is requested', async (test) => {
-		const res = await new Promise((resolve) => http.get(getURL('/directory'), resolve));
-		test.compare(res, {
-			statusCode: 301,
-			headers: {location: '/directory/'},
+	test('redirect to / if a directory is requested', (test) => {
+		return new Promise((resolve) => http.get(getURL('/directory'), resolve))
+		.then((res) => {
+			test.compare(res, {
+				statusCode: 301,
+				headers: {location: '/directory/'},
+			});
 		});
 	});
 
-	test('behave as a static file server', async (test) => {
+	test('behave as a static file server', (test) => {
 		const expectedJS = [
 			'console.log(\'app.js\');',
 			'',
 		].join('\n');
-		const res = await new Promise((resolve) => http.get(getURL('/app.js'), resolve));
-		const receivedJS = `${await readStream(res)}`;
-		test.compare(receivedJS, expectedJS);
+		return new Promise((resolve) => http.get(getURL('/app.js'), resolve))
+		.then((res) => readStream(res))
+		.then((receivedJS) => {
+			test.compare(`${receivedJS}`, expectedJS);
+		});
 	});
 
 	test('watch the files', (test) => {
