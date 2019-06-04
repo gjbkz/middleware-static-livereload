@@ -27,6 +27,6 @@
 	"devDependencies": {
 		"@nlib/lint": "2.2.11",
 		"@nlib/test": "1.3.4",
-		"connect": "3.6.6"
+		"connect": "3.7.0"
 	}
 }
