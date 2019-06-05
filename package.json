@@ -22,7 +22,7 @@
 		"@nlib/content-type": "^1.1.1",
 		"@nlib/replace-stream": "^1.0.1",
 		"@nlib/util": "0.0.0",
-		"livereload": "^0.7.0"
+		"livereload": "^0.8.0"
 	},
 	"devDependencies": {
 		"@nlib/lint": "2.2.11",
