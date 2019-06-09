@@ -5,7 +5,7 @@ export const stringify = (
     inspectOptions: util.InspectOptions,
 ): string => {
     if (typeof item === 'string') {
-        return item;
+        return item.trim();
     }
-    return util.inspect(item, inspectOptions);
+    return util.inspect(item, inspectOptions).trim();
 };

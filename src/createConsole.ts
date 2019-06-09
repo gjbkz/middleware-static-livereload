@@ -2,29 +2,32 @@ import * as util from 'util';
 import {LogLevel, IConsole} from './types';
 import {createWriter} from './createWriter';
 
-interface IParameters {
-    stdout: NodeJS.WritableStream,
-    stderr: NodeJS.WritableStream,
-    logLevel: LogLevel,
-    inspectOptions: util.InspectOptions,
-}
-
 export const createConsole = (
-    parameters: IParameters,
+    parameters: {
+        logLevel?: LogLevel,
+        stdout?: NodeJS.WritableStream,
+        stderr?: NodeJS.WritableStream,
+        inspectOptions?: util.InspectOptions,
+    } = {},
 ): IConsole => {
-    const stdout = createWriter(parameters.stdout, parameters.inspectOptions);
-    const stderr = createWriter(parameters.stderr, parameters.inspectOptions);
+    const inspectOptions = {
+        colors: true,
+        ...parameters.inspectOptions,
+    };
+    const stdout = createWriter(parameters.stdout || process.stdout, inspectOptions);
+    const stderr = createWriter(parameters.stderr || process.stderr, inspectOptions);
     const ignore = () => {};
-    switch (parameters.logLevel) {
+    const logLevel = 'logLevel' in parameters ? parameters.logLevel : LogLevel.info;
+    switch (logLevel) {
     case LogLevel.silent:
-        return {debug: ignore, info: ignore, error: ignore};
+        return {logLevel, debug: ignore, info: ignore, error: ignore};
     case LogLevel.error:
-        return {debug: ignore, info: ignore, error: stderr};
+        return {logLevel, debug: ignore, info: ignore, error: stderr};
     case LogLevel.info:
-        return {debug: ignore, info: stdout, error: stderr};
+        return {logLevel, debug: ignore, info: stdout, error: stderr};
     case LogLevel.debug:
-        return {debug: stdout, info: stdout, error: stderr};
+        return {logLevel, debug: stdout, info: stdout, error: stderr};
     default:
-        throw new Error(`Invalid logLevel: ${parameters.logLevel}`);
+        throw new Error(`Invalid logLevel: ${logLevel}`);
     }
 };
