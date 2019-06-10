@@ -1,7 +1,7 @@
 import * as http from 'http';
 import * as https from 'https';
 
-export const request = async (
+export const request = (
     method: string,
     url: URL,
     options?: http.RequestOptions | https.RequestOptions,

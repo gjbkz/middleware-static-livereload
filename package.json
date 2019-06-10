@@ -14,7 +14,7 @@
     "repository": "kei-ito/middleware-static-livereload",
     "main": "src/index.js",
     "scripts": {
-        "lint": "eslint src",
+        "lint": "eslint --ext .ts src",
         "build:tsc": "tsc",
         "build:client": "cpy src/client-script.js lib",
         "build": "run-s build:tsc build:client",
@@ -55,6 +55,9 @@
             "es6": true,
             "node": true
         },
+        "globals": {
+            "URL": false
+        },
         "overrides": [
             {
                 "files": [
@@ -84,7 +87,9 @@
             },
             {
                 "files": [
-                    "src/types.ts"
+                    "src/types.ts",
+                    "src/stringify.ts",
+                    "src/createWriter.ts"
                 ],
                 "rules": {
                     "@typescript-eslint/no-explicit-any": "off"

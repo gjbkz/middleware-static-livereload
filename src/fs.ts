@@ -22,4 +22,4 @@ export const statIfExistSync = (
         }
         throw error;
     }
-}
+};

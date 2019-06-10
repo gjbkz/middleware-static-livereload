@@ -20,30 +20,23 @@ export const createInserter = (
         insertAfter?: string | RegExp | Array<string | RegExp>,
     } = {},
 ) => {
-    const [insertBefore, insertAfter] = (options.insertBefore || options.insertAfter)
-    ? [ensureArray(options.insertBefore || []), ensureArray(options.insertAfter || [])]
-    : [defaultInsertBefore, defaultInsertAfter];
+    const [insertBefore, insertAfter] = (options.insertBefore || options.insertAfter) ? [
+        ensureArray(options.insertBefore || []),
+        ensureArray(options.insertAfter || []),
+    ] : [defaultInsertBefore, defaultInsertAfter];
     return (
         input: string,
         insertee: string | Buffer,
     ): string | null => {
-        let done = false;
-        let result = input;
         for (const pattern of insertBefore) {
-            result = input.replace(pattern, (match) => {
-                done = true;
-                return `${insertee}${match}`;
-            });
-            if (done) {
+            const result = input.replace(pattern, `${insertee}$&`);
+            if (result !== input) {
                 return result;
             }
         }
         for (const pattern of insertAfter) {
-            result = input.replace(pattern, (match) => {
-                done = true;
-                return `${match}${insertee}`;
-            });
-            if (done) {
+            const result = input.replace(pattern, `$&${insertee}`);
+            if (result !== input) {
                 return result;
             }
         }
