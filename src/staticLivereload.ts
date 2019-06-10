@@ -9,17 +9,9 @@ import {createFileFinder} from './createFileFinder';
 import {createConsole} from './createConsole';
 import {compileContentTypes} from './compileContentTypes';
 import {createSnippetInjector} from './createSnippetInjector';
+import {getFile} from './getFile';
+import {createConnectionHandler} from './createConnectionHandler';
 import {IFile} from './types';
-
-export const clientScriptURL = `/reload-${Date.now()}.js`;
-
-const clientScriptPath = path.join(__dirname, 'client', 'script.js');
-export const clientScript: IFile = {
-    path: clientScriptPath,
-    relativePath: path.normalize(clientScriptURL),
-    stats: fs.statSync(clientScriptPath),
-};
-const scriptHTML = Buffer.from(`<script src="${clientScriptURL}"></script>`);
 
 export type IOptions = {
     chokidar?: chokidar.WatchOptions,
@@ -32,23 +24,40 @@ export type IOptions = {
 export const staticLivereload = (
     options: IOptions = {},
 ): connect.SimpleHandleFunction => {
+    const reservedPaths = new Map<string, string>();
+    const reservedURL = '/middleware-static-livereload';
+    const clientScriptPath = `${reservedURL}/script.js`;
     const findFile = createFileFinder(options);
+    const scriptHTML = Buffer.from(`<script id="middleware-static-livereload" src="${clientScriptPath}" defer></script>`);
+    reservedPaths.set(clientScriptPath, path.join(__dirname, 'client', 'script.js'));
+    reservedPaths.set(`${clientScriptPath}/polyfill.js`, require.resolve('event-source-polyfill/src/eventsource.min.js'));
     const injectSnippet = createSnippetInjector(options, scriptHTML);
-    const watcher = options.chokidar === null ? null : chokidar.watch([], options.chokidar);
     const console = createConsole(options);
     const getContentType = compileContentTypes(options.contentTypes);
+    const serverEvent = createConnectionHandler(console);
+    const watcher = options.chokidar === null ? null : chokidar.watch([], options.chokidar)
+    .on('all', (eventName, file) => {
+        console.debug(`${eventName}: ${file}`);
+        const documentRoot = findFile.resolveDocumentRoot(file);
+        const pathname = path.relative(documentRoot, file).split(path.sep).join('/');
+        serverEvent.sendEvent(pathname, eventName);
+    });
+    const getFileFromPathname = (pathname: string): Promise<IFile> => {
+        const reserved = reservedPaths.get(pathname);
+        if (reserved) {
+            return getFile(reserved);
+        }
+        return findFile(pathname);
+    };
     let counter = 0;
     return (req, res) => {
         const id = `#${counter++}`;
         console.info(id, '←', req.method, req.url);
         const url = new URL(req.url || '/', 'http://localhost');
-        new Promise<IFile>(async (resolve, reject) => {
-            if (url.pathname === clientScriptURL) {
-                resolve(clientScript);
-            } else {
-                findFile(url.pathname).then(resolve, reject);
-            }
-        })
+        if (url.pathname === `${clientScriptPath}/connect`) {
+            return serverEvent.handler(req, res);
+        }
+        getFileFromPathname(url.pathname)
         .then(async (file) => {
             console.debug(id, '→', file.path);
             res.statusCode = 200;
@@ -68,7 +77,7 @@ export const staticLivereload = (
                 .once('error', reject)
                 .once('finish', resolve);
             });
-            if (watcher) {
+            if (watcher && !reservedPaths.has(url.pathname)) {
                 watcher.add(file.path);
             }
         })

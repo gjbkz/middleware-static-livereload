@@ -6,5 +6,5 @@ export const createWriter = (
     stream: NodeJS.WritableStream,
     inspectOptions: util.InspectOptions,
 ): ILog => (...args: Array<any>) => {
-    stream.write(args.map((arg) => stringify(arg, inspectOptions)).join(' '));
+    stream.write(`${args.map((arg) => stringify(arg, inspectOptions)).join(' ')}\n`);
 };

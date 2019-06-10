@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as stream from 'stream';
 import * as chokidar from 'chokidar';
+import * as connect from 'connect';
 
 export enum LogLevel {
     debug = 0,
@@ -28,6 +29,7 @@ export interface IFile {
 
 export interface IFileFinder {
     (pathname: string): Promise<IFile>,
+    resolveDocumentRoot: (absolutePath: string) => string,
 }
 
 export interface IContentTypeGetter {
@@ -42,4 +44,16 @@ export interface IFunctions {
     findFile: IFileFinder,
     watcher: chokidar.FSWatcher | null,
     console: IConsole,
+}
+
+export interface IEventCompiler {
+    (
+        data: string,
+        eventName?: string,
+    ): string,
+}
+
+export interface IConnectionHandler {
+    handler: connect.SimpleHandleFunction,
+    sendEvent: (...args: Parameters<IEventCompiler>) => void,
 }

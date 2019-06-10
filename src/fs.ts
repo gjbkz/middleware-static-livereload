@@ -11,3 +11,15 @@ export const statIfExist = (
     }
     throw error;
 });
+export const statIfExistSync = (
+    filePath: string,
+): fs.Stats | null => {
+    try {
+        return fs.statSync(filePath);
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return null;
+        }
+        throw error;
+    }
+}

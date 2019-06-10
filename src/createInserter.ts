@@ -27,16 +27,24 @@ export const createInserter = (
         input: string,
         insertee: string | Buffer,
     ): string | null => {
+        let done = false;
+        let result = input;
         for (const pattern of insertBefore) {
-            const match = input.match(pattern);
-            if (match) {
-                return `${insertee}\n${match[0]}`;
+            result = input.replace(pattern, (match) => {
+                done = true;
+                return `${insertee}${match}`;
+            });
+            if (done) {
+                return result;
             }
         }
         for (const pattern of insertAfter) {
-            const match = input.match(pattern);
-            if (match) {
-                return `${match[0]}\n${insertee}`;
+            result = input.replace(pattern, (match) => {
+                done = true;
+                return `${match}${insertee}`;
+            });
+            if (done) {
+                return result;
             }
         }
         return null;

@@ -12,26 +12,33 @@ export const createSnippetInjector = (
     const stringDecoder = new StringDecoder(options.encoding);
     const insert = createInserter(options);
     let done = false;
+    const chunks: Array<string> = [];
     const injector = new stream.Transform({
         transform(chunk, _encoding, callback) {
+            const string = stringDecoder.write(chunk);
             if (!done) {
-                const inserted = insert(stringDecoder.write(chunk), injectee);
+                const inserted = insert(string, injectee);
                 if (inserted) {
                     this.push(inserted);
+                    chunks.push(inserted);
                     done = true;
                     callback();
                     return;
                 }
             }
-            this.push(chunk);
+            chunks.push(string);
+            this.push(string);
             callback();
         },
         flush(callback) {
-            const flushed = stringDecoder.end();
-            if (flushed) {
-                this.push((!done && insert(flushed, injectee)) || flushed);
+            let string = stringDecoder.end();
+            if (string) {
+                string = (!done && insert(string, injectee)) || string;
+                chunks.push(string);
+                this.push(string);
             }
             callback();
+            console.log(chunks);
         },
     });
     return readable.pipe(injector);

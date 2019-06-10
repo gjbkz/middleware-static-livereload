@@ -14,26 +14,59 @@
     "repository": "kei-ito/middleware-static-livereload",
     "main": "src/index.js",
     "scripts": {
-        "lint": "nlib-lint src test/*.js",
+        "lint": "eslint src",
         "test": "node test",
         "test_coverage": "nyc --reporter=lcov --reporter=text npm test"
     },
     "dependencies": {
-        "chokidar": "^3.0.1",
-        "ws": "^7.0.0"
+        "chokidar": "^3.0.1"
     },
     "devDependencies": {
+        "@commitlint/cli": "^8.0.0",
+        "@commitlint/config-conventional": "^8.0.0",
         "@nlib/lint": "^3.10.0",
         "@types/connect": "^3.4.32",
         "@types/node": "^12.0.4",
-        "@types/ws": "^6.0.1",
+        "@types/selenium-webdriver": "^4.0.0",
+        "@typescript-eslint/eslint-plugin": "^1.10.2",
         "ava": "^2.0.0",
+        "browserstack-local": "^1.4.0",
         "connect": "^3.7.0",
+        "conventional-changelog-cli": "^2.0.21",
+        "eslint": "^5.16.0",
+        "event-source-polyfill": "^1.0.5",
+        "husky": "^2.4.0",
+        "lint-staged": "^8.2.0",
+        "npm-run-all": "^4.1.5",
+        "selenium-webdriver": "^4.0.0-alpha.1",
         "ts-node": "^8.2.0",
         "typescript": "^3.5.1"
     },
     "eslintConfig": {
-        "extends": "./node_modules/@nlib/lint/.eslintrc.json"
+        "extends": "./node_modules/@nlib/lint/.eslintrc.json",
+        "overrides": [
+            {
+                "files": [
+                    "src/client/*"
+                ],
+                "env": {
+                    "browser": true,
+                    "node": false
+                },
+                "rules": {
+                    "prefer-arrow-callback": "off",
+                    "prefer-destructuring": "off",
+                    "prefer-template": "off",
+                    "func-style": ["error", "declaration"],
+                    "no-restricted-syntax": [
+                        "error",
+                        "TemplateElement",
+                        "ArrayPattern",
+                        "ObjectPattern"
+                    ]
+                }
+            }
+        ]
     },
     "ava": {
         "compileEnhancements": false,
@@ -45,6 +78,34 @@
         ],
         "files": [
             "lib/**/*.test.js"
+        ]
+    },
+    "commitlint": {
+        "extends": [
+            "@commitlint/config-conventional"
+        ]
+    },
+    "husky": {
+        "hooks": {
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.js": [
+            "eslint"
+        ]
+    },
+    "renovate": {
+        "extends": [
+            ":ignoreModulesAndTests",
+            ":unpublishSafe",
+            ":semanticPrefixChore",
+            ":prNotPending",
+            ":prConcurrentLimit10",
+            ":prHourlyLimitNone",
+            ":label(dependencies)",
+            ":automergeMinor"
         ]
     }
 }

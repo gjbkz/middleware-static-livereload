@@ -12,6 +12,7 @@ export const createConsole = (
 ): IConsole => {
     const inspectOptions = {
         colors: true,
+        breakLength: 40,
         ...parameters.inspectOptions,
     };
     const stdout = createWriter(parameters.stdout || process.stdout, inspectOptions);
