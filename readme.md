@@ -6,8 +6,7 @@
 [![codecov](https://codecov.io/gh/kei-ito/middleware-static-livereload/branch/master/graph/badge.svg)](https://codecov.io/gh/kei-ito/middleware-static-livereload)
 
 A middleware for [connect](https://github.com/senchalabs/connect) server.
-It injects the [livereload](https://github.com/napcs/node-livereload) script
-into .html files before serving them.
+It injects the autoreload script into text/html files before serving them.
 
 ## Install
 
