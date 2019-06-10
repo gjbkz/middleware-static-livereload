@@ -28,7 +28,7 @@ const test = anyTest as TestInterface<{
  * servers using BrowserStack?
  * → We support all ports for all browsers other than Safari.
  */
-let port = 9200;
+let port = 8000;
 test.beforeEach(async (t) => {
     t.context.port = port++;
     t.context.app = connect();
