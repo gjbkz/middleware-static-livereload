@@ -21,7 +21,7 @@ export const createFileFinder = (
     return Object.assign(
         async (pathname: string) => {
             const relativePath = pathname.replace(/\/$/, `/${index}`).split('/').join(path.sep);
-            let absolutePath = reservedPaths[relativePath] || null;
+            let absolutePath = reservedPaths[pathname] || null;
             let stats: fs.Stats | null = null;
             if (absolutePath) {
                 stats = await statIfExist(absolutePath);
