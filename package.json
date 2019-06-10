@@ -96,6 +96,14 @@
                 "rules": {
                     "@typescript-eslint/no-explicit-any": "off"
                 }
+            },
+            {
+                "files": [
+                    "src/listen.ts"
+                ],
+                "rules": {
+                    "no-process-env": "off"
+                }
             }
         ]
     },

@@ -1,4 +1,5 @@
 import * as http from 'http';
+const hostname = process.env.HOSTNAME || 'localhost';
 
 export const listenPort = (
     server: http.Server,
@@ -16,7 +17,7 @@ export const listenPort = (
         server.removeListener('error', reject);
         resolve();
     })
-    .listen(port);
+    .listen(port, hostname);
 });
 
 export const listen = async (

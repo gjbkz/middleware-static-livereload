@@ -18,8 +18,11 @@ jobs:
       - persist_to_workspace: {root: ., paths: [.]}
   test:
     docker: [{image: "circleci/node:lts"}]
+    environment:
+      HOSTNAME: dev.example.com
     steps:
       - attach_workspace: {at: .}
+      - run: "'127.0.0.1 $HOSTNAME' >> /etc/hosts"
       - run: sudo npm install -g codecov c8
       - run: c8 npm test
       - run: c8 report --reporter=text-lcov > coverage.lcov
