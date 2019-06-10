@@ -4,7 +4,7 @@ import {createConsole} from './createConsole';
 import {compileContentTypes} from './compileContentTypes';
 import {createSnippetInjector} from './createSnippetInjector';
 import {createConnectionHandler} from './createConnectionHandler';
-import {createWatcher} from './createWatcher';
+import {createFileWatcher} from './createFileWatcher';
 import {IOptions} from './types';
 
 export const getTools = (
@@ -24,7 +24,7 @@ export const getTools = (
         handleConnection,
         injectSnippet: createSnippetInjector(options, `<script id="middleware-static-livereload" src="${clientScriptPath}" defer></script>`),
         getContentType: compileContentTypes(options.contentTypes),
-        watcher: createWatcher({
+        fileWatcher: createFileWatcher({
             console,
             chokidar: options.chokidar || {},
             sendEvent: handleConnection.sendEvent,

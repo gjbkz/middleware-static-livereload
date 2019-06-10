@@ -2,7 +2,7 @@ import * as chokidar from 'chokidar';
 import * as path from 'path';
 import {ISendEvent, IConsole} from './types';
 
-export const createWatcher = (
+export const createFileWatcher = (
     options: {
         chokidar: chokidar.WatchOptions,
         console: IConsole,
