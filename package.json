@@ -15,8 +15,7 @@
     "main": "src/index.js",
     "scripts": {
         "lint": "eslint src",
-        "test": "node test",
-        "test_coverage": "nyc --reporter=lcov --reporter=text npm test"
+        "test": "ava src/**/*.test.ts"
     },
     "dependencies": {
         "chokidar": "^3.0.1"
