@@ -6,7 +6,7 @@ export const listenPort = (
 ) => new Promise((resolve, reject) => {
     server
     .once('error', (error: NodeJS.ErrnoException) => {
-        if (error.code === 'EADDRINUSE') {
+        if (error.code === 'EADDRINUSE' || error.code === 'EADDRNOTAVAIL') {
             resolve();
         } else {
             reject(error);
