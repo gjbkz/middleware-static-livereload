@@ -20,6 +20,7 @@ const test = anyTest as TestInterface<{
         [path: string]: Buffer,
     },
     directory: string,
+    baseURL: URL,
 }>;
 
 /**
@@ -28,7 +29,7 @@ const test = anyTest as TestInterface<{
  * servers using BrowserStack?
  * → We support all ports for all browsers other than Safari.
  */
-let port = 8000;
+let port = 9200;
 test.beforeEach(async (t) => {
     t.context.port = port++;
     t.context.app = connect();
@@ -43,7 +44,11 @@ test.beforeEach(async (t) => {
             'index',
         ].join('\n')),
     };
-    await prepareFiles(t.context.files, t.context.directory);
+    await Promise.all([
+        listen(t.context.server, t.context.port),
+        prepareFiles(t.context.files, t.context.directory),
+    ]);
+    t.context.baseURL = getBaseURL(t.context.server.address());
 });
 
 test.afterEach(async (t) => {
@@ -52,23 +57,61 @@ test.afterEach(async (t) => {
     });
 });
 
-test('GET a file', async (t) => {
+test('GET /foo.txt', async (t) => {
     t.context.app.use(staticLivereload({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
         stderr: createLogger(t),
     }));
-    await listen(t.context.server, t.context.port);
-    const baseURL = getBaseURL(t.context.server.address());
-    const resFoo = await request('GET', new URL('/foo.txt', baseURL));
-    t.is(resFoo.statusCode, 200);
-    t.is(resFoo.headers['content-type'], 'text/plain');
-    t.is(`${await readStream(resFoo)}`, `${t.context.files['foo.txt']}`);
-    const resIndex = await request('GET', new URL('/', baseURL));
-    t.is(resIndex.statusCode, 200);
-    t.is(resIndex.headers['content-type'], 'text/html');
-    const resScript = await request('GET', new URL('/middleware-static-livereload/script.js', baseURL));
-    t.is(resScript.statusCode, 200);
-    t.is(resScript.headers['content-type'], 'text/javascript');
+    const url = new URL('/foo.txt', t.context.baseURL);
+    const res = await request('GET', url);
+    t.is(res.statusCode, 200);
+    t.is(res.headers['content-type'], 'text/plain');
+    t.is(`${await readStream(res)}`, `${t.context.files['foo.txt']}`);
+});
+
+test('GET /', async (t) => {
+    t.context.app.use(staticLivereload({
+        documentRoot: t.context.directory,
+        logLevel: LogLevel.debug,
+        stdout: createLogger(t),
+        stderr: createLogger(t),
+    }));
+    const url = new URL('/', t.context.baseURL);
+    const res = await request('GET', url);
+    t.is(res.statusCode, 200);
+    t.is(res.headers['content-type'], 'text/html');
+});
+
+test('GET /middleware-static-livereload.js', async (t) => {
+    t.context.app.use(staticLivereload({
+        documentRoot: t.context.directory,
+        logLevel: LogLevel.debug,
+        stdout: createLogger(t),
+        stderr: createLogger(t),
+    }));
+    const url = new URL('/middleware-static-livereload.js', t.context.baseURL);
+    const res = await request('GET', url);
+    t.is(res.statusCode, 200);
+    t.is(res.headers['content-type'], 'text/javascript');
+});
+
+test('GET /middleware-static-livereload.js/connect', async (t) => {
+    t.context.app.use(staticLivereload({
+        documentRoot: t.context.directory,
+        logLevel: LogLevel.debug,
+        stdout: createLogger(t),
+        stderr: createLogger(t),
+    }));
+    const url = new URL('/middleware-static-livereload.js/connect', t.context.baseURL);
+    const res = await request('GET', url, {
+        headers: {
+            'accept': 'text/event-stream',
+            'content-type': 'text/event-stream',
+        },
+    });
+    t.is(res.statusCode, 200);
+    t.is(res.headers['content-type'], 'text/event-stream');
+    res.destroy();
 });

@@ -11,7 +11,7 @@ export const getTools = (
     options: IOptions = {},
 ) => {
     const prefix = `/${options.scriptPrefix || 'middleware-static-livereload'}`.replace(/^\/+/, '/');
-    const clientScriptPath = `${prefix}/script.js`;
+    const clientScriptPath = `${prefix}.js`;
     const findFile = createFileFinder(options, {
         [clientScriptPath]: path.join(__dirname, 'client-script.js'),
         [`${clientScriptPath}/polyfill.js`]: require.resolve('event-source-polyfill/src/eventsource.min.js'),
