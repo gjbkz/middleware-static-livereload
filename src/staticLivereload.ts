@@ -8,7 +8,7 @@ import {getTools} from './getTools';
 
 export const staticLivereload = (
     options: IOptions,
-): connect.SimpleHandleFunction => {
+): connect.NextHandleFunction => {
     const {
         console,
         findFile,
@@ -19,7 +19,7 @@ export const staticLivereload = (
         connectionPath,
     } = getTools(options);
     let counter = 0;
-    return (req, res) => {
+    return (req, res, next) => {
         const id = `#${counter++}`;
         console.info(id, '←', req.method, req.url);
         const url = new URL(req.url || '/', 'http://localhost');
@@ -29,7 +29,6 @@ export const staticLivereload = (
             findFile(url.pathname)
             .then(async (file) => {
                 console.debug(id, '→', file.path);
-                res.statusCode = 200;
                 const contentType = getContentType(file.path);
                 if (contentType) {
                     res.setHeader('content-type', contentType);
@@ -42,14 +41,18 @@ export const staticLivereload = (
                     res.setHeader('content-length', file.stats.size);
                 }
                 await new Promise((resolve, reject) => {
+                    res.statusCode = 200;
                     reader.pipe(res).once('error', reject).once('finish', resolve);
                 });
                 if (fileWatcher && !findFile.isReserved(url.pathname)) {
                     fileWatcher.add(file.path);
                 }
             })
-            .catch((error) => handleError(id, res, error, console))
-            .finally(() => console.debug(id, '→', res.statusCode, {...res.getHeaders()}));
+            .catch((error) => {
+                handleError(id, res, error, console);
+                next(error);
+            })
+            .then(() => console.debug(id, '→', res.statusCode, {...res.getHeaders()}));
         }
     };
 };
