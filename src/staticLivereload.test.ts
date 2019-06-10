@@ -1,5 +1,6 @@
 import * as http from 'http';
 import * as connect from 'connect';
+import {URL} from 'url';
 import anyTest, {TestInterface} from 'ava';
 import {staticLivereload} from './staticLivereload';
 import {listen} from './listen';
