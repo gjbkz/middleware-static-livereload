@@ -1,5 +1,5 @@
 import * as http from 'http';
-const hostname = process.env.HOSTNAME || 'localhost';
+const hostname = 'localhost';
 
 export const listenPort = (
     server: http.Server,
