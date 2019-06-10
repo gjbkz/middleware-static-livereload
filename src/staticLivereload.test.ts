@@ -1,7 +1,7 @@
 import * as http from 'http';
 import * as connect from 'connect';
 import anyTest, {TestInterface} from 'ava';
-import {staticLivereload, clientScriptURL} from './staticLivereload';
+import {staticLivereload} from './staticLivereload';
 import {listen} from './listen';
 import {prepareFiles} from './test-util/prepareFiles';
 import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
@@ -67,7 +67,7 @@ test('GET a file', async (t) => {
     const resIndex = await request('GET', new URL('/', baseURL));
     t.is(resIndex.statusCode, 200);
     t.is(resIndex.headers['content-type'], 'text/html');
-    const resScript = await request('GET', new URL(clientScriptURL, baseURL));
+    const resScript = await request('GET', new URL('/middleware-static-livereload/script.js', baseURL));
     t.is(resScript.statusCode, 200);
     t.is(resScript.headers['content-type'], 'text/javascript');
 });

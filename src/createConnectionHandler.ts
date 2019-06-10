@@ -3,9 +3,9 @@ import {IConsole, IConnectionHandler} from './types';
 import {compileEvent} from './compileEvent';
 
 export const createConnectionHandler = (
-    console: IConsole,
+    options: {console: IConsole},
 ): IConnectionHandler => {
-    let counter = 0;
+    const {console} = options;
     const EventStreamType = 'text/event-stream';
     const connections = new Set<http.ServerResponse>();
     const sendEvent = (
@@ -23,15 +23,11 @@ export const createConnectionHandler = (
             connection.write(': keepalive');
         }
     }, 8000);
-    return {
-        handler: (req, res) => {
-            if (req.headers.accept !== EventStreamType) {
-                const message = `Invaild event-stream request: ${req.headers.accept}`;
-                res.statusCode = 400;
-                console.error(message);
-                res.end(message);
-            } else {
-                let id = counter++;
+    let counter = 0;
+    return Object.assign(
+        (req: http.IncomingMessage, res: http.ServerResponse) => {
+            if (req.headers.accept === EventStreamType) {
+                const id = counter++;
                 connections.add(res);
                 res.statusCode = 200;
                 res.setHeader('content-type', EventStreamType);
@@ -41,8 +37,13 @@ export const createConnectionHandler = (
                     connections.delete(res);
                     console.info(`disconnected: #${id}`);
                 });
+            } else {
+                const message = `Invaild event-stream request: ${req.headers.accept}`;
+                res.statusCode = 400;
+                console.error(message);
+                res.end(message);
             }
         },
-        sendEvent,
-    };
+        {sendEvent},
+    );
 };

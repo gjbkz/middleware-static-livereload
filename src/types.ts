@@ -1,7 +1,11 @@
 import * as fs from 'fs';
 import * as stream from 'stream';
 import * as chokidar from 'chokidar';
-import * as connect from 'connect';
+import * as http from 'http';
+import {compileContentTypes} from './compileContentTypes';
+import {createSnippetInjector} from './createSnippetInjector';
+import {createFileFinder} from './createFileFinder';
+import {createConsole} from './createConsole';
 
 export enum LogLevel {
     debug = 0,
@@ -28,8 +32,9 @@ export interface IFile {
 }
 
 export interface IFileFinder {
+    documentRoots: Array<string>,
+    isReserved: (file: string) => boolean,
     (pathname: string): Promise<IFile>,
-    resolveDocumentRoot: (absolutePath: string) => string,
 }
 
 export interface IContentTypeGetter {
@@ -37,6 +42,7 @@ export interface IContentTypeGetter {
 }
 
 export interface ISnippetInjector {
+    size: number,
     (readable: stream.Readable): stream.Transform,
 }
 
@@ -47,13 +53,23 @@ export interface IFunctions {
 }
 
 export interface IEventCompiler {
-    (
-        data: string,
-        eventName?: string,
-    ): string,
+    (data: string, eventName?: string): string,
+}
+
+export interface ISendEvent {
+    (...args: Parameters<IEventCompiler>): void,
 }
 
 export interface IConnectionHandler {
-    handler: connect.SimpleHandleFunction,
-    sendEvent: (...args: Parameters<IEventCompiler>) => void,
+    sendEvent: ISendEvent,
+    (req: http.IncomingMessage, res: http.ServerResponse): void,
 }
+
+export type IOptions = {
+    scriptPrefix?: string,
+    chokidar?: chokidar.WatchOptions,
+    contentTypes?: Parameters<typeof compileContentTypes>[0],
+}
+& Parameters<typeof createSnippetInjector>[0]
+& Parameters<typeof createFileFinder>[0]
+& Parameters<typeof createConsole>[0];
