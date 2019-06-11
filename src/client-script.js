@@ -1,8 +1,8 @@
-{
-    const global = self || window;
-    const document = global.document;
-    const location = global.location;
-    const console = global.console;
+(function () {
+    const g = self || window;
+    const document = g.document;
+    const location = g.location;
+    const console = g.console;
     /**
      * @param {(endpoint: string) => void} callback
      */
@@ -15,7 +15,7 @@
         }
         let loading = false;
         function getEventSource() {
-            if ('EventSource' in global) {
+            if ('EventSource' in g) {
                 callback(endpoint);
             } else if (!loading) {
                 const polyfillElement = document.createElement('script');
@@ -75,13 +75,13 @@
         const pathname = event.data;
         if (extname(pathname) === '.css') {
             const selector = 'link[rel="stylesheet"][href*="' + pathname + '"]';
-            const element = global.document.querySelector(selector);
+            const element = g.document.querySelector(selector);
             if (element) {
                 const absolutePath = absolutify(element.getAttribute('href'));
                 element.setAttribute('href', absolutePath + '?reload=' + Date.now());
             }
         } else {
-            global.location.reload();
+            g.location.reload();
         }
     }
     /**
@@ -92,9 +92,9 @@
         console.error(event);
     }
     setup(function (endpoint) {
-        const eventSource = new global.EventSource(endpoint);
+        const eventSource = new g.EventSource(endpoint);
         eventSource.addEventListener('error', onError);
         eventSource.addEventListener('change', onChange);
         eventSource.addEventListener('unlink', onChange);
     });
-}
+}());

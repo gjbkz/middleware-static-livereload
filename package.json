@@ -81,6 +81,7 @@
                     "node": false
                 },
                 "rules": {
+                    "max-lines-per-function": "off",
                     "prefer-arrow-callback": "off",
                     "prefer-destructuring": "off",
                     "prefer-template": "off",
