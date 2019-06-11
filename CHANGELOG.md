@@ -1,3 +1,13 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/kei-ito/middleware-static-livereload/compare/v1.0.0...v1.1.0) (2019-06-11)
+
+
+### Features
+
+* add index generator ([#15](https://github.com/kei-ito/middleware-static-livereload/issues/15)) ([03276b3](https://github.com/kei-ito/middleware-static-livereload/commit/03276b3))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/kei-ito/middleware-static-livereload/compare/v0.0.5...v1.0.0) (2019-06-11)
 
