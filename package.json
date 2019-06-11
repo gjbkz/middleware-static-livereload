@@ -27,7 +27,8 @@
         "version": "run-s version:changelog version:add"
     },
     "dependencies": {
-        "chokidar": "^3.0.1"
+        "chokidar": "^3.0.1",
+        "event-source-polyfill": "1.0.5"
     },
     "devDependencies": {
         "@commitlint/cli": "8.0.0",
@@ -44,7 +45,6 @@
         "conventional-changelog-cli": "2.0.21",
         "cpy-cli": "2.0.0",
         "eslint": "5.16.0",
-        "event-source-polyfill": "1.0.5",
         "husky": "2.4.0",
         "lint-staged": "8.2.0",
         "npm-run-all": "4.1.5",
