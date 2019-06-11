@@ -159,10 +159,10 @@ getCapabilities(testDirectories).forEach((capability, index) => {
                 options: {cwd: testDirectory},
             });
             await driver.wait(selenium.until.titleIs(`passed: ${testCommand}`), 5000);
+            const base64 = await driver.takeScreenshot();
+            const screenShot = Buffer.from(base64, 'base64');
+            await afs.writeFile(path.join(outputDirectory, `${Date.now()}-${testCommand}.png`), screenShot);
         }
-        const base64 = await driver.takeScreenshot();
-        const screenShot = Buffer.from(base64, 'base64');
-        await afs.writeFile(path.join(outputDirectory, `${Date.now()}.png`), screenShot);
         t.context.passed = true;
     });
 });

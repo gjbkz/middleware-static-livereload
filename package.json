@@ -20,7 +20,8 @@
         "build:tsc": "tsc",
         "build:client": "cpy src/client-script.js lib",
         "build": "run-s build:tsc build:client",
-        "test": "ava -v",
+        "test": "ava",
+        "test-client": "ava test/run.ts",
         "version:changelog": "conventional-changelog --preset angular --infile CHANGELOG.md --same-file --release-count 0",
         "version:add": "git add .",
         "version": "run-s version:changelog version:add"
