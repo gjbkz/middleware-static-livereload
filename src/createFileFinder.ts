@@ -28,10 +28,10 @@ export const createFileFinder = (
                         if (stats.isFile()) {
                             break;
                         } else if (stats.isDirectory()) {
-                            stats = await statIfExist(`${absolutePath}/${index}`);
+                            stats = await statIfExist(path.join(absolutePath, index));
                             if (stats && stats.isFile()) {
-                                absolutePath = `${absolutePath}/${index}`;
-                                relativePath = `${relativePath}/${index}`;
+                                absolutePath = path.join(absolutePath, index);
+                                relativePath = path.join(relativePath, index);
                             } else {
                                 const indexHTML = await generateIndexHTML(absolutePath, relativePath);
                                 absolutePath = path.join(temporaryDirectory, `${relativePath.split(path.sep).join('sep')}.html`);
