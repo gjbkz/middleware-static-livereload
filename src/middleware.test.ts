@@ -3,7 +3,7 @@ import * as http from 'http';
 import * as connect from 'connect';
 import {URL} from 'url';
 import anyTest, {TestInterface} from 'ava';
-import {staticLivereload} from './staticLivereload';
+import {middleware} from './middleware';
 import {listen} from './listen';
 import {prepareFiles} from './test-util/prepareFiles';
 import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
     files: {[path: string]: Buffer},
     directory: string,
     baseURL: URL,
-    middleware: ReturnType<typeof staticLivereload>,
+    middleware: ReturnType<typeof middleware>,
 }>;
 
 let port = 9200;
@@ -64,7 +64,7 @@ test.afterEach(async (t) => {
 });
 
 test('GET /foo.txt', async (t) => {
-    t.context.middleware = staticLivereload({
+    t.context.middleware = middleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
@@ -79,7 +79,7 @@ test('GET /foo.txt', async (t) => {
 });
 
 test('GET /', async (t) => {
-    t.context.middleware = staticLivereload({
+    t.context.middleware = middleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
@@ -93,7 +93,7 @@ test('GET /', async (t) => {
 });
 
 test('GET /bar/', async (t) => {
-    t.context.middleware = staticLivereload({
+    t.context.middleware = middleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
@@ -110,7 +110,7 @@ test('GET /bar/', async (t) => {
 });
 
 test('GET /middleware-static-livereload.js', async (t) => {
-    t.context.middleware = staticLivereload({
+    t.context.middleware = middleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
@@ -130,7 +130,7 @@ test('GET /middleware-static-livereload.js/connect', async (t) => {
         }
         t.fail('timeout');
     }, 5000);
-    t.context.middleware = staticLivereload({
+    t.context.middleware = middleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
