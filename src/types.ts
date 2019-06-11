@@ -46,12 +46,6 @@ export interface ISnippetInjector {
     (readable: stream.Readable): stream.Transform,
 }
 
-export interface IFunctions {
-    findFile: IFileFinder,
-    watcher: chokidar.FSWatcher | null,
-    console: IConsole,
-}
-
 export interface IEventCompiler {
     (data: string, eventName?: string): string,
 }
@@ -67,9 +61,13 @@ export interface IConnectionHandler {
 
 export type IOptions = {
     scriptPrefix?: string,
-    chokidar?: chokidar.WatchOptions,
+    fileWatcher?: chokidar.FSWatcher,
     contentTypes?: Parameters<typeof compileContentTypes>[0],
 }
 & Parameters<typeof createSnippetInjector>[0]
 & Parameters<typeof createFileFinder>[0]
 & Parameters<typeof createConsole>[0];
+
+export interface IEvent {
+    [key: string]: string,
+}

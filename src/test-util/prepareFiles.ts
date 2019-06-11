@@ -1,25 +1,15 @@
 import * as path from 'path';
-import * as fs from 'fs';
+import {writeFile} from '../fs';
 
 export const prepareFiles = (
     files: {
         [path: string]: Buffer,
     },
     directory: string,
-): Promise<Array<string>> => Promise.all(
-    Object.keys(files)
-    .map((relativePath) => new Promise((resolve, reject) => {
-        const filePath = path.join(directory, relativePath);
-        fs.writeFile(
-            filePath,
-            files[relativePath],
-            (error) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            },
-        );
-    })),
+): Promise<Array<void>> => Promise.all(
+    Object.keys(files).map(async (relativePath) => {
+        const dest = path.join(directory, relativePath);
+        const content = files[relativePath];
+        await writeFile(dest, content);
+    }),
 );

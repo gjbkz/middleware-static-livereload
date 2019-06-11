@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as util from 'util';
 
+export const writeFile = util.promisify(fs.writeFile);
 export const stat = util.promisify(fs.stat);
 export const statIfExist = (
     filePath: string,

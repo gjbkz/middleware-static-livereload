@@ -1,5 +1,7 @@
+import * as path from 'path';
 import * as http from 'http';
 import * as connect from 'connect';
+import * as chokidar from 'chokidar';
 import {URL} from 'url';
 import anyTest, {TestInterface} from 'ava';
 import {staticLivereload} from './staticLivereload';
@@ -11,6 +13,8 @@ import {request} from './test-util/request';
 import {readStream} from './test-util/readStream';
 import {LogLevel} from './types';
 import {createLogger} from './test-util/createLogger';
+import {writeFile} from './fs';
+import {parseEvents} from './test-util/parseEvent';
 
 const test = anyTest as TestInterface<{
     port: number,
@@ -21,14 +25,9 @@ const test = anyTest as TestInterface<{
     },
     directory: string,
     baseURL: URL,
+    fileWatcher: chokidar.FSWatcher,
 }>;
 
-/**
- * https://www.browserstack.com/question/664
- * Question: What ports can I use to test development environments or private
- * servers using BrowserStack?
- * → We support all ports for all browsers other than Safari.
- */
 let port = 9200;
 test.beforeEach(async (t) => {
     t.context.port = port++;
@@ -52,8 +51,12 @@ test.beforeEach(async (t) => {
 });
 
 test.afterEach(async (t) => {
+    const {fileWatcher, server} = t.context;
+    if (fileWatcher) {
+        fileWatcher.close();
+    }
     await new Promise((resolve, reject) => {
-        t.context.server.close((error) => error ? reject(error) : resolve());
+        server.close((error) => error ? reject(error) : resolve());
     });
 });
 
@@ -98,7 +101,9 @@ test('GET /middleware-static-livereload.js', async (t) => {
 });
 
 test('GET /middleware-static-livereload.js/connect', async (t) => {
+    const fileWatcher = t.context.fileWatcher = chokidar.watch([]);
     t.context.app.use(staticLivereload({
+        fileWatcher,
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
@@ -113,5 +118,23 @@ test('GET /middleware-static-livereload.js/connect', async (t) => {
     });
     t.is(res.statusCode, 200);
     t.is(res.headers['content-type'], 'text/event-stream');
-    res.destroy();
+    const indexUrl = new URL('/', t.context.baseURL);
+    const indexRes = await request('GET', indexUrl);
+    t.is(indexRes.statusCode, 200);
+    t.is(indexRes.headers['content-type'], 'text/html');
+    const reader = readStream(res);
+    await writeFile(
+        path.join(t.context.directory, 'index.html'),
+        Buffer.from([
+            '<!doctype html>',
+            'index2',
+        ].join('\n')),
+    );
+    setTimeout(() => res.destroy(), 300);
+    const events = parseEvents(await reader);
+    t.deepEqual(events, [
+        {data: '#0', retry: '3000'},
+        {id: '0', event: 'add', data: 'index.html'},
+        {id: '1', event: 'change', data: 'index.html'},
+    ]);
 });

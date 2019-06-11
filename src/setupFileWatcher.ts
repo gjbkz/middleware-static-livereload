@@ -2,17 +2,19 @@ import * as chokidar from 'chokidar';
 import * as path from 'path';
 import {ISendEvent, IConsole} from './types';
 
-export const createFileWatcher = (
+export const setupFileWatcher = (
     options: {
-        chokidar: chokidar.WatchOptions,
+        fileWatcher?: chokidar.FSWatcher,
         console: IConsole,
         sendEvent: ISendEvent,
         documentRoots: Array<string>,
     },
 ): chokidar.FSWatcher | null => {
+    if (!options.fileWatcher) {
+        return null;
+    }
     const {console, sendEvent, documentRoots} = options;
-    return options.chokidar === null ? null : chokidar.watch([], options.chokidar)
-    .on('all', (eventName, file) => {
+    return options.fileWatcher.on('all', (eventName, file) => {
         console.debug(`${eventName}: ${file}`);
         const documentRoot = documentRoots.find((documentRoot) => file.startsWith(documentRoot));
         if (!documentRoot) {
