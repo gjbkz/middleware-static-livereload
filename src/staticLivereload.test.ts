@@ -39,6 +39,12 @@ test.beforeEach(async (t) => {
             '<!doctype html>',
             'index',
         ].join('\n')),
+        'bar/baz1.txt': Buffer.from([
+            'baz1',
+        ].join('\n')),
+        'bar/baz2.txt': Buffer.from([
+            'baz2',
+        ].join('\n')),
     };
     await Promise.all([
         listen(t.context.server, t.context.port),
@@ -84,6 +90,23 @@ test('GET /', async (t) => {
     const res = await request('GET', url);
     t.is(res.statusCode, 200);
     t.is(res.headers['content-type'], 'text/html');
+});
+
+test('GET /bar/', async (t) => {
+    t.context.middleware = staticLivereload({
+        documentRoot: t.context.directory,
+        logLevel: LogLevel.debug,
+        stdout: createLogger(t),
+        stderr: createLogger(t),
+    });
+    t.context.app.use(t.context.middleware);
+    const url = new URL('/bar/', t.context.baseURL);
+    const res = await request('GET', url);
+    t.is(res.statusCode, 200);
+    t.is(res.headers['content-type'], 'text/html');
+    const html = `${await readStream(res)}`;
+    t.true(html.includes('baz1'));
+    t.true(html.includes('baz2'));
 });
 
 test('GET /middleware-static-livereload.js', async (t) => {
