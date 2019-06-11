@@ -21,8 +21,8 @@ export const createFileWatcher = (
         return watch;
     }
     return chokidar.watch([], {
-        ...(typeof watch === 'object' ? watch : {}),
         useFsEvents: false,
         ignoreInitial: false,
+        ...(typeof watch === 'object' ? watch : {}),
     });
 };

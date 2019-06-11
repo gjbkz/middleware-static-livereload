@@ -60,7 +60,7 @@ export interface IConnectionHandler {
 }
 
 export type IOptions = {
-    scriptPrefix?: string,
+    scriptPath?: string,
     contentTypes?: Parameters<typeof compileContentTypes>[0],
 }
 & Parameters<typeof createFileWatcher>[0]
