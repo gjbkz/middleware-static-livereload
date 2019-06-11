@@ -1,4 +1,6 @@
 .*
 *.test.js
+*.md
 test-util
 test
+tsconfig.json
