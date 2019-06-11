@@ -4,7 +4,7 @@ import {createConsole} from './createConsole';
 import {compileContentTypes} from './compileContentTypes';
 import {createSnippetInjector} from './createSnippetInjector';
 import {createConnectionHandler} from './createConnectionHandler';
-import {setupFileWatcher} from './setupFileWatcher';
+import {createFileWatcher} from './createFileWatcher';
 import {IOptions} from './types';
 
 export const getTools = (
@@ -18,18 +18,27 @@ export const getTools = (
     });
     const console = createConsole(options);
     const handleConnection = createConnectionHandler({console});
+    const fileWatcher = createFileWatcher(options);
+    if (fileWatcher) {
+        fileWatcher.on('all', (eventName, file) => {
+            console.debug(`${eventName}: ${file}`);
+            const documentRoot = findFile.documentRoots.find((documentRoot) => file.startsWith(documentRoot));
+            if (!documentRoot) {
+                throw new Error('Cannot find a documentRoot');
+            }
+            handleConnection.sendEvent(
+                path.relative(documentRoot, file).split(path.sep).join('/'),
+                eventName,
+            );
+        });
+    }
     return {
         console,
         findFile,
         handleConnection,
+        fileWatcher,
         injectSnippet: createSnippetInjector(options, `<script id="middleware-static-livereload" src="${clientScriptPath}" defer></script>`),
         getContentType: compileContentTypes(options.contentTypes),
-        fileWatcher: setupFileWatcher({
-            fileWatcher: options.fileWatcher,
-            console,
-            sendEvent: handleConnection.sendEvent,
-            documentRoots: findFile.documentRoots,
-        }),
         connectionPath: `${clientScriptPath}/connect`,
     };
 };

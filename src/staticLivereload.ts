@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as connect from 'connect';
 import * as stream from 'stream';
+import * as chokidar from 'chokidar';
 import {URL} from 'url';
 import {handleError} from './handleError';
 import {IOptions} from './types';
@@ -8,18 +9,13 @@ import {getTools} from './getTools';
 
 export const staticLivereload = (
     options: IOptions,
-): connect.NextHandleFunction => {
+): connect.NextHandleFunction & {fileWatcher: chokidar.FSWatcher | null} => {
     const {
-        console,
-        findFile,
-        injectSnippet,
-        getContentType,
-        handleConnection,
-        fileWatcher,
-        connectionPath,
+        fileWatcher, console, connectionPath, handleConnection, findFile,
+        getContentType, injectSnippet,
     } = getTools(options);
     let counter = 0;
-    return (req, res, next) => {
+    const middleware: connect.NextHandleFunction = (req, res, next) => {
         const id = `#${counter++}`;
         console.info(id, '←', req.method, req.url);
         const url = new URL(req.url || '/', 'http://localhost');
@@ -55,4 +51,5 @@ export const staticLivereload = (
             .then(() => console.debug(id, '→', res.statusCode, {...res.getHeaders()}));
         }
     };
+    return Object.assign(middleware, {fileWatcher});
 };

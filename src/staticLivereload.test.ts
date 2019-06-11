@@ -1,7 +1,6 @@
 import * as path from 'path';
 import * as http from 'http';
 import * as connect from 'connect';
-import * as chokidar from 'chokidar';
 import {URL} from 'url';
 import anyTest, {TestInterface} from 'ava';
 import {staticLivereload} from './staticLivereload';
@@ -20,12 +19,10 @@ const test = anyTest as TestInterface<{
     port: number,
     app: connect.Server,
     server: http.Server,
-    files: {
-        [path: string]: Buffer,
-    },
+    files: {[path: string]: Buffer},
     directory: string,
     baseURL: URL,
-    fileWatcher: chokidar.FSWatcher,
+    middleware: ReturnType<typeof staticLivereload>,
 }>;
 
 let port = 9200;
@@ -51,9 +48,9 @@ test.beforeEach(async (t) => {
 });
 
 test.afterEach(async (t) => {
-    const {fileWatcher, server} = t.context;
-    if (fileWatcher) {
-        fileWatcher.close();
+    const {middleware, server} = t.context;
+    if (middleware.fileWatcher) {
+        middleware.fileWatcher.close();
     }
     await new Promise((resolve, reject) => {
         server.close((error) => error ? reject(error) : resolve());
@@ -61,12 +58,13 @@ test.afterEach(async (t) => {
 });
 
 test('GET /foo.txt', async (t) => {
-    t.context.app.use(staticLivereload({
+    t.context.middleware = staticLivereload({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
         stderr: createLogger(t),
-    }));
+    });
+    t.context.app.use(t.context.middleware);
     const url = new URL('/foo.txt', t.context.baseURL);
     const res = await request('GET', url);
     t.is(res.statusCode, 200);
@@ -75,12 +73,13 @@ test('GET /foo.txt', async (t) => {
 });
 
 test('GET /', async (t) => {
-    t.context.app.use(staticLivereload({
+    t.context.middleware = staticLivereload({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
         stderr: createLogger(t),
-    }));
+    });
+    t.context.app.use(t.context.middleware);
     const url = new URL('/', t.context.baseURL);
     const res = await request('GET', url);
     t.is(res.statusCode, 200);
@@ -88,12 +87,13 @@ test('GET /', async (t) => {
 });
 
 test('GET /middleware-static-livereload.js', async (t) => {
-    t.context.app.use(staticLivereload({
+    t.context.middleware = staticLivereload({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
         stderr: createLogger(t),
-    }));
+    });
+    t.context.app.use(t.context.middleware);
     const url = new URL('/middleware-static-livereload.js', t.context.baseURL);
     const res = await request('GET', url);
     t.is(res.statusCode, 200);
@@ -101,36 +101,54 @@ test('GET /middleware-static-livereload.js', async (t) => {
 });
 
 test('GET /middleware-static-livereload.js/connect', async (t) => {
-    const fileWatcher = t.context.fileWatcher = chokidar.watch([]);
-    t.context.app.use(staticLivereload({
-        fileWatcher,
+    setTimeout(() => {
+        if (connection) {
+            connection.destroy();
+        }
+        t.fail('timeout');
+    }, 5000);
+    t.context.middleware = staticLivereload({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
         stderr: createLogger(t),
-    }));
+    });
+    const {fileWatcher} = t.context.middleware;
+    if (!fileWatcher) {
+        t.truthy(fileWatcher);
+        return;
+    }
+    t.context.app.use(t.context.middleware);
     const url = new URL('/middleware-static-livereload.js/connect', t.context.baseURL);
-    const res = await request('GET', url, {
+    const connection = await request('GET', url, {
         headers: {
             'accept': 'text/event-stream',
             'content-type': 'text/event-stream',
+            'user-agent': `${process.version} ${process.arch}`,
         },
     });
-    t.is(res.statusCode, 200);
-    t.is(res.headers['content-type'], 'text/event-stream');
+    const reader = readStream(connection, (received) => {
+        if (`${received}`.includes('event: change')) {
+            connection.destroy();
+        }
+    });
+    t.is(connection.statusCode, 200);
+    t.is(connection.headers['content-type'], 'text/event-stream');
+    const waitAddEvent = new Promise((resolve, reject) => {
+        fileWatcher
+        .once('error', reject)
+        .once('add', (file) => {
+            fileWatcher.removeListener('error', reject);
+            resolve(file);
+        });
+    });
+    const indexFilePath = path.join(t.context.directory, 'index.html');
     const indexUrl = new URL('/', t.context.baseURL);
     const indexRes = await request('GET', indexUrl);
     t.is(indexRes.statusCode, 200);
     t.is(indexRes.headers['content-type'], 'text/html');
-    const reader = readStream(res);
-    await writeFile(
-        path.join(t.context.directory, 'index.html'),
-        Buffer.from([
-            '<!doctype html>',
-            'index2',
-        ].join('\n')),
-    );
-    setTimeout(() => res.destroy(), 300);
+    t.is(await waitAddEvent, indexFilePath);
+    await writeFile(indexFilePath, Buffer.from('<!doctype html>\nindex2'));
     const events = parseEvents(await reader);
     t.deepEqual(events, [
         {data: '#0', retry: '3000'},

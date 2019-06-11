@@ -2,7 +2,7 @@ import * as stream from 'stream';
 
 export const readStream = (
     readable: stream.Readable,
-    listener?: (chunk: Buffer, encoding: string) => void,
+    listener?: (received: Buffer, encoding: string) => void,
 ): Promise<Buffer> => new Promise((resolve, reject) => {
     const chunks: Array<Buffer> = [];
     let totalLength = 0;
@@ -11,7 +11,7 @@ export const readStream = (
             chunks.push(chunk);
             totalLength += chunk.length;
             if (listener) {
-                listener(chunk, encoding);
+                listener(Buffer.concat(chunks, totalLength), encoding);
             }
             callback();
         },

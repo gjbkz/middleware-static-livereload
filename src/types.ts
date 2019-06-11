@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as stream from 'stream';
-import * as chokidar from 'chokidar';
 import * as http from 'http';
 import {compileContentTypes} from './compileContentTypes';
 import {createSnippetInjector} from './createSnippetInjector';
 import {createFileFinder} from './createFileFinder';
 import {createConsole} from './createConsole';
+import {createFileWatcher} from './createFileWatcher';
 
 export enum LogLevel {
     debug = 0,
@@ -61,9 +61,9 @@ export interface IConnectionHandler {
 
 export type IOptions = {
     scriptPrefix?: string,
-    fileWatcher?: chokidar.FSWatcher,
     contentTypes?: Parameters<typeof compileContentTypes>[0],
 }
+& Parameters<typeof createFileWatcher>[0]
 & Parameters<typeof createSnippetInjector>[0]
 & Parameters<typeof createFileFinder>[0]
 & Parameters<typeof createConsole>[0];
