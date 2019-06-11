@@ -1,23 +1,16 @@
 language: node_js
-node_js:
-- '9'
-- '8'
-- '7'
-- '6'
+cache: npm
+os: osx
+node_js: '12'
 install:
-- npm install
-- npm install -g nyc eslint
+  - npm ci
+  - npm install -g codecov c8
 script:
-- npm run test_coverage
-- npm run lint
-after_success:
-- npm install -g codecov
-- codecov
-deploy:
-  provider: npm
-  email: kei.itof@gmail.com
-  api_key:
-    secure: 0DfJMXsbh9Dm0dhwMkEbUjD4NiauVjxWeABWegyeFxIIGOJ/UdaYL/S2BCgKeEmgVqI8Md2vkdWrvAPhqvVR/O4OnLhQFbtNbq0qV8fjyREFdXVH/h2hJ0pL5YqXU3CoI6sxb4O0UGFQ3plBC01uuZV0g9iSrN8/Kk82vOGDGzenyppArIZ7ZfOl90v4GoxgiYqKLfAE+NEavDQ+CyQX3gPy7xZK/PvFFmTzaBeISMGLHidp+CRIORHW0LDL07fe6ddmyD+oTf35A1nqpAbSjNLj5+j12aNkZGFgE3EbsNbLfhUrkydZVrgxNYSfT3zMx2HFFSZGDq3D05AyMqu+/IYahVm/eVEzjSHgJx7CbuJTwUdxgAY53wCSIN62fzWZLy4kzf8EkqdoQ5qz6G/3gh2+TE0PxApWm9khWrZdGeookyWINdsd3CIHGorc1iMhjd4kowDRDAvbFr179k430Qq3i8puooxjLSDqC+KJ4TjJd6jVw3ECVVqDWqHPVhXVvATSVhOpGjW21mxNoVR2XLPDpXD6c+p3D5LQHAcNipZpYoZqX9Mf5tVAE7FgD7tA2j++LM9U0aOGYaGKACO815ntuVGCpIT1ROOk39900QiQng3jVh+sWtMcy6KZJGQaLcofYCOVLed8hvNEBzxyfxh90Gh8oonVTvVsLAUOLCs=
-  on:
-    tags: true
-    repo: kei-ito/middleware-static-livereload
+  - npm run build
+  - c8 npm run test
+  - c8 report --reporter=text-lcov > coverage.lcov
+  - codecov
+  - nvm install 10
+  - npm run test
+  - nvm install 8
+  - npm run test
