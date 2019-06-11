@@ -48,7 +48,6 @@ test.beforeEach((t) => {
     let count = 0;
     t.context.run = (t, parameters) => {
         const id = `#${count++}`;
-        t.log(`${id}: ${parameters.command}`);
         const subProcess = childProcess.spawn(
             parameters.command,
             parameters.args || [],
@@ -58,18 +57,18 @@ test.beforeEach((t) => {
             },
         )
         .on('error', (error) => t.fail(`${error}`));
-        subProcess.stdout.pipe(new stream.Writable({
-            write(chunk, _encoding, callback) {
-                t.log(`${id}.stdout: ${chunk}`);
-                callback();
-            },
-        }));
-        subProcess.stderr.pipe(new stream.Writable({
-            write(chunk, _encoding, callback) {
-                t.log(`${id}.stderr: ${chunk}`);
-                callback();
-            },
-        }));
+        // subProcess.stdout.pipe(new stream.Writable({
+        //     write(chunk, _encoding, callback) {
+        //         t.log(`${id}.stdout: ${chunk}`);
+        //         callback();
+        //     },
+        // }));
+        // subProcess.stderr.pipe(new stream.Writable({
+        //     write(chunk, _encoding, callback) {
+        //         t.log(`${id}.stderr: ${chunk}`);
+        //         callback();
+        //     },
+        // }));
         t.context.processes.push({
             process: subProcess,
             exit: false,
@@ -103,19 +102,15 @@ const testDirectories = fs.readdirSync(__dirname)
     }
 });
 
-const builtProjects = new Set<string>();
 const build = async (
     testDirectory: string,
 ) => {
-    if (!builtProjects.has(testDirectory)) {
-        const spawnOptions: childProcess.SpawnOptionsWithoutStdio = {
-            cwd: testDirectory,
-            shell: true,
-        };
-        await spawn({command: 'npm install', options: spawnOptions});
-        await spawn({command: 'npm run build', options: spawnOptions});
-        builtProjects.add(testDirectory);
-    }
+    const spawnOptions: childProcess.SpawnOptionsWithoutStdio = {
+        cwd: testDirectory,
+        shell: true,
+    };
+    await spawn({command: 'npm install', options: spawnOptions});
+    await spawn({command: 'npm run build', options: spawnOptions});
 };
 
 getCapabilities(testDirectories).forEach((capability, index) => {
