@@ -38,7 +38,7 @@
         "@types/selenium-webdriver": "4.0.0",
         "@typescript-eslint/eslint-plugin": "1.10.2",
         "@typescript-eslint/parser": "1.10.2",
-        "ava": "2.0.0",
+        "ava": "^2.1.0",
         "browserstack-local": "1.4.0",
         "connect": "3.7.0",
         "conventional-changelog-cli": "2.0.21",
