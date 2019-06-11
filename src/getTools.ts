@@ -22,13 +22,14 @@ export const getTools = (
         fileWatcher.on('all', (eventName, file) => {
             console.debug(`${eventName}: ${file}`);
             const documentRoot = findFile.documentRoots.find((documentRoot) => file.startsWith(documentRoot));
-            if (!documentRoot) {
-                throw new Error('Cannot find a documentRoot');
+            if (documentRoot) {
+                handleConnection.sendEvent(
+                    path.relative(documentRoot, file).split(path.sep).join('/'),
+                    eventName,
+                );
+            } else {
+                console.error(new Error('Cannot find a documentRoot'));
             }
-            handleConnection.sendEvent(
-                path.relative(documentRoot, file).split(path.sep).join('/'),
-                eventName,
-            );
         });
     }
     return {

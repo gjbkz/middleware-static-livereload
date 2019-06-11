@@ -7,7 +7,7 @@ export const handleError = (
     error: Error & {code?: string},
     console: IConsole,
 ) => {
-    console.error(id, error);
+    console.error(id, error.stack || error);
     if (!res.headersSent) {
         switch (error.code) {
         case 'ENOENT':
