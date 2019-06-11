@@ -1,3 +1,13 @@
+<a name="1.2.1"></a>
+## [1.2.1](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.0...v1.2.1) (2019-06-11)
+
+
+### Bug Fixes
+
+* event-source-polyfill ([0c2399e](https://github.com/kei-ito/middleware-static-livereload/commit/0c2399e))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/kei-ito/middleware-static-livereload/compare/v1.1.0...v1.2.0) (2019-06-11)
 
