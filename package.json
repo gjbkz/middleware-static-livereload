@@ -12,7 +12,7 @@
         "node": ">=6"
     },
     "repository": "kei-ito/middleware-static-livereload",
-    "main": "src/index.js",
+    "main": "lib/index.js",
     "scripts": {
         "lint:ts": "eslint --ext .ts src",
         "lint:js": "eslint src",
@@ -71,7 +71,8 @@
             },
             {
                 "files": [
-                    "src/client-script.js"
+                    "src/client-script.js",
+                    "test/*/{src,test-*}/**/*.js"
                 ],
                 "env": {
                     "es6": false,
@@ -111,6 +112,16 @@
                 ],
                 "rules": {
                     "no-process-env": "off"
+                }
+            },
+            {
+                "files": [
+                    "test/**/*.ts"
+                ],
+                "rules": {
+                    "max-lines-per-function": "off",
+                    "no-process-env": "off",
+                    "@typescript-eslint/no-triple-slash-reference": "off"
                 }
             }
         ]

@@ -8,7 +8,7 @@ import {IOptions} from './types';
 import {getTools} from './getTools';
 
 export const staticLivereload = (
-    options: IOptions,
+    options?: IOptions,
 ): connect.NextHandleFunction & {fileWatcher: chokidar.FSWatcher | null} => {
     const {
         fileWatcher, console, connectionPath, handleConnection, findFile,
