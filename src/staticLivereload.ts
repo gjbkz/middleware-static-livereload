@@ -40,7 +40,7 @@ export const staticLivereload = (
                     res.statusCode = 200;
                     reader.pipe(res).once('error', reject).once('finish', resolve);
                 });
-                if (fileWatcher && !findFile.isReserved(url.pathname)) {
+                if (fileWatcher && findFile.documentRoots.find((documentRoot) => file.path.startsWith(documentRoot))) {
                     fileWatcher.add(file.path);
                 }
             })

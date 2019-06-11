@@ -1,5 +1,5 @@
 import * as path from 'path';
-import {writeFile} from '../fs';
+import {writeFilep} from '../fs';
 
 export const prepareFiles = (
     files: {
@@ -10,6 +10,6 @@ export const prepareFiles = (
     Object.keys(files).map(async (relativePath) => {
         const dest = path.join(directory, relativePath);
         const content = files[relativePath];
-        await writeFile(dest, content);
+        await writeFilep(dest, content);
     }),
 );

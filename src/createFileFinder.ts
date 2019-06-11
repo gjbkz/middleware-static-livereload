@@ -1,26 +1,21 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
 import {ensureArray} from './ensureArray';
 import {IFileFinder} from './types';
 import {absolutify} from './absolutify';
-import {statIfExist} from './fs';
+import {statIfExist, writeFile} from './fs';
+import {generateIndexHTML} from './generateIndexHTML';
 
 export const createFileFinder = (
-    {
-        documentRoot = process.cwd(),
-        index = 'index.html',
-    }: {
-        documentRoot?: string | Array<string>,
-        index?: string,
-    } = {},
-    reservedPaths: {
-        [relativePath: string]: string | undefined,
-    } = {},
+    {documentRoot = process.cwd(), index = 'index.html'}: {documentRoot?: string | Array<string>, index?: string} = {},
+    reservedPaths: {[relativePath: string]: string | undefined} = {},
 ): IFileFinder => {
     const absoluteDocumentRoots = ensureArray(documentRoot).map((documentRoot) => absolutify(documentRoot));
+    const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'node-server-'));
     return Object.assign(
         async (pathname: string) => {
-            const relativePath = pathname.replace(/\/$/, `/${index}`).split('/').join(path.sep);
+            let relativePath = pathname.split('/').filter((x) => x).join(path.sep);
             let absolutePath = reservedPaths[pathname] || null;
             let stats: fs.Stats | null = null;
             if (absolutePath) {
@@ -29,8 +24,22 @@ export const createFileFinder = (
                 for (const absoluteDocumentRoot of absoluteDocumentRoots) {
                     absolutePath = path.join(absoluteDocumentRoot, relativePath);
                     stats = await statIfExist(absolutePath);
-                    if (stats && stats.isFile()) {
-                        break;
+                    if (stats) {
+                        if (stats.isFile()) {
+                            break;
+                        } else if (stats.isDirectory()) {
+                            stats = await statIfExist(path.join(absolutePath, index));
+                            if (stats && stats.isFile()) {
+                                absolutePath = path.join(absolutePath, index);
+                                relativePath = path.join(relativePath, index);
+                            } else {
+                                const indexHTML = await generateIndexHTML(absolutePath, relativePath);
+                                absolutePath = path.join(temporaryDirectory, `${relativePath.split(path.sep).join('sep')}.html`);
+                                await writeFile(absolutePath, indexHTML);
+                                stats = await statIfExist(absolutePath);
+                            }
+                            break;
+                        }
                     } else {
                         absolutePath = stats = null;
                     }
