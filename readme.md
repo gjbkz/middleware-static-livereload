@@ -21,7 +21,7 @@ npm install middleware-static-livereload
 const http = require('http');
 const connect = require('connect');
 const app = connect();
-app.use(require('middleware-static-livereload')());
+app.use(require('middleware-static-livereload').middleware());
 const server = http.createServer(app).listen(3000);
 ```
 
@@ -71,7 +71,7 @@ If you given a map, it extends the default value.
 type: [NodeJS.Writable]
 default: [process.stdout], [process.stderr]
 
-Streams where the middleware writes message to. 
+Streams where the middleware writes message to.
 
 ### logLevel
 

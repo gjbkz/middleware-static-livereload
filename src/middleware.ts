@@ -7,7 +7,7 @@ import {handleError} from './handleError';
 import {IOptions} from './types';
 import {getTools} from './getTools';
 
-export const staticLivereload = (
+export const middleware = (
     options?: IOptions,
 ): connect.NextHandleFunction & {fileWatcher: chokidar.FSWatcher | null} => {
     const {
