@@ -3,7 +3,6 @@ import anyTest, {TestInterface, ExecutionContext} from 'ava';
 import {URL} from 'url';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as stream from 'stream';
 import * as childProcess from 'child_process';
 import * as selenium from 'selenium-webdriver';
 import * as BrowserStack from 'browserstack-local';
@@ -45,9 +44,7 @@ test.beforeEach((t) => {
     t.context.passed = false;
     t.context.port = port++;
     t.context.processes = [];
-    let count = 0;
     t.context.run = (t, parameters) => {
-        const id = `#${count++}`;
         const subProcess = childProcess.spawn(
             parameters.command,
             parameters.args || [],
@@ -57,18 +54,6 @@ test.beforeEach((t) => {
             },
         )
         .on('error', (error) => t.fail(`${error}`));
-        // subProcess.stdout.pipe(new stream.Writable({
-        //     write(chunk, _encoding, callback) {
-        //         t.log(`${id}.stdout: ${chunk}`);
-        //         callback();
-        //     },
-        // }));
-        // subProcess.stderr.pipe(new stream.Writable({
-        //     write(chunk, _encoding, callback) {
-        //         t.log(`${id}.stderr: ${chunk}`);
-        //         callback();
-        //     },
-        // }));
         t.context.processes.push({
             process: subProcess,
             exit: false,
