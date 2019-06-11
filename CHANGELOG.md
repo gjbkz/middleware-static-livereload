@@ -1,3 +1,13 @@
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/kei-ito/middleware-static-livereload/compare/v1.1.0...v1.2.0) (2019-06-11)
+
+
+### Features
+
+* remove default export ([#16](https://github.com/kei-ito/middleware-static-livereload/issues/16)) ([a0e2713](https://github.com/kei-ito/middleware-static-livereload/commit/a0e2713))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/kei-ito/middleware-static-livereload/compare/v1.0.0...v1.1.0) (2019-06-11)
 
