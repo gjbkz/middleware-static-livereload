@@ -25,13 +25,13 @@ const test = anyTest as TestInterface<{
     middleware: ReturnType<typeof middleware>,
 }>;
 
-let port = 9200;
+let nextPort = 9200;
 test.beforeEach(async (t) => {
-    t.context.port = port++;
-    t.context.app = connect();
-    t.context.server = http.createServer(t.context.app);
-    t.context.directory = await createTemporaryDirectory();
-    t.context.files = {
+    const port = nextPort++;
+    const app = connect();
+    const server = http.createServer(app);
+    const directory = await createTemporaryDirectory();
+    const files = {
         'foo.txt': Buffer.from([
             'foo',
         ].join('\n')),
@@ -47,10 +47,17 @@ test.beforeEach(async (t) => {
         ].join('\n')),
     };
     await Promise.all([
-        listen(t.context.server, t.context.port),
-        prepareFiles(t.context.files, t.context.directory),
+        listen(server, port),
+        prepareFiles(files, directory),
     ]);
-    t.context.baseURL = getBaseURL(t.context.server.address());
+    Object.assign(t.context, {
+        port,
+        app,
+        server,
+        directory,
+        files,
+        baseURL: getBaseURL(server.address()),
+    });
 });
 
 test.afterEach(async (t) => {
