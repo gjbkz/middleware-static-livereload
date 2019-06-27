@@ -5,6 +5,9 @@ import {ILog} from './types';
 export const createWriter = (
     stream: NodeJS.WritableStream,
     inspectOptions: util.InspectOptions,
-): ILog => (...args: Array<any>) => {
-    stream.write(`${args.map((arg) => stringify(arg, inspectOptions)).join(' ')}\n`);
-};
+): ILog => Object.assign(
+    (...args: Array<any>) => {
+        stream.write(`${args.map((arg) => stringify(arg, inspectOptions)).join(' ')}\n`);
+    },
+    {end: (() => stream.end())},
+);

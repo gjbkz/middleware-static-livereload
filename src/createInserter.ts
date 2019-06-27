@@ -1,4 +1,5 @@
 import {ensureArray} from './ensureArray';
+import {IOptions} from './types';
 
 export const defaultInsertBefore = [
     /<\/head/i,
@@ -7,7 +8,6 @@ export const defaultInsertBefore = [
     /<title/i,
     /<script/i,
     /<link/i,
-    /<script/i,
 ];
 
 export const defaultInsertAfter = [
@@ -15,10 +15,7 @@ export const defaultInsertAfter = [
 ];
 
 export const createInserter = (
-    options: {
-        insertBefore?: string | RegExp | Array<string | RegExp>,
-        insertAfter?: string | RegExp | Array<string | RegExp>,
-    } = {},
+    options: IOptions = {},
 ) => {
     const [insertBefore, insertAfter] = (options.insertBefore || options.insertAfter) ? [
         ensureArray(options.insertBefore || []),

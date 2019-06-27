@@ -10,10 +10,7 @@ import {getTools} from './getTools';
 export const middleware = (
     options?: IOptions,
 ): connect.NextHandleFunction & {fileWatcher: chokidar.FSWatcher | null} => {
-    const {
-        fileWatcher, console, connectionPath, handleConnection, findFile,
-        getContentType, injectSnippet,
-    } = getTools(options);
+    const {fileWatcher, console, connectionPath, handleConnection, findFile, getContentType, injectSnippet} = getTools(options);
     let counter = 0;
     const middleware: connect.NextHandleFunction = (req, res, next) => {
         const id = `#${counter++}`;
@@ -30,7 +27,7 @@ export const middleware = (
                     res.setHeader('content-type', contentType);
                 }
                 let reader: stream.Readable = fs.createReadStream(file.path);
-                if (res.getHeader('content-type') === 'text/html') {
+                if (`${res.getHeader('content-type')}`.startsWith('text/html')) {
                     res.setHeader('content-length', file.stats.size + injectSnippet.size);
                     reader = injectSnippet(reader);
                 } else {

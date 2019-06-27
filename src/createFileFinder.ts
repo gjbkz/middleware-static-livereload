@@ -2,13 +2,13 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import {ensureArray} from './ensureArray';
-import {IFileFinder} from './types';
+import {IFileFinder, IOptions} from './types';
 import {absolutify} from './absolutify';
 import {statIfExist, writeFile} from './fs';
 import {generateIndexHTML} from './generateIndexHTML';
 
 export const createFileFinder = (
-    {documentRoot = process.cwd(), index = 'index.html'}: {documentRoot?: string | Array<string>, index?: string} = {},
+    {documentRoot = process.cwd(), index = 'index.html'}: IOptions = {},
     reservedPaths: {[relativePath: string]: string | undefined} = {},
 ): IFileFinder => {
     const absoluteDocumentRoots = ensureArray(documentRoot).map((documentRoot) => absolutify(documentRoot));
