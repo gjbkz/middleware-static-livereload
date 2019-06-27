@@ -23,6 +23,6 @@ export const createFileWatcher = (
     return chokidar.watch([], {
         useFsEvents: false,
         ignoreInitial: false,
-        ...(typeof watch === 'object' ? watch : {}),
+        ...(typeof watch === 'object' ? watch : null),
     });
 };
