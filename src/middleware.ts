@@ -10,10 +10,7 @@ import {getTools} from './getTools';
 export const middleware = (
     options?: IOptions,
 ): connect.NextHandleFunction & {fileWatcher: chokidar.FSWatcher | null} => {
-    const {
-        fileWatcher, console, connectionPath, handleConnection, findFile,
-        getContentType, injectSnippet,
-    } = getTools(options);
+    const {fileWatcher, console, connectionPath, handleConnection, findFile, getContentType, injectSnippet} = getTools(options);
     let counter = 0;
     const middleware: connect.NextHandleFunction = (req, res, next) => {
         const id = `#${counter++}`;
