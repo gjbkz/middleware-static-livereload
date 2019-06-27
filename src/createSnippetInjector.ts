@@ -34,6 +34,7 @@ export const createSnippetInjector = (
                 flush(callback) {
                     let string = stringDecoder.end();
                     if (string) {
+                        process.stdout.write(`string: ${string}\n`);
                         string = (!done && insert(string, injectee)) || string;
                         chunks.push(string);
                         this.push(string);
