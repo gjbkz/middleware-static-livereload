@@ -1,12 +1,10 @@
 import * as path from 'path';
 import {ensureArray} from './ensureArray';
-import {IContentTypeGetter} from './types';
+import {IContentTypeGetter, IOptions} from './types';
 import {defaultContentTypes} from './defaultContentTypes';
 
 export const compileContentTypes = (
-    overrides: {
-        [type: string]: string | Array<string>,
-    } = {},
+    overrides: IOptions['contentTypes'] = {},
 ): IContentTypeGetter => {
     const map = new Map<string, string>();
     for (const types of [defaultContentTypes, overrides]) {

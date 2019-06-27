@@ -1,14 +1,8 @@
-import * as util from 'util';
-import {LogLevel, IConsole} from './types';
+import {LogLevel, IConsole, IOptions} from './types';
 import {createWriter} from './createWriter';
 
 export const createConsole = (
-    parameters: {
-        logLevel?: LogLevel,
-        stdout?: NodeJS.WritableStream,
-        stderr?: NodeJS.WritableStream,
-        inspectOptions?: util.InspectOptions,
-    } = {},
+    parameters: IOptions = {},
 ): IConsole => {
     const inspectOptions = {
         colors: true,

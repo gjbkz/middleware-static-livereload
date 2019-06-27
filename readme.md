@@ -27,66 +27,80 @@ const server = http.createServer(app).listen(3000);
 
 ## Options
 
-### documentRoot
-
-type: `string|Array<string>`
-default: `process.cwd()`
-
-Directories which contains the files to be served.
-If it is an array, it is processed as following pseudo code:
-
+```javascript
+{
+  /**
+    * Directories which contains the files to be served.
+    * If it is an array, it is processed as following pseudo code:
+    *   FOREACH documentRoot in the array
+    *     IF documentRoot has a file at requestedPath
+    *       RETURN the file
+    *   RETURN 404
+    * @default process.cwd()
+    */
+  documentRoot?: string | Array<string>,
+  /**
+    * If it is `false` or `null`, the middleware doesn't watch files.
+    * Otherwise, the middleware watches the served files and send events
+    * to connected clients when they are updated.
+    * If you need to do something with the watcher outside this middleware,
+    * you can pass the watcher object itself.
+    * @default {ignoreInitial:false, useFsEvents:false}
+    */
+  watch?: chokidar.WatchOptions | chokidar.FSWatcher | boolean | null,
+  /**
+    * If this value is `foo.txt`, the middleware respond `/foo.txt` to `GET /`,
+    * `/foo/foo.txt` to `GET /foo/`.
+    * @default 'index.html'
+    */
+  index?: string,
+  /**
+    * A map from Content-Type to an array of file extensions.
+    * If you given a map, it extends the default map.
+    * @default See [src/defaultContentTypes.ts](src/defaultContentTypes.ts).
+    */
+  contentTypes?: {
+      [type: string]: string | Array<string>,
+  },
+  /**
+    * 0: debug, 1: info, 2: error, 3: silent
+    * @default 1
+    */
+  logLevel?: LogLevel,
+  /**
+    * Streams where the middleware writes message to.
+    * @default process.stdout
+    */
+  stdout?: NodeJS.WritableStream,
+  /**
+    * Streams where the middleware writes message to.
+    * @default process.stderr
+    */
+  stderr?: NodeJS.WritableStream,
+  /**
+    * A pattern or patterns to detect the position before which a <script> tag
+    * is inserted.
+    * If this value is `x` and the document is `abc x def`, then the actual
+    * response will be `abc <script src="..."></script>x def`.
+    * @default [/<\/head/i, /<\/body/i, /<meta/i, /<title/i, /<script/i, /<link/i]
+    */
+  insertBefore?: string | RegExp | Array<string | RegExp>,
+  /**
+    * A pattern or patterns to detect the position after which a <script> tag
+    * is inserted.
+    * If this value is `x` and the document is `abc x def`, then the actual
+    * response will be `abc x<script src="..."></script> def`.
+    * @default [/<!doctype\s*html\s*>/i]
+    */
+  insertAfter?: string | RegExp | Array<string | RegExp>,
+  /**
+    * A pathname for the script enables live reloading.
+    * If the default value conflicts with other middlewares, change this value.
+    * @default 'middleware-static-livereload.js'
+    */
+  scriptPath?: string,
+}
 ```
-FOREACH documentRoot in the array
-  IF documentRoot has a file at requestedPath
-    RETURN the file
-RETURN 404
-```
-
-### watch
-
-type: `chokidar.FSWatcher|chokidar.WatchOptions|boolean|null`
-default: `{ignoreInitial:false, useFsEvents:false})`
-
-If it is `false` or `null`, the middleware doesn't watch files.
-Otherwise, the middleware watches the served files and send events to connected clients when they are updated.
-If you need to handle the watcher, you can use the watcher object itself.
-
-### index
-
-type: `string`
-default: `index.html`
-
-If this value is `foo.txt`, the middleware respond `/foo.txt` to `GET /`, `/foo/foo.txt` to `GET /foo/`.
-
-### contentTypes
-
-type: `{[contentType: string]: Array<string>}`
-default: See [src/defaultContentTypes.ts](src/defaultContentTypes.ts).
-
-A map from Content-Type to an array of file extensions.
-If you given a map, it extends the default value.
-
-### stdout, stderr
-
-type: [NodeJS.Writable]
-default: [process.stdout], [process.stderr]
-
-Streams where the middleware writes message to.
-
-### logLevel
-
-type: 0 | 1 | 2 | 3
-default: `1`
-
-0: debug, 1: info, 2: error, 3: silent
-
-### scriptPath
-
-type: `string`
-default: `middleware-static-livereload.js`
-
-A pathname for the script enables live reloading.
-If it conflicts with other middlewares, change this value.
 
 ## LICENSE
 
