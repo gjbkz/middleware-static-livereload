@@ -152,6 +152,9 @@
         }
     },
     "lint-staged": {
+        "*.ts": [
+            "eslint"
+        ],
         "*.js": [
             "eslint"
         ]
