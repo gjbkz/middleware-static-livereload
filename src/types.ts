@@ -15,6 +15,7 @@ export enum LogLevel {
 }
 
 export interface ILog {
+    end: () => void,
     (...args: Array<any>): void,
 }
 
@@ -23,6 +24,7 @@ export interface IConsole {
     info: ILog,
     error: ILog,
     logLevel: LogLevel,
+    end: () => void,
 }
 
 export interface IFile {
