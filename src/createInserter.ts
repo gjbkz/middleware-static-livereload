@@ -7,7 +7,6 @@ export const defaultInsertBefore = [
     /<title/i,
     /<script/i,
     /<link/i,
-    /<script/i,
 ];
 
 export const defaultInsertAfter = [
