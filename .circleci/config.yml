@@ -15,13 +15,28 @@ jobs:
       - run: npm run build
       - run: git diff --exit-code
       - persist_to_workspace: {root: ., paths: [.]}
-  test:
-    docker: [{image: "circleci/node:lts"}]
+  test-12:
+    docker: [{image: "circleci/node:12"}]
     steps:
       - attach_workspace: {at: .}
       - run: sudo npm install -g codecov c8
       - run: c8 npm test
       - run: c8 report --reporter=text-lcov > coverage.lcov
+      - run: codecov
+  test-10:
+    docker: [{image: "circleci/node:10"}]
+    steps:
+      - attach_workspace: {at: .}
+      - run: sudo npm install -g codecov c8
+      - run: c8 npm test
+      - run: c8 report --reporter=text-lcov > coverage.lcov
+      - run: codecov
+  test-8:
+    docker: [{image: "circleci/node:8"}]
+    steps:
+      - attach_workspace: {at: .}
+      - run: sudo npm install -g codecov nyc
+      - run: nyc npm test
       - run: codecov
   test-client:
     docker: [{image: "circleci/node:lts"}]
@@ -59,7 +74,9 @@ workflows:
             branches: {ignore: master}
             tags: {ignore: /.*/}
       - build: {requires: [onBranch]}
-      - test: {requires: [build]}
+      - test-12: {requires: [build]}
+      - test-10: {requires: [build]}
+      - test-8: {requires: [build]}
       - test-client: {requires: [build]}
       - lint: {requires: [build]}
   release:
@@ -73,7 +90,17 @@ workflows:
           filters:
             branches: {ignore: /.*/}
             tags: {only: /^v.*/}
-      - test:
+      - test-12:
+          requires: [build]
+          filters:
+            branches: {ignore: /.*/}
+            tags: {only: /^v.*/}
+      - test-10:
+          requires: [build]
+          filters:
+            branches: {ignore: /.*/}
+            tags: {only: /^v.*/}
+      - test-8:
           requires: [build]
           filters:
             branches: {ignore: /.*/}
@@ -89,7 +116,7 @@ workflows:
             branches: {ignore: /.*/}
             tags: {only: /^v.*/}
       - deploy:
-          requires: [test, test-client, lint]
+          requires: [test-12, test-10, test-8, test-client, lint]
           filters:
             branches: {ignore: /.*/}
             tags: {only: /^v.*/}
