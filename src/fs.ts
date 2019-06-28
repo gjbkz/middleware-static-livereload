@@ -18,7 +18,7 @@ export const mkdirpSync = (directory: string) => {
         case 'ENOENT':
             mkdirpSync(path.dirname(directory));
             fs.mkdirSync(directory);
-            break;
+            return;
         default:
         }
         throw error;
@@ -44,15 +44,3 @@ export const statIfExist = (
     }
     throw error;
 });
-export const statIfExistSync = (
-    filePath: string,
-): fs.Stats | null => {
-    try {
-        return fs.statSync(filePath);
-    } catch (error) {
-        if (error.code === 'ENOENT') {
-            return null;
-        }
-        throw error;
-    }
-};
