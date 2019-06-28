@@ -136,3 +136,10 @@ export interface IOptions {
 export interface IEvent {
     [key: string]: string,
 }
+
+export interface IServerResponseLike {
+    end: http.ServerResponse['end'],
+    statusCode?: http.ServerResponse['statusCode'],
+    headersSent?: http.ServerResponse['headersSent'],
+    finished?: http.ServerResponse['finished'],
+}
