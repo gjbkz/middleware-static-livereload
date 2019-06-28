@@ -12,7 +12,6 @@ export enum LogLevel {
 }
 
 export interface ILog {
-    end: () => void,
     (...args: Array<any>): void,
 }
 
@@ -21,7 +20,8 @@ export interface IConsole {
     info: ILog,
     error: ILog,
     logLevel: LogLevel,
-    end: () => void,
+    stdout: NodeJS.WritableStream,
+    stderr: NodeJS.WritableStream,
 }
 
 export interface IFile {
@@ -135,4 +135,11 @@ export interface IOptions {
 
 export interface IEvent {
     [key: string]: string,
+}
+
+export interface IServerResponseLike {
+    end: http.ServerResponse['end'],
+    statusCode?: http.ServerResponse['statusCode'],
+    headersSent?: http.ServerResponse['headersSent'],
+    finished?: http.ServerResponse['finished'],
 }

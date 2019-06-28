@@ -9,23 +9,21 @@ export const createConsole = (
         breakLength: 40,
         ...parameters.inspectOptions,
     };
-    const stdout = createWriter(parameters.stdout || process.stdout, inspectOptions);
-    const stderr = createWriter(parameters.stderr || process.stderr, inspectOptions);
+    const stdout = parameters.stdout || process.stdout;
+    const stderr = parameters.stderr || process.stderr;
+    const out = createWriter(stdout, inspectOptions);
+    const err = createWriter(stderr, inspectOptions);
     const ignore = Object.assign(() => {}, {end: () => {}});
     const logLevel = 'logLevel' in parameters ? parameters.logLevel : LogLevel.info;
-    const end = () => {
-        stdout.end();
-        stderr.end();
-    };
     switch (logLevel) {
     case LogLevel.silent:
-        return {logLevel, debug: ignore, info: ignore, error: ignore, end};
+        return {logLevel, debug: ignore, info: ignore, error: ignore, stdout, stderr};
     case LogLevel.error:
-        return {logLevel, debug: ignore, info: ignore, error: stderr, end};
+        return {logLevel, debug: ignore, info: ignore, error: err, stdout, stderr};
     case LogLevel.info:
-        return {logLevel, debug: ignore, info: stdout, error: stderr, end};
+        return {logLevel, debug: ignore, info: out, error: err, stdout, stderr};
     case LogLevel.debug:
-        return {logLevel, debug: stdout, info: stdout, error: stderr, end};
+        return {logLevel, debug: out, info: out, error: err, stdout, stderr};
     default:
         throw new Error(`Invalid logLevel: ${logLevel}`);
     }

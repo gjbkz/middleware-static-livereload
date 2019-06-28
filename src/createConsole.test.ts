@@ -115,8 +115,16 @@ interface ITest {
         for (const [method, message] of logs) {
             console[method](message);
         }
-        console.end();
+        console.stdout.end();
+        console.stderr.end();
         t.is(`${Buffer.concat(stdoutResult)}`, expected.stdout);
         t.is(`${Buffer.concat(stderrResult)}`, expected.stderr);
     });
+});
+
+
+test('stdout and stderr', (t) => {
+    const console = createConsole();
+    t.is(console.stdout, process.stdout);
+    t.is(console.stderr, process.stderr);
 });
