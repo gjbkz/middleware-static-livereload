@@ -1,3 +1,13 @@
+<a name="1.2.5"></a>
+## [1.2.5](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.4...v1.2.5) (2019-07-29)
+
+
+### Bug Fixes
+
+* upgrade dependencies ([c271d06](https://github.com/kei-ito/middleware-static-livereload/commit/c271d06))
+
+
+
 <a name="1.2.4"></a>
 ## [1.2.4](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.3...v1.2.4) (2019-06-28)
 
