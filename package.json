@@ -28,7 +28,7 @@
     },
     "dependencies": {
         "chokidar": "^3.0.2",
-        "event-source-polyfill": "1.0.7"
+        "event-source-polyfill": "1.0.8"
     },
     "devDependencies": {
         "@commitlint/cli": "8.1.0",
