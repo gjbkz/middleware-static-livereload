@@ -1,24 +1,26 @@
 import * as http from 'http';
 const hostname = 'localhost';
 
-export const listenPort = (
+export const listenPort = async (
     server: http.Server,
     port: number,
-) => new Promise((resolve, reject) => {
-    server
-    .once('error', (error: NodeJS.ErrnoException) => {
-        if (error.code === 'EADDRINUSE' || error.code === 'EADDRNOTAVAIL') {
+) => {
+    await new Promise((resolve, reject) => {
+        server
+        .once('error', (error: NodeJS.ErrnoException) => {
+            if (error.code === 'EADDRINUSE' || error.code === 'EADDRNOTAVAIL') {
+                resolve();
+            } else {
+                reject(error);
+            }
+        })
+        .once('listening', () => {
+            server.removeListener('error', reject);
             resolve();
-        } else {
-            reject(error);
-        }
-    })
-    .once('listening', () => {
-        server.removeListener('error', reject);
-        resolve();
-    })
-    .listen(port, hostname);
-});
+        })
+        .listen(port, hostname);
+    });
+};
 
 export const listen = async (
     server: http.Server,
