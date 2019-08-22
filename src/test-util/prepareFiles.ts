@@ -1,15 +1,16 @@
 import * as path from 'path';
 import {writeFilep} from '../fs';
 
-export const prepareFiles = (
+export const prepareFiles = async (
     files: {
         [path: string]: Buffer,
     },
     directory: string,
-): Promise<Array<void>> => Promise.all(
-    Object.keys(files).map(async (relativePath) => {
+): Promise<void> => {
+    const paths = Object.keys(files).sort((a, b) => a.localeCompare(b));
+    for (const relativePath of paths) {
         const dest = path.join(directory, relativePath);
         const content = files[relativePath];
         await writeFilep(dest, content);
-    }),
-);
+    }
+};

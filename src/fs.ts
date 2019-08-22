@@ -24,23 +24,34 @@ export const mkdirpSync = (directory: string) => {
         throw error;
     }
 };
-export const writeFilep = (
+
+export const writeFilep = async (
     filePath: string,
     data: Buffer | string,
-): Promise<void> => writeFile(filePath, data)
-.catch((error) => {
-    if (error.code === 'ENOENT') {
-        mkdirpSync(path.dirname(filePath));
-        return writeFile(filePath, data);
+): Promise<void> => {
+    try {
+        await writeFile(filePath, data);
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            mkdirpSync(path.dirname(filePath));
+            await writeFile(filePath, data);
+        } else {
+            throw error;
+        }
     }
-    throw error;
-});
-export const statIfExist = (
+};
+
+export const statIfExist = async (
     filePath: string,
-): Promise<fs.Stats | null> => stat(filePath)
-.catch((error) => {
-    if (error.code === 'ENOENT') {
-        return null;
+): Promise<fs.Stats | null> => {
+    try {
+        const stats = await stat(filePath);
+        return stats;
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return null;
+        } else {
+            throw error;
+        }
     }
-    throw error;
-});
+};

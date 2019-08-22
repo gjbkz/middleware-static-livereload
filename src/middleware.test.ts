@@ -179,10 +179,10 @@ test('GET /middleware-static-livereload.js/connect', async (t) => {
     t.is(indexRes.headers['content-type'], 'text/html');
     t.is(await waitAddEvent, indexFilePath);
     await writeFile(indexFilePath, Buffer.from('<!doctype html>\nindex2'));
-    const events = parseEvents(await reader);
-    t.deepEqual(events, [
-        {data: '#0', retry: '3000'},
-        {id: '0', event: 'add', data: 'index.html'},
-        {id: '1', event: 'change', data: 'index.html'},
-    ]);
+    const [e0, e1, e2] = parseEvents(await reader);
+    t.is(e0.data, '#0');
+    t.is(e1.event, 'add');
+    t.is(e1.data, 'index.html');
+    t.is(e2.event, 'change');
+    t.is(e2.data, 'index.html');
 });

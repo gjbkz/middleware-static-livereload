@@ -26,5 +26,7 @@ test('fails to create a directory on a file', async (t) => {
 
 test('fails to write a file on a directory', async (t) => {
     const target = t.context.directory;
-    await t.throwsAsync(() => writeFilep(target, target));
+    await t.throwsAsync(async () => {
+        await writeFilep(target, target);
+    });
 });

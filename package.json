@@ -33,20 +33,20 @@
     "devDependencies": {
         "@commitlint/cli": "8.1.0",
         "@commitlint/config-conventional": "8.1.0",
-        "@nlib/lint": "^3.13.2",
+        "@nlib/lint": "^3.13.3",
         "@types/connect": "3.4.32",
         "@types/node": "12.7.2",
         "@types/selenium-webdriver": "4.0.2",
-        "@typescript-eslint/eslint-plugin": "^1.13.0",
-        "@typescript-eslint/parser": "^1.13.0",
+        "@typescript-eslint/eslint-plugin": "^2.0.0",
+        "@typescript-eslint/parser": "^2.0.0",
         "ava": "2.3.0",
         "browserstack-local": "1.4.2",
         "connect": "3.7.0",
         "conventional-changelog-cli": "2.0.23",
         "cpy-cli": "2.0.0",
-        "eslint": "^6.1.0",
-        "husky": "3.0.3",
-        "lint-staged": "9.2.1",
+        "eslint": "^6.2.1",
+        "husky": "^3.0.4",
+        "lint-staged": "^9.2.3",
         "npm-run-all": "4.1.5",
         "selenium-webdriver": "4.0.0-alpha.4",
         "ts-node": "8.3.0",
@@ -124,6 +124,22 @@
                     "max-lines-per-function": "off",
                     "no-process-env": "off",
                     "@typescript-eslint/no-triple-slash-reference": "off"
+                }
+            },
+            {
+                "files": [
+                    "src/middleware.ts"
+                ],
+                "rules": {
+                    "@typescript-eslint/no-floating-promises": "off"
+                }
+            },
+            {
+                "files": [
+                    "src/createFileWatcher.ts"
+                ],
+                "rules": {
+                    "@typescript-eslint/unbound-method": "off"
                 }
             }
         ]
