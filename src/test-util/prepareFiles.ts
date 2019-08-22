@@ -7,12 +7,10 @@ export const prepareFiles = async (
     },
     directory: string,
 ): Promise<void> => {
-    await Promise.all(
-        Object.keys(files)
-        .map(async (relativePath) => {
-            const dest = path.join(directory, relativePath);
-            const content = files[relativePath];
-            await writeFilep(dest, content);
-        }),
-    );
+    const paths = Object.keys(files).sort((a, b) => a.localeCompare(b));
+    for (const relativePath of paths) {
+        const dest = path.join(directory, relativePath);
+        const content = files[relativePath];
+        await writeFilep(dest, content);
+    }
 };

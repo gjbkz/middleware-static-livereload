@@ -35,8 +35,9 @@ export const writeFilep = async (
         if (error.code === 'ENOENT') {
             mkdirpSync(path.dirname(filePath));
             await writeFile(filePath, data);
+        } else {
+            throw error;
         }
-        throw error;
     }
 };
 
@@ -49,7 +50,8 @@ export const statIfExist = async (
     } catch (error) {
         if (error.code === 'ENOENT') {
             return null;
+        } else {
+            throw error;
         }
-        throw error;
     }
 };

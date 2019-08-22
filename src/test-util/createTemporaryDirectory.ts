@@ -5,7 +5,7 @@ import * as path from 'path';
 export const createTemporaryDirectory = async (
     prefix = 'temp-',
 ): Promise<string> => {
-    const directory = await new Promise<string>((resolve, reject) => {
+    const createdDirectory = await new Promise<string>((resolve, reject) => {
         fs.mkdtemp(path.join(os.tmpdir(), prefix), (error, directory) => {
             if (error) {
                 reject(error);
@@ -14,5 +14,5 @@ export const createTemporaryDirectory = async (
             }
         });
     });
-    return directory;
+    return createdDirectory;
 };
