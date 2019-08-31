@@ -35,7 +35,7 @@
         "@commitlint/config-conventional": "8.1.0",
         "@nlib/lint": "^3.13.3",
         "@types/connect": "3.4.32",
-        "@types/node": "12.7.2",
+        "@types/node": "12.7.3",
         "@types/selenium-webdriver": "4.0.2",
         "@typescript-eslint/eslint-plugin": "^2.0.0",
         "@typescript-eslint/parser": "^2.0.0",
