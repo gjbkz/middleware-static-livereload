@@ -2,3 +2,4 @@ node_modules
 coverage
 output
 lib
+test/sample-project/package-lock.json
