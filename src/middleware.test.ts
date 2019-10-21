@@ -132,9 +132,7 @@ test('GET /middleware-static-livereload.js', async (t) => {
 
 test('GET /middleware-static-livereload.js/connect', async (t) => {
     setTimeout(() => {
-        if (connection) {
-            connection.destroy();
-        }
+        connection.destroy();
         t.fail('timeout');
     }, 5000);
     t.context.middleware = middleware({
