@@ -24,6 +24,7 @@
         "build:tsc": "tsc",
         "build:client": "cpy src/client-script.js lib",
         "build": "run-s cleanup build:tsc build:client",
+        "prepack": "rimraf lib/**/*.test.js lib/**/*.test.d.ts lib/test-util",
         "test": "ava",
         "test-client": "ava test/run.ts",
         "version:changelog": "conventional-changelog --preset angular --infile CHANGELOG.md --same-file --release-count 0",
