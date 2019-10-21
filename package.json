@@ -25,7 +25,9 @@
         "build:client": "cpy src/client-script.js lib",
         "build": "run-s cleanup build:tsc build:client",
         "prepack": "rimraf lib/**/*.test.js lib/**/*.test.d.ts lib/test-util",
-        "test": "ava",
+        "test:ava": "ava",
+        "test:tsc": "tsc --noEmit",
+        "test": "run-p test:*",
         "test-client": "ava test/run.ts",
         "version:changelog": "conventional-changelog --preset angular --infile CHANGELOG.md --same-file --release-count 0",
         "version:add": "git add .",
@@ -120,7 +122,7 @@
                     "src/listen.ts"
                 ],
                 "rules": {
-                    "no-process-env": "off"
+                    "@typescript-eslint/no-unnecessary-condition": "off"
                 }
             },
             {

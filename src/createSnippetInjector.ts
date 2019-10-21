@@ -4,7 +4,7 @@ import {ISnippetInjector, IOptions} from './types';
 import {createInserter} from './createInserter';
 
 export const createSnippetInjector = (
-    options: IOptions = {},
+    options: IOptions,
     injecteeSource: string | Buffer,
 ): ISnippetInjector => {
     const injectee = Buffer.isBuffer(injecteeSource) ? injecteeSource : Buffer.from(injecteeSource);
