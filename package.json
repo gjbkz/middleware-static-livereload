@@ -1,6 +1,6 @@
 {
     "name": "middleware-static-livereload",
-    "version": "1.2.7",
+    "version": "1.2.8",
     "description": "A middleware for connect and livereload",
     "license": "Apache-2.0",
     "author": {
