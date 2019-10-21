@@ -1,8 +1,7 @@
-import * as ava from 'ava';
 import * as stream from 'stream';
 
 export const createLogger = (
-    t: ava.ExecutionContext,
+    t: {log: (...input: Array<any>) => void},
 ): stream.Writable => new stream.Writable({
     write(chunk, _encoding, callback) {
         t.log(`${chunk}`);

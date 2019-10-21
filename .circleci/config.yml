@@ -43,6 +43,7 @@ jobs:
     steps:
       - attach_workspace: {at: .}
       - run: sudo npm install -g codecov c8
+      - run: npm run prepack
       - run: c8 npm run test-client
       - run: c8 report --reporter=text-lcov > coverage.lcov
       - run: codecov
