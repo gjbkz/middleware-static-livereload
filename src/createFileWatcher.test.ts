@@ -7,18 +7,18 @@ test('return null', (t) => {
     t.is(createFileWatcher({watch: null}), null);
 });
 
-test('return watcher-like', (t) => {
+test('return watcher-like', async (t) => {
     const watcher = chokidar.watch([]);
     t.is(createFileWatcher({watch: watcher}), watcher);
-    watcher.close();
+    await watcher.close();
 });
 
-test('return a watcher', (t) => {
+test('return a watcher', async (t) => {
     const interval = 123;
     const watcher = createFileWatcher({watch: {interval}});
     t.true(watcher instanceof chokidar.FSWatcher);
     if (watcher) {
         t.is(watcher.options.interval, interval);
-        watcher.close();
+        await watcher.close();
     }
 });
