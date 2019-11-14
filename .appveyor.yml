@@ -2,19 +2,17 @@ cache:
   - node_modules
 install:
   - ps: Install-Product node 12
+  - npm install -g codecov c8 nyc
   - npm ci
   - npm run build
-  - npm install -g codecov c8
   - c8 npm run test
   - c8 report --reporter=text-lcov > coverage.lcov
   - codecov
   - ps: Install-Product node 10
-  - npm install -g codecov c8
   - c8 npm run test
   - c8 report --reporter=text-lcov > coverage.lcov
   - codecov
   - ps: Install-Product node 8
-  - npm install -g codecov nyc
   - nyc npm run test
   - codecov
-build: 'off'
+build: off

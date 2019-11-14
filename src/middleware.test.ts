@@ -63,7 +63,7 @@ test.beforeEach(async (t) => {
 test.afterEach(async (t) => {
     const {middleware, server} = t.context;
     if (middleware.fileWatcher) {
-        middleware.fileWatcher.close();
+        await middleware.fileWatcher.close();
     }
     await new Promise((resolve, reject) => {
         server.close((error) => error ? reject(error) : resolve());
