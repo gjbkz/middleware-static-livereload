@@ -18,8 +18,8 @@
     ],
     "scripts": {
         "cleanup": "rimraf lib",
-        "lint:ts": "eslint --ext .ts src test",
-        "lint:js": "eslint src",
+        "lint:ts": "eslint --ignore-pattern sample-project --ext .ts src test",
+        "lint:js": "eslint --ignore-pattern sample-project src",
         "lint": "run-p lint:*",
         "build:tsc": "tsc",
         "build:client": "cpy src/client-script.js lib",
