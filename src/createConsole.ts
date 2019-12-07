@@ -1,6 +1,10 @@
 import {LogLevel, IConsole, IOptions} from './types';
 import {createWriter} from './createWriter';
 
+const createNoop = () => () => {
+    // noop
+};
+
 export const createConsole = (
     parameters: IOptions = {},
 ): IConsole => {
@@ -13,7 +17,7 @@ export const createConsole = (
     const stderr = parameters.stderr || process.stderr;
     const out = createWriter(stdout, inspectOptions);
     const err = createWriter(stderr, inspectOptions);
-    const ignore = Object.assign(() => {}, {end: () => {}});
+    const ignore = Object.assign(createNoop(), {end: createNoop()});
     const logLevel = 'logLevel' in parameters ? parameters.logLevel : LogLevel.info;
     switch (logLevel) {
     case LogLevel.silent:

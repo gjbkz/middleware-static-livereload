@@ -25,15 +25,11 @@ export const listenPort = async (
 export const listen = async (
     server: http.Server,
     port: number,
-) => {
-    let result = port;
-    while (1) {
-        await listenPort(server, result);
-        if (server.listening) {
-            break;
-        } else {
-            result++;
-        }
+): Promise<number> => {
+    await listenPort(server, port);
+    if (server.listening) {
+        return port;
+    } else {
+        return listen(server, port + 1);
     }
-    return result;
 };

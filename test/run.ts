@@ -1,4 +1,3 @@
-/// <reference path="./browserstack-local.d.ts"/>
 import anyTest, {TestInterface, ExecutionContext} from 'ava';
 import {URL} from 'url';
 import * as path from 'path';
@@ -18,7 +17,7 @@ interface ITextContext {
     session?: selenium.Session,
     builder?: selenium.Builder,
     driver?: selenium.ThenableWebDriver,
-    bsLocal: BrowserStack.Local,
+    bsLocal?: BrowserStack.Local,
     port: number,
     passed: boolean,
     processes: Array<{
@@ -41,24 +40,29 @@ const test = anyTest as TestInterface<ITextContext>;
  */
 let port = 9200;
 test.beforeEach((t) => {
-    t.context.passed = false;
-    t.context.port = port++;
-    t.context.processes = [];
-    t.context.run = (t, parameters) => {
-        const subProcess = childProcess.spawn(
-            parameters.command,
-            parameters.args || [],
-            {
-                ...parameters.options || {},
-                shell: true,
-            },
-        )
-        .on('error', (error) => t.fail(`${error}`));
-        t.context.processes.push({
-            process: subProcess,
-            exit: false,
-        });
-    };
+    Object.assign(t.context, {
+        passed: false,
+        port: port++,
+        processes: [],
+        run(
+            t: ExecutionContext<ITextContext>,
+            parameters: ISpawnParameters,
+        ) {
+            const subProcess = childProcess.spawn(
+                parameters.command,
+                parameters.args || [],
+                {
+                    ...parameters.options || {},
+                    shell: true,
+                },
+            )
+            .on('error', (error) => t.fail(`${error}`));
+            t.context.processes.push({
+                process: subProcess,
+                exit: false,
+            });
+        },
+    });
 });
 
 test.afterEach(async (t) => {
