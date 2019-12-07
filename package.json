@@ -18,7 +18,7 @@
     ],
     "scripts": {
         "cleanup": "rimraf lib",
-        "lint:ts": "eslint --ext .ts src scripts test",
+        "lint:ts": "eslint --ext .ts src test",
         "lint:js": "eslint src",
         "lint": "run-p lint:*",
         "build:tsc": "tsc",
@@ -76,17 +76,6 @@
                 ],
                 "rules": {
                     "max-lines-per-function": "off"
-                }
-            },
-            {
-                "files": [
-                    "scripts/**"
-                ],
-                "parserOptions": {
-                    "project": "tsconfig.base.json"
-                },
-                "rules": {
-                    "no-console": "off"
                 }
             },
             {
