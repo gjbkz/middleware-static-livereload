@@ -1,15 +1,15 @@
 {
     "private": true,
     "scripts": {
-        "build": "cpy src lib",
+        "build": "cpy 'src/**' lib",
         "dev": "node server.js",
-        "test-1": "cpy test-1 lib",
-        "test-2": "cpy test-2 lib",
-        "test-3": "cpy test-3 lib"
+        "test-1": "cpy 'test-1/**' lib",
+        "test-2": "cpy 'test-2/**' lib",
+        "test-3": "cpy 'test-3/**' lib"
     },
     "devDependencies": {
         "connect": "^3.7.0",
-        "cpy-cli": "^2.0.0",
+        "cpy-cli": "^3.0.0",
         "middleware-static-livereload": "file:../.."
     }
 }

@@ -18,8 +18,8 @@
     ],
     "scripts": {
         "cleanup": "rimraf lib",
-        "lint:ts": "eslint --ext .ts src",
-        "lint:js": "eslint src",
+        "lint:ts": "eslint --ignore-pattern sample-project --ext .ts src test",
+        "lint:js": "eslint --ignore-pattern sample-project src",
         "lint": "run-p lint:*",
         "build:tsc": "tsc",
         "build:client": "cpy src/client-script.js lib",
@@ -35,30 +35,30 @@
     },
     "dependencies": {
         "chokidar": "^3.3.0",
-        "event-source-polyfill": "1.0.9"
+        "event-source-polyfill": "^1.0.11"
     },
     "devDependencies": {
         "@commitlint/cli": "8.2.0",
         "@commitlint/config-conventional": "8.2.0",
         "@nlib/lint": "^3.15.0",
         "@types/connect": "3.4.32",
-        "@types/node": "^12.12.7",
+        "@types/node": "^12.12.14",
         "@types/selenium-webdriver": "4.0.5",
-        "@typescript-eslint/eslint-plugin": "^2.7.0",
-        "@typescript-eslint/parser": "^2.7.0",
+        "@typescript-eslint/eslint-plugin": "^2.10.0",
+        "@typescript-eslint/parser": "^2.10.0",
         "ava": "^2.4.0",
         "browserstack-local": "1.4.2",
         "connect": "3.7.0",
-        "conventional-changelog-cli": "^2.0.27",
-        "cpy-cli": "2.0.0",
-        "eslint": "^6.6.0",
-        "husky": "^3.0.9",
-        "lint-staged": "^9.4.3",
+        "conventional-changelog-cli": "^2.0.28",
+        "cpy-cli": "^3.0.0",
+        "eslint": "^6.7.2",
+        "husky": "^3.1.0",
+        "lint-staged": "^9.5.0",
         "npm-run-all": "4.1.5",
         "rimraf": "^3.0.0",
         "selenium-webdriver": "4.0.0-alpha.5",
-        "ts-node": "^8.5.0",
-        "typescript": "^3.7.2"
+        "ts-node": "^8.5.4",
+        "typescript": "^3.7.3"
     },
     "eslintConfig": {
         "extends": "./node_modules/@nlib/lint/.eslintrc.json",
@@ -76,6 +76,19 @@
                 ],
                 "rules": {
                     "max-lines-per-function": "off"
+                }
+            },
+            {
+                "files": [
+                    "test/**"
+                ],
+                "parserOptions": {
+                    "project": "tsconfig.base.json"
+                },
+                "rules": {
+                    "max-lines-per-function": "off",
+                    "no-process-env": "off",
+                    "@typescript-eslint/no-triple-slash-reference": "off"
                 }
             },
             {
@@ -119,24 +132,6 @@
             },
             {
                 "files": [
-                    "src/listen.ts"
-                ],
-                "rules": {
-                    "@typescript-eslint/no-unnecessary-condition": "off"
-                }
-            },
-            {
-                "files": [
-                    "test/**/*.ts"
-                ],
-                "rules": {
-                    "max-lines-per-function": "off",
-                    "no-process-env": "off",
-                    "@typescript-eslint/no-triple-slash-reference": "off"
-                }
-            },
-            {
-                "files": [
                     "src/middleware.ts"
                 ],
                 "rules": {
@@ -145,10 +140,18 @@
             },
             {
                 "files": [
-                    "src/createFileWatcher.ts"
+                    "test/run.ts"
                 ],
                 "rules": {
-                    "@typescript-eslint/unbound-method": "off"
+                    "require-atomic-updates": "off"
+                }
+            },
+            {
+                "files": [
+                    "test/util/createBrowserStackLocal.ts"
+                ],
+                "rules": {
+                    "@typescript-eslint/no-unnecessary-condition": "off"
                 }
             }
         ]

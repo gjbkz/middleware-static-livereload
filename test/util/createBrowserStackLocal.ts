@@ -10,7 +10,7 @@ export const createBrowserStackLocal = async (
     parameters: IParameters,
 ): Promise<BrowserStack.Local> => {
     const bsLocal = new BrowserStack.Local();
-    await new Promise((resolve, reject) => {
+    const error = await new Promise<Error | undefined>((resolve) => {
         bsLocal.start({
             key: parameters.accessKey,
             verbose: true,
@@ -18,14 +18,11 @@ export const createBrowserStackLocal = async (
             onlyAutomate: true,
             only: `localhost,${parameters.port},0`,
             localIdentifier: parameters.localIdentifier,
-        }, (error) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(bsLocal);
-            }
-        });
+        }, resolve);
     });
+    if (error) {
+        throw error;
+    }
     await new Promise((resolve, reject) => {
         let count = 0;
         const check = function () {
