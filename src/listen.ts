@@ -30,6 +30,6 @@ export const listen = async (
     if (server.listening) {
         return port;
     } else {
-        return listen(server, port + 1);
+        return await listen(server, port + 1);
     }
 };
