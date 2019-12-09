@@ -21,6 +21,9 @@ export const createFileWatcher = (
     return chokidar.watch([], {
         useFsEvents: false,
         ignoreInitial: false,
+        awaitWriteFinish: {
+            stabilityThreshold: 300,
+        },
         ...(typeof watch === 'object' ? watch : null),
     });
 };
