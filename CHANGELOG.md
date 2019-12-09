@@ -1,3 +1,13 @@
+<a name="1.2.13"></a>
+## [1.2.13](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.12...v1.2.13) (2019-12-09)
+
+
+### Features
+
+* set stabilityThreshold ([0c1e40d](https://github.com/kei-ito/middleware-static-livereload/commit/0c1e40d))
+
+
+
 <a name="1.2.12"></a>
 ## [1.2.12](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.11...v1.2.12) (2019-12-09)
 
