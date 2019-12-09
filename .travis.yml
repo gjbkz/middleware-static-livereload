@@ -9,13 +9,13 @@ script:
   - npm run build
   - c8 npm test
   - c8 report --reporter=text-lcov > coverage.lcov
-  - codecov
+  - codecov --disable=gcov
   - nvm install 10
   - npm install -g codecov c8
   - c8 npm test
   - c8 report --reporter=text-lcov > coverage.lcov
-  - codecov
+  - codecov --disable=gcov
   - nvm install 8
   - npm install -g codecov nyc
   - nyc npm test
-  - codecov
+  - codecov --disable=gcov
