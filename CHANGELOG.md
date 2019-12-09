@@ -1,3 +1,8 @@
+<a name="1.2.11"></a>
+## [1.2.11](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.10...v1.2.11) (2019-12-09)
+
+
+
 <a name="1.2.10"></a>
 ## [1.2.10](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.9...v1.2.10) (2019-12-08)
 
