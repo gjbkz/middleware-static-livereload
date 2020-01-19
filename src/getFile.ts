@@ -1,6 +1,7 @@
 import * as path from 'path';
 import {IFile} from './types';
 import {statIfExist} from './fs';
+import {LibError} from './LibError';
 
 export const getFile = async (
     absolutePath: string,
@@ -15,8 +16,5 @@ export const getFile = async (
             stats,
         };
     }
-    throw Object.assign(
-        new Error(`Cannot find the file: ${relativePath}`),
-        {code: 'ENOENT'},
-    );
+    throw new LibError('ENOENT', relativePath);
 };

@@ -19,7 +19,7 @@ const getPort = () => {
     if (0 < port) {
         return port;
     }
-    throw new Error(`Invalid port: ${port}`);
+    throw new Error(`InvalidPort: ${port}`);
 };
 
 app.use(require('middleware-static-livereload').middleware({
