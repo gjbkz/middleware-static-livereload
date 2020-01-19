@@ -6,6 +6,7 @@ import {IFileFinder, IOptions} from './types';
 import {absolutify} from './absolutify';
 import {statIfExist, writeFile} from './fs';
 import {generateIndexHTML} from './generateIndexHTML';
+import {LibError} from './LibError';
 
 export const createFileFinder = (
     {documentRoot = process.cwd(), index = 'index.html'}: IOptions = {},
@@ -48,7 +49,7 @@ export const createFileFinder = (
             if (stats && absolutePath) {
                 return {path: absolutePath, relativePath, stats};
             }
-            throw Object.assign(new Error(`Cannot find the file: ${relativePath}`), {code: 'ENOENT'});
+            throw new LibError('ENOENT', relativePath);
         },
         {
             documentRoots: absoluteDocumentRoots,
