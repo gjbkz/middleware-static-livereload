@@ -45,7 +45,7 @@
         "@nlib/lint": "^3.17.0",
         "@nlib/remove-sourcemap": "^3.17.0",
         "@types/connect": "^3.4.33",
-        "@types/node": "^12.12.25",
+        "@types/node": "^13.0.0",
         "@types/selenium-webdriver": "^4.0.6",
         "@typescript-eslint/eslint-plugin": "^2.16.0",
         "@typescript-eslint/parser": "^2.16.0",
