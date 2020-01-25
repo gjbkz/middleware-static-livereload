@@ -50,7 +50,7 @@
         "@typescript-eslint/eslint-plugin": "^2.16.0",
         "@typescript-eslint/parser": "^2.16.0",
         "ava": "^2.4.0",
-        "browserstack-local": "1.4.4",
+        "browserstack-local": "1.4.5",
         "connect": "3.7.0",
         "conventional-changelog-cli": "^2.0.31",
         "cpy-cli": "^3.0.0",
