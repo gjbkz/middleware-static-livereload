@@ -27,7 +27,7 @@
         "prepack:test": "rimraf lib/**/*.test.js lib/**/*.test.d.ts lib/test-util",
         "prepack:sourcemap": "remove-sourcemap lib",
         "prepack": "run-s prepack:test prepack:sourcemap",
-        "test:ava": "ava",
+        "test:ava": "ava 'lib/**/*.test.js'",
         "test:tsc": "tsc --noEmit",
         "test": "run-p test:*",
         "test-client": "ava test/run.ts",
@@ -65,13 +65,11 @@
     },
     "ava": {
         "extensions": [
-            "ts"
+            "ts",
+            "js"
         ],
         "require": [
             "ts-node/register"
-        ],
-        "files": [
-            "lib/**/*.test.js"
         ]
     },
     "eslintConfig": {
