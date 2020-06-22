@@ -21,10 +21,7 @@ interface ITextContext {
     bsLocal?: BrowserStack.Local,
     port: number,
     passed: boolean,
-    processes: Array<{
-        process: childProcess.ChildProcess,
-        exit: boolean,
-    }>,
+    processes: Array<childProcess.ChildProcess>,
     run: (
         t: ExecutionContext<ITextContext>,
         parameters: ISpawnParameters,
@@ -62,10 +59,8 @@ test.beforeEach((t) => {
             )
             .on('close', (code) => console.log(`EXIT(${code}): ${command}`))
             .on('error', (error) => t.fail(`${error as {toString: () => string}}`));
-            t.context.processes.push({
-                process: subProcess,
-                exit: false,
-            });
+            t.context.processes.push(subProcess);
+            console.log(subProcess);
         },
     });
 });
@@ -81,9 +76,9 @@ test.afterEach(async (t) => {
     if (bsLocal) {
         await new Promise((resolve) => bsLocal.stop(resolve));
     }
-    for (const {process, exit} of t.context.processes) {
-        if (!exit) {
-            process.kill();
+    for (const subProcess of t.context.processes) {
+        if (typeof subProcess.exitCode !== 'number') {
+            subProcess.kill();
         }
     }
 });
@@ -164,5 +159,6 @@ getCapabilities(testDirectories).forEach((capability, index) => {
             await afs.writeFile(path.join(outputDirectory, `${Date.now()}-${testCommand}.png`), screenShot);
         }
         t.context.passed = true;
+        t.pass();
     });
 });
