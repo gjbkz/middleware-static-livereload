@@ -17,6 +17,6 @@ export const handleError = (
                 res.statusCode = 500;
             }
         }
-        res.end(`${error.stack || error}`);
+        res.end(`${error.stack || error.message || 'Error'}`);
     }
 };

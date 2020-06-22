@@ -24,10 +24,10 @@ interface ITextContext {
         process: childProcess.ChildProcess,
         exit: boolean,
     }>,
-    run(
+    run: (
         t: ExecutionContext<ITextContext>,
         parameters: ISpawnParameters,
-    ): void,
+    ) => void,
 }
 
 const test = anyTest as TestInterface<ITextContext>;
@@ -56,7 +56,7 @@ test.beforeEach((t) => {
                     shell: true,
                 },
             )
-            .on('error', (error) => t.fail(`${error}`));
+            .on('error', (error) => t.fail(`${error as {toString: () => string}}`));
             t.context.processes.push({
                 process: subProcess,
                 exit: false,
@@ -133,7 +133,15 @@ getCapabilities(testDirectories).forEach((capability, index) => {
         t.context.session = await driver.getSession();
         await driver.get(`${new URL('/', baseURL)}`);
         t.is(await driver.getTitle(), name);
-        const tests = Object.keys(JSON.parse(await afs.readFile(path.join(testDirectory, 'package.json'), 'utf8')).scripts)
+        const tests = Object.keys(
+            (JSON.parse(
+                await afs.readFile(
+                    path.join(testDirectory, 'package.json'),
+                    'utf8',
+                ),
+            ) as {scripts: {[key: string]: string}})
+            .scripts,
+        )
         .filter((command) => command.startsWith('test-'));
         for (const testCommand of tests) {
             t.context.run(t, {
