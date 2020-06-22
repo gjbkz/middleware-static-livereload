@@ -22,7 +22,7 @@
         "lint:js": "eslint --ignore-pattern sample-project src",
         "lint": "run-p lint:*",
         "build:tsc": "tsc",
-        "build:client": "node -e 'require(`fs`).copyFileSync(`src/client-script.js`,`lib/client-script.js`)'",
+        "build:client": "node copy.js src/client-script.js lib/client-script.js",
         "build": "run-s cleanup build:tsc build:client",
         "prepack:test": "rimraf lib/**/*.test.js lib/**/*.test.d.ts lib/test-util",
         "prepack:sourcemap": "remove-sourcemap lib",
@@ -176,6 +176,7 @@
             },
             {
                 "files": [
+                    "copy.js",
                     "test/sample-project/**/*"
                 ],
                 "rules": {
