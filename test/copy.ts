@@ -1,11 +1,14 @@
-const {promises: afs} = require('fs');
-const path = require('path');
+import {promises as afs} from 'fs';
+import * as path from 'path';
 
 /**
  * @param {string} src
  * @param {string} dest
  */
-const copy = async (src, dest) => {
+export const copy = async (
+    src: string,
+    dest: string,
+): Promise<void> => {
     src = path.normalize(src);
     dest = path.normalize(dest);
     if ((await afs.stat(src)).isDirectory()) {
@@ -22,8 +25,11 @@ const copy = async (src, dest) => {
     }
 };
 
-copy(...process.argv.slice(-2))
-.catch((error) => {
-    console.error(error);
-    process.exit(1);
-});
+if (!module.parent) {
+    const [src, dest] = process.argv.slice(-2);
+    copy(src, dest)
+    .catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
+}

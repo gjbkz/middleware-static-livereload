@@ -22,7 +22,7 @@
         "lint:js": "eslint --ignore-pattern sample-project src",
         "lint": "run-p lint:*",
         "build:tsc": "tsc",
-        "build:client": "node copy.js src/client-script.js lib/client-script.js",
+        "build:client": "ts-node test/copy.ts src/client-script.js lib/client-script.js",
         "build": "run-s cleanup build:tsc build:client",
         "prepack:test": "rimraf lib/**/*.test.js lib/**/*.test.d.ts lib/test-util",
         "prepack:sourcemap": "remove-sourcemap lib",
@@ -72,6 +72,10 @@
         ]
     },
     "eslintConfig": {
+        "ignorePatterns": [
+            "test/src",
+            "test/test-*"
+        ],
         "extends": "./node_modules/@nlib/lint/.eslintrc.json",
         "env": {
             "es6": true,
@@ -159,7 +163,7 @@
             },
             {
                 "files": [
-                    "copy.js",
+                    "copy.ts",
                     "test/**/*"
                 ],
                 "rules": {

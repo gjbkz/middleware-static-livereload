@@ -1,17 +1,24 @@
-import anyTest, {TestInterface, ExecutionContext} from 'ava';
+/**
+ * https://www.browserstack.com/question/664
+ * Question: What ports can I use to test development environments or private
+ * servers using BrowserStack?
+ * → We support all ports for all browsers other than Safari.
+ */
+import anyTest, {TestInterface} from 'ava';
 import {URL} from 'url';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as childProcess from 'child_process';
+import * as http from 'http';
 import * as selenium from 'selenium-webdriver';
 import * as chrome from 'selenium-webdriver/chrome';
 import * as BrowserStack from 'browserstack-local';
+import * as connect from 'connect';
 import {browserStack} from './util/constants';
-import {spawn} from './util/spawn';
 import {createBrowserStackLocal} from './util/createBrowserStackLocal';
 import {markResult} from './util/markResult';
-import {getCapabilities} from './util/getCapabilities';
-import {ISpawnParameters} from './util/types';
+import {capabilities} from './util/capabilities';
+import {copy} from './copy';
+import {middleware} from '..';
 const {promises: afs} = fs;
 
 interface ITextContext {
@@ -19,116 +26,73 @@ interface ITextContext {
     builder?: selenium.Builder,
     driver?: selenium.ThenableWebDriver,
     bsLocal?: BrowserStack.Local,
-    port: number,
-    passed: boolean,
-    processes: Array<childProcess.ChildProcess>,
-    run: (
-        t: ExecutionContext<ITextContext>,
-        parameters: ISpawnParameters,
-    ) => void,
+    passed?: boolean,
+    server?: http.Server,
 }
 
 const test = anyTest as TestInterface<ITextContext>;
 
-/**
- * https://www.browserstack.com/question/664
- * Question: What ports can I use to test development environments or private
- * servers using BrowserStack?
- * → We support all ports for all browsers other than Safari.
- */
-let port = 9200;
-test.beforeEach((t) => {
-    Object.assign(t.context, {
-        passed: false,
-        port: port++,
-        processes: [],
-        run(
-            t: ExecutionContext<ITextContext>,
-            parameters: ISpawnParameters,
-        ) {
-            const command = [parameters.command, ...(parameters.args || [])].join(' ');
-            console.log(`RUN: ${command}`);
-            const subProcess = childProcess.spawn(
-                parameters.command,
-                parameters.args || [],
-                {
-                    ...parameters.options || {},
-                    shell: true,
-                    stdio: [process.stdin, process.stdout, process.stderr],
-                },
-            )
-            .on('close', (code) => console.log(`EXIT(${code}): ${command}`))
-            .on('error', (error) => t.fail(`${error as {toString: () => string}}`));
-            t.context.processes.push(subProcess);
-            console.log(subProcess);
-        },
-    });
+test.afterEach(async ({context: {session, driver, server, bsLocal, passed}}) => {
+    await Promise.all([
+        session && markResult(session, passed || false),
+        driver && driver.quit(),
+        server && new Promise((resolve, reject) => {
+            server.close((error) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            });
+        }),
+        bsLocal && new Promise((resolve) => bsLocal.stop(resolve)),
+    ]);
 });
 
-test.afterEach(async (t) => {
-    if (t.context.session) {
-        await markResult(t.context.session, t.context.passed);
-    }
-    if (t.context.driver) {
-        await t.context.driver.quit();
-    }
-    const {bsLocal} = t.context;
-    if (bsLocal) {
-        await new Promise((resolve) => bsLocal.stop(resolve));
-    }
-    for (const subProcess of t.context.processes) {
-        if (typeof subProcess.exitCode !== 'number') {
-            subProcess.kill();
-        }
-    }
-});
-
-const testDirectories = fs.readdirSync(__dirname)
-.filter((name) => {
-    try {
-        return fs.statSync(path.join(__dirname, name, 'package.json')).isFile();
-    } catch (error) {
-        return false;
-    }
-});
-
-const build = async (
-    testDirectory: string,
-) => {
-    const spawnOptions: childProcess.SpawnOptionsWithoutStdio = {
-        cwd: testDirectory,
-        shell: true,
-    };
-    await spawn({command: 'npm run build', options: spawnOptions});
-};
-
-getCapabilities(testDirectories).forEach((capability, index) => {
+capabilities.forEach((capability, index) => {
     const name = capability['bstack:options'].sessionName;
-    const testDirectory = path.join(__dirname, name);
-    const outputDirectory = path.join(__dirname, name, 'output');
+    const directory = {
+        src: path.join(__dirname, 'src'),
+        webroot: path.join(__dirname, 'webroot'),
+        output: path.join(__dirname, 'output'),
+        test1: path.join(__dirname, 'test-1'),
+        test2: path.join(__dirname, 'test-2'),
+        test3: path.join(__dirname, 'test-3'),
+    };
     const subTitle = [
         capability['bstack:options'].os || capability['bstack:options'].deviceName || '-',
         capability.browserName,
     ].join(' ');
     test.serial(`#${index + 1} ${name} ${subTitle}`, async (t) => {
-        t.timeout(180000);
+        t.timeout(120000);
         await Promise.all([
-            build(testDirectory),
-            afs.mkdir(outputDirectory, {recursive: true}),
+            copy(directory.src, directory.webroot),
+            afs.mkdir(directory.output, {recursive: true}),
         ]);
+        const port = 9200 + index;
         const host = (/safari/i).test(capability.browserName) ? 'bs-local.com' : 'localhost';
-        const baseURL = new URL(`http://${host}:${t.context.port}`);
-        t.context.run(t, {
-            command: `npm run dev -- --port ${baseURL.port} --host ${host}`,
-            options: {cwd: testDirectory},
-        });
+        const baseURL = new URL(`http://${host}:${port}`);
+        {
+            const app = connect();
+            app.use(middleware({logLevel: 0, documentRoot: directory.webroot}));
+            t.context.server = await new Promise((resolve, reject) => {
+                const server = http.createServer(app);
+                server.once('error', reject);
+                server.once('listening', () => {
+                    server.removeListener('error', reject);
+                    server.once('error', t.log);
+                    resolve(server);
+                });
+                server.listen(port, host);
+            });
+        }
         const builder = new selenium.Builder().withCapabilities(capability);
         t.context.builder = builder;
         if (browserStack) {
             builder.usingServer(browserStack.server);
             t.context.bsLocal = await createBrowserStackLocal({
                 accessKey: browserStack.key,
-                port: t.context.port,
+                port,
                 localIdentifier: capability['bstack:options'].localIdentifier,
             });
         } else {
@@ -137,26 +101,13 @@ getCapabilities(testDirectories).forEach((capability, index) => {
         const driver = t.context.driver = builder.build();
         t.context.session = await driver.getSession();
         await driver.get(`${new URL('/', baseURL)}`);
-        t.is(await driver.getTitle(), name);
-        const tests = Object.keys(
-            (JSON.parse(
-                await afs.readFile(
-                    path.join(testDirectory, 'package.json'),
-                    'utf8',
-                ),
-            ) as {scripts: {[key: string]: string}})
-            .scripts,
-        )
-        .filter((command) => command.startsWith('test-'));
-        for (const testCommand of tests) {
-            t.context.run(t, {
-                command: `npm run ${testCommand}`,
-                options: {cwd: testDirectory},
-            });
-            await driver.wait(selenium.until.titleIs(`passed: ${testCommand}`), 5000);
+        for (const testName of ['test-1', 'test-2', 'test-3']) {
+            t.log(`Title: ${await driver.getTitle()}`);
+            await copy(path.join(__dirname, testName), directory.webroot);
+            await driver.wait(selenium.until.titleIs(`passed: ${testName}`), 5000);
             const base64 = await driver.takeScreenshot();
             const screenShot = Buffer.from(base64, 'base64');
-            await afs.writeFile(path.join(outputDirectory, `${Date.now()}-${testCommand}.png`), screenShot);
+            await afs.writeFile(path.join(directory.output, `${Date.now()}-${testName}.png`), screenShot);
         }
         t.context.passed = true;
         t.pass();
