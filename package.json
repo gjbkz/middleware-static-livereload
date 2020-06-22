@@ -22,48 +22,60 @@
         "lint:js": "eslint --ignore-pattern sample-project src",
         "lint": "run-p lint:*",
         "build:tsc": "tsc",
-        "build:client": "cpy src/client-script.js lib",
+        "build:client": "ts-node test/copy.ts src/client-script.js lib/client-script.js",
         "build": "run-s cleanup build:tsc build:client",
         "prepack:test": "rimraf lib/**/*.test.js lib/**/*.test.d.ts lib/test-util",
         "prepack:sourcemap": "remove-sourcemap lib",
         "prepack": "run-s prepack:test prepack:sourcemap",
-        "test:ava": "ava",
+        "test:ava": "ava 'lib/**/*.test.js'",
         "test:tsc": "tsc --noEmit",
         "test": "run-p test:*",
-        "test-client": "ava test/run.ts",
+        "test-client": "ava --timeout 2m test/run.ts",
         "version:changelog": "conventional-changelog --preset angular --infile CHANGELOG.md --same-file --release-count 0",
         "version:add": "git add .",
         "version": "run-s version:changelog version:add"
     },
     "dependencies": {
-        "chokidar": "^3.3.1",
-        "event-source-polyfill": "^1.0.12"
+        "chokidar": "^3.4.0",
+        "event-source-polyfill": "^1.0.15"
     },
     "devDependencies": {
-        "@commitlint/cli": "8.3.5",
-        "@commitlint/config-conventional": "8.3.4",
-        "@nlib/lint": "^3.17.0",
-        "@nlib/remove-sourcemap": "^3.17.0",
+        "@commitlint/cli": "^9.0.1",
+        "@commitlint/config-conventional": "^9.0.1",
+        "@nlib/lint": "^3.17.2",
+        "@nlib/remove-sourcemap": "^3.17.2",
         "@types/connect": "^3.4.33",
-        "@types/node": "^12.12.25",
-        "@types/selenium-webdriver": "^4.0.6",
-        "@typescript-eslint/eslint-plugin": "^2.16.0",
-        "@typescript-eslint/parser": "^2.16.0",
-        "ava": "^2.4.0",
+        "@types/node": "^14.0.13",
+        "@types/selenium-webdriver": "^4.0.9",
+        "@typescript-eslint/eslint-plugin": "^3.3.0",
+        "@typescript-eslint/parser": "^3.3.0",
+        "ava": "^3.9.0",
         "browserstack-local": "1.4.5",
-        "connect": "3.7.0",
-        "conventional-changelog-cli": "^2.0.31",
-        "cpy-cli": "^3.0.0",
-        "eslint": "^6.8.0",
-        "husky": "^4.0.10",
-        "lint-staged": "^9.5.0",
+        "connect": "^3.7.0",
+        "conventional-changelog-cli": "^2.0.34",
+        "eslint": "^7.3.0",
+        "husky": "^4.2.5",
+        "lint-staged": "^10.2.11",
         "npm-run-all": "4.1.5",
-        "rimraf": "^3.0.0",
-        "selenium-webdriver": "4.0.0-alpha.5",
-        "ts-node": "^8.6.2",
-        "typescript": "^3.7.5"
+        "rimraf": "^3.0.2",
+        "selenium-webdriver": "^4.0.0-alpha.7",
+        "ts-node": "^8.10.2",
+        "typescript": "^3.9.5"
+    },
+    "ava": {
+        "extensions": [
+            "ts",
+            "js"
+        ],
+        "require": [
+            "ts-node/register"
+        ]
     },
     "eslintConfig": {
+        "ignorePatterns": [
+            "test/src",
+            "test/test-*"
+        ],
         "extends": "./node_modules/@nlib/lint/.eslintrc.json",
         "env": {
             "es6": true,
@@ -135,10 +147,27 @@
             },
             {
                 "files": [
+                    "src/createWriter.ts"
+                ],
+                "rules": {
+                    "no-console": "off"
+                }
+            },
+            {
+                "files": [
                     "src/middleware.ts"
                 ],
                 "rules": {
                     "@typescript-eslint/no-floating-promises": "off"
+                }
+            },
+            {
+                "files": [
+                    "copy.ts",
+                    "test/**/*"
+                ],
+                "rules": {
+                    "no-console": "off"
                 }
             },
             {
@@ -157,18 +186,6 @@
                     "@typescript-eslint/no-unnecessary-condition": "off"
                 }
             }
-        ]
-    },
-    "ava": {
-        "compileEnhancements": false,
-        "extensions": [
-            "ts"
-        ],
-        "require": [
-            "ts-node/register"
-        ],
-        "files": [
-            "lib/**/*.test.js"
         ]
     },
     "commitlint": {

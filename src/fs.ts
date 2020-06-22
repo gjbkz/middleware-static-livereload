@@ -9,7 +9,7 @@ export const mkdirpSync = (directory: string) => {
     try {
         fs.mkdirSync(directory);
     } catch (error) {
-        switch (error.code) {
+        switch ((error as {code: string}).code) {
         case 'EEXIST':
             if (fs.statSync(directory).isDirectory()) {
                 return;
@@ -32,7 +32,7 @@ export const writeFilep = async (
     try {
         await writeFile(filePath, data);
     } catch (error) {
-        if (error.code === 'ENOENT') {
+        if ((error as {code: string}).code === 'ENOENT') {
             mkdirpSync(path.dirname(filePath));
             await writeFile(filePath, data);
         } else {
@@ -48,7 +48,7 @@ export const statIfExist = async (
         const stats = await stat(filePath);
         return stats;
     } catch (error) {
-        if (error.code === 'ENOENT') {
+        if ((error as {code: string}).code === 'ENOENT') {
             return null;
         } else {
             throw error;

@@ -94,6 +94,7 @@
     setup(function (endpoint) {
         const eventSource = new g.EventSource(endpoint);
         eventSource.addEventListener('error', onError);
+        eventSource.addEventListener('add', onChange);
         eventSource.addEventListener('change', onChange);
         eventSource.addEventListener('unlink', onChange);
     });
