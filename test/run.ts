@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as childProcess from 'child_process';
 import * as selenium from 'selenium-webdriver';
+import * as chrome from 'selenium-webdriver/chrome';
 import * as BrowserStack from 'browserstack-local';
 import {browserStack} from './util/constants';
 import {spawn} from './util/spawn';
@@ -48,14 +49,18 @@ test.beforeEach((t) => {
             t: ExecutionContext<ITextContext>,
             parameters: ISpawnParameters,
         ) {
+            const command = [parameters.command, ...(parameters.args || [])].join(' ');
+            console.log(`RUN: ${command}`);
             const subProcess = childProcess.spawn(
                 parameters.command,
                 parameters.args || [],
                 {
                     ...parameters.options || {},
                     shell: true,
+                    stdio: [process.stdin, process.stdout, process.stderr],
                 },
             )
+            .on('close', (code) => console.log(`EXIT(${code}): ${command}`))
             .on('error', (error) => t.fail(`${error as {toString: () => string}}`));
             t.context.processes.push({
                 process: subProcess,
@@ -96,7 +101,6 @@ const build = async (
         cwd: testDirectory,
         shell: true,
     };
-    await spawn({command: 'npm install', options: spawnOptions});
     await spawn({command: 'npm run build', options: spawnOptions});
 };
 
@@ -109,6 +113,7 @@ getCapabilities(testDirectories).forEach((capability, index) => {
         capability.browserName,
     ].join(' ');
     test.serial(`#${index + 1} ${name} ${subTitle}`, async (t) => {
+        t.timeout(180000);
         await Promise.all([
             build(testDirectory),
             afs.mkdir(outputDirectory, {recursive: true}),
@@ -128,6 +133,8 @@ getCapabilities(testDirectories).forEach((capability, index) => {
                 port: t.context.port,
                 localIdentifier: capability['bstack:options'].localIdentifier,
             });
+        } else {
+            builder.setChromeOptions(new chrome.Options().addArguments('--auto-open-devtools-for-tabs'));
         }
         const driver = t.context.driver = builder.build();
         t.context.session = await driver.getSession();

@@ -22,7 +22,8 @@ const getPort = () => {
     throw new Error(`InvalidPort: ${port}`);
 };
 
-app.use(require('middleware-static-livereload').middleware({
+app.use(require('../..').middleware({
+    logLevel: 0,
     documentRoot: 'lib',
 }));
 const server = http.createServer(app);
