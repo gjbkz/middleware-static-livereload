@@ -159,11 +159,19 @@
             },
             {
                 "files": [
+                    "copy.js",
+                    "test/**/*"
+                ],
+                "rules": {
+                    "no-console": "off"
+                }
+            },
+            {
+                "files": [
                     "test/run.ts"
                 ],
                 "rules": {
-                    "require-atomic-updates": "off",
-                    "no-console": "off"
+                    "require-atomic-updates": "off"
                 }
             },
             {
@@ -172,15 +180,6 @@
                 ],
                 "rules": {
                     "@typescript-eslint/no-unnecessary-condition": "off"
-                }
-            },
-            {
-                "files": [
-                    "copy.js",
-                    "test/sample-project/**/*"
-                ],
-                "rules": {
-                    "no-console": "off"
                 }
             }
         ]

@@ -77,7 +77,9 @@ test.afterEach(async (t) => {
     if (t.context.driver) {
         await t.context.driver.quit();
     }
-    await new Promise((resolve) => t.context.bsLocal ? t.context.bsLocal.stop(resolve) : resolve());
+    if (t.context.bsLocal) {
+        await new Promise((resolve) => t.context.bsLocal.stop(resolve));
+    }
     for (const {process, exit} of t.context.processes) {
         if (!exit) {
             process.kill();
