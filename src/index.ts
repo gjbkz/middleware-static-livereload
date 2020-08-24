@@ -13,6 +13,7 @@ export * from './getFile';
 export * from './getTools';
 export * from './handleError';
 export * from './listen';
+export * from './LogLevel';
 export * from './normalizeURLPathname';
 export * from './middleware';
 export * from './stringify';

@@ -3,13 +3,7 @@ import * as stream from 'stream';
 import * as http from 'http';
 import * as util from 'util';
 import * as chokidar from 'chokidar';
-
-export enum LogLevel {
-    debug = 0,
-    info = 1,
-    error = 2,
-    silent = 3,
-}
+import {LogLevel} from './LogLevel';
 
 export interface ILog {
     (...args: Array<any>): void,

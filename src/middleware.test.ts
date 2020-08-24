@@ -10,7 +10,7 @@ import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
 import {getBaseURL} from './test-util/getBaseURL';
 import {request} from './test-util/request';
 import {readStream} from './test-util/readStream';
-import {LogLevel} from './types';
+import {LogLevel} from './LogLevel';
 import {createLogger} from './test-util/createLogger';
 import {writeFile} from './fs';
 import {parseEvents} from './test-util/parseEvent';
