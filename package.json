@@ -42,7 +42,7 @@
     "devDependencies": {
         "@commitlint/cli": "^9.1.2",
         "@commitlint/config-conventional": "^9.1.2",
-        "@nlib/lint": "^3.17.2",
+        "@nlib/eslint-config": "^3.17.4",
         "@nlib/remove-sourcemap": "^3.17.4",
         "@types/connect": "^3.4.33",
         "@types/node": "^14.6.0",
@@ -76,7 +76,9 @@
             "test/src",
             "test/test-*"
         ],
-        "extends": "./node_modules/@nlib/lint/.eslintrc.json",
+        "extends": [
+            "@nlib/eslint-config"
+        ],
         "env": {
             "es6": true,
             "node": true
