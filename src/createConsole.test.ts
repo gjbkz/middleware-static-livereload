@@ -1,6 +1,6 @@
 import test from 'ava';
 import * as stream from 'stream';
-import {LogLevel} from './types';
+import {LogLevel} from './LogLevel';
 import {createConsole} from './createConsole';
 
 interface ITest {

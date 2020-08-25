@@ -1,4 +1,5 @@
-import {LogLevel, IConsole, IOptions} from './types';
+import {IConsole, IOptions} from './types';
+import {LogLevel} from './LogLevel';
 import {createWriter} from './createWriter';
 
 const createNoop = () => () => {

@@ -45,7 +45,9 @@ test.afterEach(async ({context: {session, driver, server, bsLocal, passed}}) => 
                 }
             });
         }),
-        bsLocal && new Promise((resolve) => bsLocal.stop(resolve)),
+        bsLocal && new Promise((resolve) => {
+            bsLocal.stop(resolve);
+        }),
     ]);
 });
 
