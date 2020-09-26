@@ -41,7 +41,7 @@
     },
     "devDependencies": {
         "@commitlint/cli": "^11.0.0",
-        "@commitlint/config-conventional": "^9.1.2",
+        "@commitlint/config-conventional": "^11.0.0",
         "@nlib/eslint-config": "^3.17.4",
         "@nlib/remove-sourcemap": "^3.17.4",
         "@types/connect": "^3.4.33",
