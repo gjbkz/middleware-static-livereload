@@ -36,7 +36,7 @@
         "version": "run-s version:changelog version:add"
     },
     "dependencies": {
-        "chokidar": "3.4.2",
+        "chokidar": "3.4.3",
         "event-source-polyfill": "1.0.17"
     },
     "devDependencies": {
