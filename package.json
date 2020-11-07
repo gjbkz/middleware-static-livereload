@@ -52,7 +52,7 @@
         "ava": "3.12.1",
         "browserstack-local": "1.4.8",
         "connect": "3.7.0",
-        "conventional-changelog-cli": "2.1.0",
+        "conventional-changelog-cli": "2.1.1",
         "eslint": "7.12.1",
         "husky": "4.2.5",
         "lint-staged": "10.2.11",
