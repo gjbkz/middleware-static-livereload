@@ -10,9 +10,9 @@ import {LibError} from './LibError';
 
 export const createFileFinder = (
     {documentRoot = process.cwd(), index = 'index.html'}: IOptions = {},
-    reservedPaths: {[relativePath: string]: string | undefined} = {},
+    reservedPaths: Record<string, string> = {},
 ): IFileFinder => {
-    const absoluteDocumentRoots = ensureArray(documentRoot).map((documentRoot) => absolutify(documentRoot));
+    const absoluteDocumentRoots = ensureArray(documentRoot).map((pathString) => absolutify(pathString));
     const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'node-server-'));
     return Object.assign(
         async (pathname: string) => {

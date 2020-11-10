@@ -19,7 +19,7 @@ const test = anyTest as TestInterface<{
     port: number,
     app: connect.Server,
     server: http.Server,
-    files: {[path: string]: Buffer},
+    files: Record<string, Buffer>,
     directory: string,
     baseURL: URL,
     middleware: ReturnType<typeof middleware>,
@@ -61,9 +61,9 @@ test.beforeEach(async (t) => {
 });
 
 test.afterEach(async (t) => {
-    const {middleware, server} = t.context;
-    if (middleware.fileWatcher) {
-        await middleware.fileWatcher.close();
+    const {server} = t.context;
+    if (t.context.middleware.fileWatcher) {
+        await t.context.middleware.fileWatcher.close();
     }
     await new Promise((resolve, reject) => {
         server.close((error) => error ? reject(error) : resolve());

@@ -83,8 +83,8 @@
             "es6": true,
             "node": true
         },
-        "globals": {
-            "URL": false
+        "rules": {
+            "@nlib/no-globals": "off"
         },
         "overrides": [
             {
@@ -186,6 +186,14 @@
                 ],
                 "rules": {
                     "@typescript-eslint/no-unnecessary-condition": "off"
+                }
+            },
+            {
+                "files": [
+                    "src/LogLevel.ts"
+                ],
+                "rules": {
+                    "@typescript-eslint/no-redeclare": "off"
                 }
             }
         ]

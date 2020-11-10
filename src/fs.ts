@@ -8,7 +8,7 @@ export const writeFile = util.promisify(fs.writeFile);
 export const mkdirpSync = (directory: string) => {
     try {
         fs.mkdirSync(directory);
-    } catch (error) {
+    } catch (error: unknown) {
         switch ((error as {code: string}).code) {
         case 'EEXIST':
             if (fs.statSync(directory).isDirectory()) {
@@ -31,7 +31,7 @@ export const writeFilep = async (
 ): Promise<void> => {
     try {
         await writeFile(filePath, data);
-    } catch (error) {
+    } catch (error: unknown) {
         if ((error as {code: string}).code === 'ENOENT') {
             mkdirpSync(path.dirname(filePath));
             await writeFile(filePath, data);
@@ -47,7 +47,7 @@ export const statIfExist = async (
     try {
         const stats = await stat(filePath);
         return stats;
-    } catch (error) {
+    } catch (error: unknown) {
         if ((error as {code: string}).code === 'ENOENT') {
             return null;
         } else {
