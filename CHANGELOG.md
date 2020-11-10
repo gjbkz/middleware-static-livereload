@@ -1,111 +1,180 @@
-## [1.2.14](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.13...v1.2.14) (2020-06-22)
+# Changelog
+
+## v1.2.15 (2020-11-10)
+
+### Tests
+
+- use fetch (67f97a1)
+- fix middleware tests (5cef326)
+
+### Code Refactoring
+
+- remove readStream (fb21143)
+- fix eslint errors (f5cf638)
+- fix eslint errors (3a5adb4)
+
+### Documentation
+
+- update the BrowserStack badge (4d333a3)
+- update badges (8b2e203)
+
+### Continuous Integration
+
+- update configurations (7305207)
+- setup github actions (ce1ad5d)
+
+### Dependency Upgrades
+
+- pin dependencies (e6c0326)
+- setup some nlib tools (f3178b6)
 
 
+## v1.2.14 (2020-06-22)
 
-## [1.2.13](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.12...v1.2.13) (2019-12-09)
+### Tests
 
+- remove spawn() (b55fdd6)
+- kill processes (8abc39d)
+- fix types (c199cb6)
+- fix reporter (376f0e3)
+- fix test scripts (2c168ab)
+
+### Code Refactoring
+
+- fix eslint errors (89902c2)
+- fix eslint errors (3988a24)
+
+
+## v1.2.13 (2019-12-09)
 
 ### Features
 
-* set stabilityThreshold ([0c1e40d](https://github.com/kei-ito/middleware-static-livereload/commit/0c1e40d365bd75b68f8e3e629d6ac78e7b68b2ed))
+- set stabilityThreshold (0c1e40d)
 
 
+## v1.2.12 (2019-12-09)
 
-## [1.2.12](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.11...v1.2.12) (2019-12-09)
+### Code Refactoring
 
-
-
-## [1.2.11](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.10...v1.2.11) (2019-12-09)
-
+- fix an eslint error (26ec3ac)
 
 
-## [1.2.10](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.9...v1.2.10) (2019-12-08)
+## v1.2.11 (2019-12-09)
 
 
+## v1.2.10 (2019-12-08)
 
-## [1.2.9](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.8...v1.2.9) (2019-11-14)
+### Tests
 
+- add capabilities (f85ca0a)
 
+### Code Refactoring
 
-## [1.2.8](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.7...v1.2.8) (2019-10-21)
-
-
-
-## [1.2.7](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.6...v1.2.7) (2019-09-06)
-
+- fix eslint and type errors (8db59d4)
 
 
-## [1.2.6](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.5...v1.2.6) (2019-08-22)
+## v1.2.9 (2019-11-14)
+
+### Code Refactoring
+
+- fix eslint errors (66b3fb6)
 
 
+## v1.2.8 (2019-10-21)
 
-## [1.2.5](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.4...v1.2.5) (2019-07-29)
 
+## v1.2.7 (2019-09-06)
+
+
+## v1.2.6 (2019-08-22)
+
+### Tests
+
+- update the last test (fd2c4fc)
+
+### Code Refactoring
+
+- fix the logic error (f0d0764)
+- fix eslint errors (ff9a34d)
+
+
+## v1.2.5 (2019-07-29)
 
 ### Bug Fixes
 
-* upgrade dependencies ([c271d06](https://github.com/kei-ito/middleware-static-livereload/commit/c271d066910a1cee06fb5b9918cbf881ceb8e25c))
+- upgrade dependencies (c271d06)
 
 
+## v1.2.4 (2019-06-28)
 
-## [1.2.4](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.3...v1.2.4) (2019-06-28)
+### Tests
+
+- add some tests for fs utils (cadb0ef)
+- add a test for listen (4041773)
+- add tests for handleError (f1f7658)
+- add a test for console (b64ddd5)
+
+### Code Refactoring
+
+- remove the end method from console (759e1d5)
 
 
+## v1.2.3 (2019-06-27)
 
-## [1.2.3](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.2...v1.2.3) (2019-06-27)
+### Tests
+
+- createInserter (8942b54)
+- createSnippetInjector (1e5de76)
+- createFileWatcher (940117b)
+- createConsole (ffa2d6c)
+
+### Code Refactoring
+
+- object merging (fba9080)
+
+### Documentation
+
+- update the options section (b0aaa58)
 
 
-
-## [1.2.2](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.1...v1.2.2) (2019-06-11)
-
+## v1.2.2 (2019-06-11)
 
 ### Bug Fixes
 
-* license ([25dd6ff](https://github.com/kei-ito/middleware-static-livereload/commit/25dd6ff3aa2d49addbc3ccbd9994f82c56836f6e))
+- license (25dd6ff)
 
 
-
-## [1.2.1](https://github.com/kei-ito/middleware-static-livereload/compare/v1.2.0...v1.2.1) (2019-06-11)
-
+## v1.2.1 (2019-06-11)
 
 ### Bug Fixes
 
-* event-source-polyfill ([0c2399e](https://github.com/kei-ito/middleware-static-livereload/commit/0c2399e0008840ddbb2db2725e7afc4d8d818722))
+- event-source-polyfill (0c2399e)
 
 
-
-# [1.2.0](https://github.com/kei-ito/middleware-static-livereload/compare/v1.1.0...v1.2.0) (2019-06-11)
-
+## v1.2.0 (2019-06-11)
 
 ### Features
 
-* remove default export ([#16](https://github.com/kei-ito/middleware-static-livereload/issues/16)) ([a0e2713](https://github.com/kei-ito/middleware-static-livereload/commit/a0e27138e3d7154996753156e53ee23036396e60))
+- remove default export (#16) (a0e2713)
 
 
-
-# [1.1.0](https://github.com/kei-ito/middleware-static-livereload/compare/v1.0.0...v1.1.0) (2019-06-11)
-
+## v1.1.0 (2019-06-11)
 
 ### Features
 
-* add index generator ([#15](https://github.com/kei-ito/middleware-static-livereload/issues/15)) ([03276b3](https://github.com/kei-ito/middleware-static-livereload/commit/03276b312b9ea5e44aa5d953af1bb82767d3a49a))
+- add index generator (#15) (03276b3)
 
 
-
-# [1.0.0](https://github.com/kei-ito/middleware-static-livereload/compare/v0.0.5...v1.0.0) (2019-06-11)
-
+## v1.0.0 (2019-06-11)
 
 ### Features
 
-* server sent events (breaking) ([#12](https://github.com/kei-ito/middleware-static-livereload/issues/12)) ([6f4f846](https://github.com/kei-ito/middleware-static-livereload/commit/6f4f84687599b55818e150964b7ba91c9fdac5fb))
+- server sent events (breaking) (#12) (6f4f846)
 
 
-
-## [0.0.5](https://github.com/kei-ito/middleware-static-livereload/compare/v0.0.4...v0.0.5) (2018-04-12)
-
+## v0.0.5 (2018-04-12)
 
 
-## 0.0.4 (2017-05-09)
-
+## v0.0.4 (2017-05-09)
 
 
