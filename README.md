@@ -2,7 +2,8 @@
 
 ![Test](https://github.com/kei-ito/middleware-static-livereload/workflows/Test/badge.svg)
 [![codecov](https://codecov.io/gh/kei-ito/middleware-static-livereload/branch/master/graph/badge.svg)](https://codecov.io/gh/kei-ito/middleware-static-livereload)
-[![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=RThwZG1nRWNGOFFOQjc5TFJJTGovbFNJVmVmTUZxSU8zVG9MWjBnMlpiOD0tLWFHNlkrZ3JHd0FmVCtVL3k1TU1NcVE9PQ==--13129bc5044f47c05b3068e5a810a374d2dda6aa)](https://www.browserstack.com/automate/public-build/RThwZG1nRWNGOFFOQjc5TFJJTGovbFNJVmVmTUZxSU8zVG9MWjBnMlpiOD0tLWFHNlkrZ3JHd0FmVCtVL3k1TU1NcVE9PQ==--13129bc5044f47c05b3068e5a810a374d2dda6aa)
+[![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=cll6bnJraU9ROGpHdWZYR3J6VzZid3lwSGE0a2REaXd2eWk0Y1dDd1NsUT0tLXNHQjRueFRqcU9YQUc2TndUd05UN1E9PQ==--db592e073086b93668e627615526e58bc499fde2)](https://automate.browserstack.com/public-build/cll6bnJraU9ROGpHdWZYR3J6VzZid3lwSGE0a2REaXd2eWk0Y1dDd1NsUT0tLXNHQjRueFRqcU9YQUc2TndUd05UN1E9PQ==--db592e073086b93668e627615526e58bc499fde2)
+
 
 A middleware for [connect](https://github.com/senchalabs/connect) server.
 It injects the autoreload script into text/html files before serving them.
