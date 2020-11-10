@@ -12,7 +12,7 @@ export const middleware = (
 ): connect.NextHandleFunction & {fileWatcher: chokidar.FSWatcher | null} => {
     const {fileWatcher, console, connectionPath, handleConnection, findFile, getContentType, injectSnippet} = getTools(options);
     let counter = 0;
-    const middleware: connect.NextHandleFunction = (req, res, next) => {
+    const middlewareFn: connect.NextHandleFunction = (req, res, next) => {
         const id = `#${counter++}`;
         console.info(id, '←', req.method, req.url);
         const url = new URL(req.url || '/', 'http://localhost');
@@ -48,5 +48,5 @@ export const middleware = (
             .then(() => console.debug(id, '→', res.statusCode, {...res.getHeaders()}));
         }
     };
-    return Object.assign(middleware, {fileWatcher});
+    return Object.assign(middlewareFn, {fileWatcher});
 };

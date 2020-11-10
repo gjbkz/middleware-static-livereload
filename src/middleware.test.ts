@@ -1,69 +1,58 @@
+import './test-util/fetch';
 import * as path from 'path';
 import * as http from 'http';
+import * as stream from 'stream';
 import * as connect from 'connect';
+import fetch from 'node-fetch';
+import AbortController from 'abort-controller';
 import {URL} from 'url';
 import anyTest, {TestInterface} from 'ava';
-import {middleware} from './middleware';
+import {middleware as createMiddleware} from './middleware';
 import {listen} from './listen';
 import {prepareFiles} from './test-util/prepareFiles';
 import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
 import {getBaseURL} from './test-util/getBaseURL';
-import {request} from './test-util/request';
-import {readStream} from './test-util/readStream';
 import {LogLevel} from './LogLevel';
 import {createLogger} from './test-util/createLogger';
 import {writeFile} from './fs';
-import {parseEvents} from './test-util/parseEvent';
 
 const test = anyTest as TestInterface<{
     port: number,
     app: connect.Server,
     server: http.Server,
-    files: {[path: string]: Buffer},
+    files: Record<string, Buffer>,
     directory: string,
     baseURL: URL,
-    middleware: ReturnType<typeof middleware>,
+    middleware: ReturnType<typeof createMiddleware>,
+    connection?: http.IncomingMessage,
 }>;
 
 let nextPort = 9200;
 test.beforeEach(async (t) => {
-    const port = nextPort++;
-    const app = connect();
-    const server = http.createServer(app);
-    const directory = await createTemporaryDirectory();
-    const files = {
-        'foo.txt': Buffer.from([
-            'foo',
-        ].join('\n')),
-        'index.html': Buffer.from([
-            '<!doctype html>',
-            'index',
-        ].join('\n')),
-        'bar/baz1.txt': Buffer.from([
-            'baz1',
-        ].join('\n')),
-        'bar/baz2.txt': Buffer.from([
-            'baz2',
-        ].join('\n')),
+    const port = t.context.port = nextPort++;
+    const app = t.context.app = connect();
+    const server = t.context.server = http.createServer(app);
+    const directory = t.context.directory = await createTemporaryDirectory();
+    const files = t.context.files = {
+        'foo.txt': Buffer.from('foo'),
+        'index.html': Buffer.from('<!doctype html>\nindex'),
+        'bar/baz1.txt': Buffer.from('baz1'),
+        'bar/baz2.txt': Buffer.from('baz2'),
     };
     await Promise.all([
         listen(server, port),
         prepareFiles(files, directory),
     ]);
-    Object.assign(t.context, {
-        port,
-        app,
-        server,
-        directory,
-        files,
-        baseURL: getBaseURL(server.address()),
-    });
+    t.context.baseURL = getBaseURL(server.address());
 });
 
 test.afterEach(async (t) => {
-    const {middleware, server} = t.context;
+    const {server, middleware, connection} = t.context;
     if (middleware.fileWatcher) {
         await middleware.fileWatcher.close();
+    }
+    if (connection && !connection.destroyed) {
+        connection.destroy();
     }
     await new Promise((resolve, reject) => {
         server.close((error) => error ? reject(error) : resolve());
@@ -71,7 +60,7 @@ test.afterEach(async (t) => {
 });
 
 test('GET /foo.txt', async (t) => {
-    t.context.middleware = middleware({
+    t.context.middleware = createMiddleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
@@ -79,14 +68,14 @@ test('GET /foo.txt', async (t) => {
     });
     t.context.app.use(t.context.middleware);
     const url = new URL('/foo.txt', t.context.baseURL);
-    const res = await request('GET', url);
-    t.is(res.statusCode, 200);
-    t.is(res.headers['content-type'], 'text/plain');
-    t.is(`${await readStream(res)}`, `${t.context.files['foo.txt']}`);
+    const res = await fetch(`${url}`);
+    t.is(res.status, 200);
+    t.is(res.headers.get('content-type'), 'text/plain');
+    t.is(`${await res.text()}`, `${t.context.files['foo.txt']}`);
 });
 
 test('GET /', async (t) => {
-    t.context.middleware = middleware({
+    t.context.middleware = createMiddleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
@@ -94,13 +83,13 @@ test('GET /', async (t) => {
     });
     t.context.app.use(t.context.middleware);
     const url = new URL('/', t.context.baseURL);
-    const res = await request('GET', url);
-    t.is(res.statusCode, 200);
-    t.is(res.headers['content-type'], 'text/html');
+    const res = await fetch(`${url}`);
+    t.is(res.status, 200);
+    t.is(res.headers.get('content-type'), 'text/html');
 });
 
 test('GET /bar/', async (t) => {
-    t.context.middleware = middleware({
+    t.context.middleware = createMiddleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
@@ -108,16 +97,16 @@ test('GET /bar/', async (t) => {
     });
     t.context.app.use(t.context.middleware);
     const url = new URL('/bar/', t.context.baseURL);
-    const res = await request('GET', url);
-    t.is(res.statusCode, 200);
-    t.is(res.headers['content-type'], 'text/html');
-    const html = `${await readStream(res)}`;
+    const res = await fetch(`${url}`);
+    t.is(res.status, 200);
+    t.is(res.headers.get('content-type'), 'text/html');
+    const html = await res.text();
     t.true(html.includes('baz1'));
     t.true(html.includes('baz2'));
 });
 
 test('GET /middleware-static-livereload.js', async (t) => {
-    t.context.middleware = middleware({
+    t.context.middleware = createMiddleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
@@ -125,17 +114,13 @@ test('GET /middleware-static-livereload.js', async (t) => {
     });
     t.context.app.use(t.context.middleware);
     const url = new URL('/middleware-static-livereload.js', t.context.baseURL);
-    const res = await request('GET', url);
-    t.is(res.statusCode, 200);
-    t.is(res.headers['content-type'], 'text/javascript');
+    const res = await fetch(`${url}`);
+    t.is(res.status, 200);
+    t.is(res.headers.get('content-type'), 'text/javascript');
 });
 
 test('GET /middleware-static-livereload.js/connect', async (t) => {
-    setTimeout(() => {
-        connection.destroy();
-        t.fail('timeout');
-    }, 5000);
-    t.context.middleware = middleware({
+    t.context.middleware = createMiddleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
         stdout: createLogger(t),
@@ -143,25 +128,36 @@ test('GET /middleware-static-livereload.js/connect', async (t) => {
     });
     const {fileWatcher} = t.context.middleware;
     if (!fileWatcher) {
-        t.truthy(fileWatcher);
+        t.fail('NoFileWatcher');
         return;
     }
     t.context.app.use(t.context.middleware);
     const url = new URL('/middleware-static-livereload.js/connect', t.context.baseURL);
-    const connection = await request('GET', url, {
+    const abortController = new AbortController();
+    const res = await fetch(`${url}`, {
+        signal: abortController.signal,
         headers: {
             'accept': 'text/event-stream',
             'content-type': 'text/event-stream',
             'user-agent': `${process.version} ${process.arch}`,
         },
     });
-    const reader = readStream(connection, (received) => {
-        if (`${received}`.includes('event: change')) {
-            connection.destroy();
-        }
-    });
-    t.is(connection.statusCode, 200);
-    t.is(connection.headers['content-type'], 'text/event-stream');
+    const connection = res.body as unknown as NodeJS.ReadableStream;
+    Object.assign(t.context, {connection});
+    let messages = '';
+    const chunks: Array<Buffer> = [];
+    connection.pipe(new stream.Writable({
+        write(chunk: Buffer, _encoding, callback) {
+            chunks.push(chunk);
+            if (`${chunk}`.includes('event: change')) {
+                messages = `${Buffer.concat(chunks)}`;
+                abortController.abort();
+            }
+            callback();
+        },
+    }));
+    t.is(res.status, 200);
+    t.is(res.headers.get('content-type'), 'text/event-stream');
     const waitAddEvent = new Promise((resolve, reject) => {
         fileWatcher
         .once('error', reject)
@@ -171,16 +167,38 @@ test('GET /middleware-static-livereload.js/connect', async (t) => {
         });
     });
     const indexFilePath = path.join(t.context.directory, 'index.html');
-    const indexUrl = new URL('/', t.context.baseURL);
-    const indexRes = await request('GET', indexUrl);
-    t.is(indexRes.statusCode, 200);
-    t.is(indexRes.headers['content-type'], 'text/html');
+    const indexRes = await fetch(`${new URL('/', t.context.baseURL)}`);
+    t.is(indexRes.status, 200);
+    t.is(indexRes.headers.get('content-type'), 'text/html');
     t.is(await waitAddEvent, indexFilePath);
     await writeFile(indexFilePath, Buffer.from('<!doctype html>\nindex2'));
-    const [e0, e1, e2] = parseEvents(await reader);
-    t.is(e0.data, '#0');
-    t.is(e1.event, 'add');
-    t.is(e1.data, 'index.html');
-    t.is(e2.event, 'change');
-    t.is(e2.data, 'index.html');
+    await new Promise((resolve, reject) => {
+        let count = 0;
+        const check = () => {
+            if (messages) {
+                resolve();
+            } else if (count++ < 50) {
+                setTimeout(check, 100);
+            } else {
+                reject(new Error('Timeout'));
+            }
+        };
+        check();
+    });
+    const events = messages.split('\n\n')
+    .map((eventMessage) => {
+        const event: Record<string, string> = {};
+        for (const line of eventMessage.trim().split('\n')) {
+            const [key, value] = line.split(/\s*:\s*/);
+            if (key && value) {
+                event[key.trim()] = value.trim();
+            }
+        }
+        return event;
+    })
+    .filter((event) => 'id' in event);
+    t.deepEqual(events, [
+        {id: '0', data: 'index.html', event: 'add'},
+        {id: '1', data: 'index.html', event: 'change'},
+    ]);
 });

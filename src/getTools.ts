@@ -21,7 +21,7 @@ export const getTools = (
     if (fileWatcher) {
         fileWatcher.on('all', (eventName, file) => {
             console.debug(`${eventName}: ${file}`);
-            const documentRoot = findFile.documentRoots.find((documentRoot) => file.startsWith(documentRoot));
+            const documentRoot = findFile.documentRoots.find((pathString) => file.startsWith(pathString));
             if (documentRoot) {
                 handleConnection.sendEvent(
                     path.relative(documentRoot, file).split(path.sep).join('/'),

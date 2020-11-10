@@ -7,7 +7,7 @@ export const handleError = (
     console: IConsole,
 ) => {
     console.error(id, error.stack || error);
-    if (!res.finished) {
+    if (!res.writableEnded) {
         if (!res.headersSent) {
             switch (error.code) {
             case 'ENOENT':

@@ -2,9 +2,7 @@ import * as path from 'path';
 import {writeFilep} from '../fs';
 
 export const prepareFiles = async (
-    files: {
-        [path: string]: Buffer,
-    },
+    files: Record<string, Buffer>,
     directory: string,
 ): Promise<void> => {
     const paths = Object.keys(files).sort((a, b) => a.localeCompare(b));

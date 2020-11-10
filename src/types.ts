@@ -83,9 +83,7 @@ export interface IOptions {
      * If you given a map, it extends the default map.
      * @default See [src/defaultContentTypes.ts](src/defaultContentTypes.ts).
      */
-    contentTypes?: {
-        [type: string]: string | Array<string>,
-    },
+    contentTypes?: Record<string, string | Array<string>>,
     /**
      * 0: debug, 1: info, 2: error, 3: silent
      * @default 1
@@ -127,13 +125,9 @@ export interface IOptions {
     inspectOptions?: util.InspectOptions,
 }
 
-export interface IEvent {
-    [key: string]: string,
-}
-
 export interface IServerResponseLike {
     end: http.ServerResponse['end'],
     statusCode?: http.ServerResponse['statusCode'],
     headersSent?: http.ServerResponse['headersSent'],
-    finished?: http.ServerResponse['finished'],
+    writableEnded?: http.ServerResponse['writableEnded'],
 }

@@ -70,7 +70,7 @@ test('Ended', (t) => {
     });
     const console = createConsole({stdout: writable, stderr: writable});
     const res: IServerResponseLike = {
-        finished: true,
+        writableEnded: true,
         statusCode: 200,
         end: () => endIsCalled++,
     };
