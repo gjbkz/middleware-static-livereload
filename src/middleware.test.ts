@@ -1,7 +1,10 @@
+import './test-util/fetch';
 import * as path from 'path';
 import * as http from 'http';
 import * as stream from 'stream';
 import * as connect from 'connect';
+import fetch from 'node-fetch';
+import AbortController from 'abort-controller';
 import {URL} from 'url';
 import anyTest, {TestInterface} from 'ava';
 import {middleware as createMiddleware} from './middleware';
@@ -9,8 +12,6 @@ import {listen} from './listen';
 import {prepareFiles} from './test-util/prepareFiles';
 import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
 import {getBaseURL} from './test-util/getBaseURL';
-import {request} from './test-util/request';
-import {readStream} from './test-util/readStream';
 import {LogLevel} from './LogLevel';
 import {createLogger} from './test-util/createLogger';
 import {writeFile} from './fs';
@@ -67,10 +68,10 @@ test('GET /foo.txt', async (t) => {
     });
     t.context.app.use(t.context.middleware);
     const url = new URL('/foo.txt', t.context.baseURL);
-    const res = await request('GET', url);
-    t.is(res.statusCode, 200);
-    t.is(res.headers['content-type'], 'text/plain');
-    t.is(`${await readStream(res)}`, `${t.context.files['foo.txt']}`);
+    const res = await fetch(`${url}`);
+    t.is(res.status, 200);
+    t.is(res.headers.get('content-type'), 'text/plain');
+    t.is(`${await res.text()}`, `${t.context.files['foo.txt']}`);
 });
 
 test('GET /', async (t) => {
@@ -82,9 +83,9 @@ test('GET /', async (t) => {
     });
     t.context.app.use(t.context.middleware);
     const url = new URL('/', t.context.baseURL);
-    const res = await request('GET', url);
-    t.is(res.statusCode, 200);
-    t.is(res.headers['content-type'], 'text/html');
+    const res = await fetch(`${url}`);
+    t.is(res.status, 200);
+    t.is(res.headers.get('content-type'), 'text/html');
 });
 
 test('GET /bar/', async (t) => {
@@ -96,10 +97,10 @@ test('GET /bar/', async (t) => {
     });
     t.context.app.use(t.context.middleware);
     const url = new URL('/bar/', t.context.baseURL);
-    const res = await request('GET', url);
-    t.is(res.statusCode, 200);
-    t.is(res.headers['content-type'], 'text/html');
-    const html = `${await readStream(res)}`;
+    const res = await fetch(`${url}`);
+    t.is(res.status, 200);
+    t.is(res.headers.get('content-type'), 'text/html');
+    const html = await res.text();
     t.true(html.includes('baz1'));
     t.true(html.includes('baz2'));
 });
@@ -113,9 +114,9 @@ test('GET /middleware-static-livereload.js', async (t) => {
     });
     t.context.app.use(t.context.middleware);
     const url = new URL('/middleware-static-livereload.js', t.context.baseURL);
-    const res = await request('GET', url);
-    t.is(res.statusCode, 200);
-    t.is(res.headers['content-type'], 'text/javascript');
+    const res = await fetch(`${url}`);
+    t.is(res.status, 200);
+    t.is(res.headers.get('content-type'), 'text/javascript');
 });
 
 test('GET /middleware-static-livereload.js/connect', async (t) => {
@@ -132,13 +133,16 @@ test('GET /middleware-static-livereload.js/connect', async (t) => {
     }
     t.context.app.use(t.context.middleware);
     const url = new URL('/middleware-static-livereload.js/connect', t.context.baseURL);
-    const connection = await request('GET', url, {
+    const abortController = new AbortController();
+    const res = await fetch(`${url}`, {
+        signal: abortController.signal,
         headers: {
             'accept': 'text/event-stream',
             'content-type': 'text/event-stream',
             'user-agent': `${process.version} ${process.arch}`,
         },
     });
+    const connection = res.body as unknown as NodeJS.ReadableStream;
     Object.assign(t.context, {connection});
     let messages = '';
     const chunks: Array<Buffer> = [];
@@ -147,13 +151,13 @@ test('GET /middleware-static-livereload.js/connect', async (t) => {
             chunks.push(chunk);
             if (`${chunk}`.includes('event: change')) {
                 messages = `${Buffer.concat(chunks)}`;
-                connection.destroy();
+                abortController.abort();
             }
             callback();
         },
     }));
-    t.is(connection.statusCode, 200);
-    t.is(connection.headers['content-type'], 'text/event-stream');
+    t.is(res.status, 200);
+    t.is(res.headers.get('content-type'), 'text/event-stream');
     const waitAddEvent = new Promise((resolve, reject) => {
         fileWatcher
         .once('error', reject)
@@ -163,10 +167,9 @@ test('GET /middleware-static-livereload.js/connect', async (t) => {
         });
     });
     const indexFilePath = path.join(t.context.directory, 'index.html');
-    const indexUrl = new URL('/', t.context.baseURL);
-    const indexRes = await request('GET', indexUrl);
-    t.is(indexRes.statusCode, 200);
-    t.is(indexRes.headers['content-type'], 'text/html');
+    const indexRes = await fetch(`${new URL('/', t.context.baseURL)}`);
+    t.is(indexRes.status, 200);
+    t.is(indexRes.headers.get('content-type'), 'text/html');
     t.is(await waitAddEvent, indexFilePath);
     await writeFile(indexFilePath, Buffer.from('<!doctype html>\nindex2'));
     await new Promise((resolve, reject) => {
