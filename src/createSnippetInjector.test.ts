@@ -1,7 +1,6 @@
 import * as stream from 'stream';
 import test from 'ava';
 import {createSnippetInjector} from './createSnippetInjector';
-import {readStream} from './test-util/readStream';
 
 test('inject the snippet', async (t) => {
     const injectee = 'abc';
@@ -15,6 +14,19 @@ test('inject the snippet', async (t) => {
         readable.write('bar');
         readable.end();
     });
-    const actual = await readStream(injected);
+    const actual = await new Promise<Buffer>((resolve, reject) => {
+        const chunks: Array<Buffer> = [];
+        injected.pipe(new stream.Writable({
+            write(chunk: Buffer, _encoding, callback) {
+                chunks.push(chunk);
+                callback();
+            },
+            final(callback) {
+                resolve(Buffer.concat(chunks));
+                callback();
+            },
+        }))
+        .once('error', reject);
+    });
     t.is(`${actual}`, `<!-- comments -->\n<!doctype html>${injectee}\nbar`);
 });
