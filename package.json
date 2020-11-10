@@ -68,7 +68,8 @@
         ],
         "require": [
             "ts-node/register"
-        ]
+        ],
+        "timeout": "1m"
     },
     "eslintConfig": {
         "ignorePatterns": [
