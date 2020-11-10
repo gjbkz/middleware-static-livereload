@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.2.16 (2020-11-10)
+
+### Tests
+
+- set timeout (d5c7ca4)
+
+
 ## v1.2.15 (2020-11-10)
 
 ### Tests
