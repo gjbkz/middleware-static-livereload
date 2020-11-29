@@ -26,9 +26,7 @@ const test = anyTest as TestInterface<{
     connection?: http.IncomingMessage,
 }>;
 
-let nextPort = 9200;
 test.beforeEach(async (t) => {
-    const port = t.context.port = nextPort++;
     const app = t.context.app = connect();
     const server = t.context.server = http.createServer(app);
     const directory = t.context.directory = await createTemporaryDirectory();
@@ -38,10 +36,8 @@ test.beforeEach(async (t) => {
         'bar/baz1.txt': Buffer.from('baz1'),
         'bar/baz2.txt': Buffer.from('baz2'),
     };
-    await Promise.all([
-        listen(server, port),
-        prepareFiles(files, directory),
-    ]);
+    t.context.port = await listen(server, 9200);
+    await prepareFiles(files, directory);
     t.context.baseURL = getBaseURL(server.address());
 });
 
