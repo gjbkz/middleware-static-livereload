@@ -94,14 +94,22 @@ test.serial('GET /middleware-static-livereload.js', async (t) => {
 });
 
 test.serial('GET /middleware-static-livereload.js/connect', async (t) => {
-    t.timeout(60000);
     const {fileWatcher} = t.context.middleware;
     if (!fileWatcher) {
         t.fail('NoFileWatcher');
         return;
     }
+    const waitAddEvent = new Promise((resolve, reject) => {
+        fileWatcher
+        .once('error', reject)
+        .once('add', (file) => {
+            fileWatcher.removeListener('error', reject);
+            resolve(file);
+        });
+    });
     const url = new URL('/middleware-static-livereload.js/connect', t.context.baseURL);
     const abortController = new AbortController();
+    t.log('connect: connecting');
     const res = await fetch(`${url}`, {
         signal: abortController.signal,
         headers: {
@@ -110,12 +118,14 @@ test.serial('GET /middleware-static-livereload.js/connect', async (t) => {
             'user-agent': `${process.version} ${process.arch}`,
         },
     });
-    const connection = res.body as unknown as NodeJS.ReadableStream;
+    t.log(`connect: ${res.status} ${res.statusText}`);
+    const connection = res.body;
     Object.assign(t.context, {connection});
     let messages = '';
     const chunks: Array<Buffer> = [];
     connection.pipe(new stream.Writable({
         write(chunk: Buffer, _encoding, callback) {
+            t.log(`connect: ${chunk}`);
             chunks.push(chunk);
             if (`${chunk}`.includes('event: change')) {
                 messages = `${Buffer.concat(chunks)}`;
@@ -126,14 +136,6 @@ test.serial('GET /middleware-static-livereload.js/connect', async (t) => {
     }));
     t.is(res.status, 200);
     t.is(res.headers.get('content-type'), 'text/event-stream');
-    const waitAddEvent = new Promise((resolve, reject) => {
-        fileWatcher
-        .once('error', reject)
-        .once('add', (file) => {
-            fileWatcher.removeListener('error', reject);
-            resolve(file);
-        });
-    });
     const indexFilePath = path.join(t.context.directory, 'index.html');
     const indexRes = await fetch(`${new URL('/', t.context.baseURL)}`);
     t.is(indexRes.status, 200);
