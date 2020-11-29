@@ -5,7 +5,7 @@ export const listenPort = async (
     server: http.Server,
     port: number,
 ) => {
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
         server
         .once('error', (error: NodeJS.ErrnoException) => {
             if (error.code === 'EADDRINUSE' || error.code === 'EADDRNOTAVAIL') {

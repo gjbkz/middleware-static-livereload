@@ -54,7 +54,7 @@ test.afterEach(async (t) => {
     if (connection && !connection.destroyed) {
         connection.destroy();
     }
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
         server.close((error) => error ? reject(error) : resolve());
     });
 });
@@ -172,7 +172,7 @@ test('GET /middleware-static-livereload.js/connect', async (t) => {
     t.is(indexRes.headers.get('content-type'), 'text/html');
     t.is(await waitAddEvent, indexFilePath);
     await writeFile(indexFilePath, Buffer.from('<!doctype html>\nindex2'));
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
         let count = 0;
         const check = () => {
             if (messages) {
