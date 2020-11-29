@@ -61,12 +61,6 @@ test.after(async (t) => {
     });
 });
 
-test.beforeEach(async () => {
-    await new Promise<void>((resolve) => {
-        setTimeout(resolve, 50);
-    });
-});
-
 test.serial('GET /foo.txt', async (t) => {
     const url = new URL('/foo.txt', t.context.baseURL);
     const res = await fetch(`${url}`);
@@ -100,6 +94,7 @@ test.serial('GET /middleware-static-livereload.js', async (t) => {
 });
 
 test.serial('GET /middleware-static-livereload.js/connect', async (t) => {
+    t.timeout(60000);
     const {fileWatcher} = t.context.middleware;
     if (!fileWatcher) {
         t.fail('NoFileWatcher');
