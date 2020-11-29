@@ -28,6 +28,7 @@
         "build": "run-s cleanup build:tsc build:client",
         "test:ava": "ava 'lib/**/*.test.js'",
         "test:tsc": "tsc --noEmit",
+        "test:tsctest": "tsc --project tsconfig.test.json --noEmit",
         "test": "run-p test:*",
         "test-client": "ava --timeout 2m test/run.ts",
         "version": "run-s version:changelog version:add",
@@ -69,7 +70,7 @@
         "require": [
             "ts-node/register"
         ],
-        "timeout": "1m"
+        "timeout": "2m"
     },
     "eslintConfig": {
         "ignorePatterns": [

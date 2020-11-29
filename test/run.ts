@@ -36,7 +36,7 @@ test.afterEach(async ({context: {session, driver, server, bsLocal, passed}}) => 
     await Promise.all([
         session && markResult(session, passed || false),
         driver && driver.quit(),
-        server && new Promise((resolve, reject) => {
+        server && new Promise<void>((resolve, reject) => {
             server.close((error) => {
                 if (error) {
                     reject(error);
@@ -45,7 +45,7 @@ test.afterEach(async ({context: {session, driver, server, bsLocal, passed}}) => 
                 }
             });
         }),
-        bsLocal && new Promise((resolve) => {
+        bsLocal && new Promise<void>((resolve) => {
             bsLocal.stop(resolve);
         }),
     ]);
