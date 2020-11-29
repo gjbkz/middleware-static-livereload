@@ -20,16 +20,16 @@
     ],
     "scripts": {
         "cleanup": "rimraf lib",
+        "lint:tsc": "tsc --noEmit",
+        "lint:tsctest": "tsc --project tsconfig.test.json --noEmit",
         "lint:ts": "eslint --ignore-pattern sample-project --ext .ts src test",
         "lint:js": "eslint --ignore-pattern sample-project src",
-        "lint": "run-p lint:*",
+        "lint": "run-s lint:*",
         "build:tsc": "tsc",
         "build:client": "ts-node test/copy.ts src/client-script.js lib/client-script.js",
         "build": "run-s cleanup build:tsc build:client",
         "test:ava": "ava 'lib/**/*.test.js'",
-        "test:tsc": "tsc --noEmit",
-        "test:tsctest": "tsc --project tsconfig.test.json --noEmit",
-        "test": "run-p test:*",
+        "test": "run-s test:*",
         "test-client": "ava --timeout 2m test/run.ts",
         "version": "run-s version:changelog version:add",
         "version:changelog": "nlib-changelog --output CHANGELOG.md",
@@ -70,8 +70,7 @@
         "require": [
             "ts-node/register"
         ],
-        "timeout": "2m",
-        "concurrency": 1
+        "timeout": "2m"
     },
     "eslintConfig": {
         "ignorePatterns": [
