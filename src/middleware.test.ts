@@ -26,7 +26,7 @@ const test = anyTest as TestInterface<{
     connection?: http.IncomingMessage,
 }>;
 
-test.beforeEach(async (t) => {
+test.before(async (t) => {
     const app = t.context.app = connect();
     const server = t.context.server = http.createServer(app);
     const directory = t.context.directory = await createTemporaryDirectory();
@@ -39,9 +39,16 @@ test.beforeEach(async (t) => {
     t.context.port = await listen(server, 9200);
     await prepareFiles(files, directory);
     t.context.baseURL = getBaseURL(server.address());
+    t.context.middleware = createMiddleware({
+        documentRoot: t.context.directory,
+        logLevel: LogLevel.debug,
+        stdout: createLogger(t),
+        stderr: createLogger(t),
+    });
+    t.context.app.use(t.context.middleware);
 });
 
-test.afterEach(async (t) => {
+test.after(async (t) => {
     const {server, middleware, connection} = t.context;
     if (middleware.fileWatcher) {
         await middleware.fileWatcher.close();
@@ -55,13 +62,6 @@ test.afterEach(async (t) => {
 });
 
 test.serial('GET /foo.txt', async (t) => {
-    t.context.middleware = createMiddleware({
-        documentRoot: t.context.directory,
-        logLevel: LogLevel.debug,
-        stdout: createLogger(t),
-        stderr: createLogger(t),
-    });
-    t.context.app.use(t.context.middleware);
     const url = new URL('/foo.txt', t.context.baseURL);
     const res = await fetch(`${url}`);
     t.is(res.status, 200);
@@ -70,13 +70,6 @@ test.serial('GET /foo.txt', async (t) => {
 });
 
 test.serial('GET /', async (t) => {
-    t.context.middleware = createMiddleware({
-        documentRoot: t.context.directory,
-        logLevel: LogLevel.debug,
-        stdout: createLogger(t),
-        stderr: createLogger(t),
-    });
-    t.context.app.use(t.context.middleware);
     const url = new URL('/', t.context.baseURL);
     const res = await fetch(`${url}`);
     t.is(res.status, 200);
@@ -84,13 +77,6 @@ test.serial('GET /', async (t) => {
 });
 
 test.serial('GET /bar/', async (t) => {
-    t.context.middleware = createMiddleware({
-        documentRoot: t.context.directory,
-        logLevel: LogLevel.debug,
-        stdout: createLogger(t),
-        stderr: createLogger(t),
-    });
-    t.context.app.use(t.context.middleware);
     const url = new URL('/bar/', t.context.baseURL);
     const res = await fetch(`${url}`);
     t.is(res.status, 200);
@@ -101,13 +87,6 @@ test.serial('GET /bar/', async (t) => {
 });
 
 test.serial('GET /middleware-static-livereload.js', async (t) => {
-    t.context.middleware = createMiddleware({
-        documentRoot: t.context.directory,
-        logLevel: LogLevel.debug,
-        stdout: createLogger(t),
-        stderr: createLogger(t),
-    });
-    t.context.app.use(t.context.middleware);
     const url = new URL('/middleware-static-livereload.js', t.context.baseURL);
     const res = await fetch(`${url}`);
     t.is(res.status, 200);
@@ -115,18 +94,11 @@ test.serial('GET /middleware-static-livereload.js', async (t) => {
 });
 
 test.serial('GET /middleware-static-livereload.js/connect', async (t) => {
-    t.context.middleware = createMiddleware({
-        documentRoot: t.context.directory,
-        logLevel: LogLevel.debug,
-        stdout: createLogger(t),
-        stderr: createLogger(t),
-    });
     const {fileWatcher} = t.context.middleware;
     if (!fileWatcher) {
         t.fail('NoFileWatcher');
         return;
     }
-    t.context.app.use(t.context.middleware);
     const url = new URL('/middleware-static-livereload.js/connect', t.context.baseURL);
     const abortController = new AbortController();
     const res = await fetch(`${url}`, {
@@ -180,20 +152,19 @@ test.serial('GET /middleware-static-livereload.js/connect', async (t) => {
         };
         check();
     });
-    const events = messages.split('\n\n')
-    .map((eventMessage) => {
+    const events: Array<Record<string, string>> = [];
+    for (const message of messages.split('\n\n')) {
         const event: Record<string, string> = {};
-        for (const line of eventMessage.trim().split('\n')) {
-            const [key, value] = line.split(/\s*:\s*/);
+        for (const line of message.split('\n')) {
+            const [key, value] = line.trim().split(/\s*:\s*/);
             if (key && value) {
-                event[key.trim()] = value.trim();
+                event[key] = value;
             }
         }
-        return event;
-    })
-    .filter((event) => 'id' in event);
-    t.deepEqual(events, [
-        {id: '0', data: 'index.html', event: 'add'},
-        {id: '1', data: 'index.html', event: 'change'},
-    ]);
+        if ('id' in event) {
+            events.push(event);
+        }
+    }
+    t.like(events[0], {data: 'index.html', event: 'add'});
+    t.like(events[1], {data: 'index.html', event: 'change'});
 });
