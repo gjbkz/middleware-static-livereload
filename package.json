@@ -43,15 +43,15 @@
         "@nlib/eslint-config": "3.17.15",
         "@nlib/lint-commit": "0.1.3",
         "@types/connect": "3.4.33",
-        "@types/node": "14.14.9",
+        "@types/node": "^14.14.10",
         "@types/selenium-webdriver": "4.0.10",
-        "@typescript-eslint/eslint-plugin": "4.8.1",
-        "@typescript-eslint/parser": "4.8.1",
+        "@typescript-eslint/eslint-plugin": "^4.8.2",
+        "@typescript-eslint/parser": "^4.8.2",
         "abort-controller": "3.0.0",
         "ava": "3.13.0",
         "browserstack-local": "1.4.8",
         "connect": "3.7.0",
-        "eslint": "7.13.0",
+        "eslint": "^7.14.0",
         "husky": "4.3.0",
         "lint-staged": "10.5.2",
         "node-fetch": "2.6.1",
@@ -59,7 +59,7 @@
         "rimraf": "3.0.2",
         "selenium-webdriver": "4.0.0-alpha.7",
         "ts-node": "9.0.0",
-        "typescript": "4.0.5"
+        "typescript": "^4.1.2"
     },
     "ava": {
         "extensions": [
