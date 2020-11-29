@@ -28,7 +28,7 @@
         "build:tsc": "tsc",
         "build:client": "ts-node test/copy.ts src/client-script.js lib/client-script.js",
         "build": "run-s cleanup build:tsc build:client",
-        "test:ava": "ava 'lib/**/*.test.js'",
+        "test:ava": "ava -v 'lib/**/*.test.js'",
         "test": "run-s test:*",
         "test-client": "ava --timeout 2m test/run.ts",
         "version": "run-s version:changelog version:add",
