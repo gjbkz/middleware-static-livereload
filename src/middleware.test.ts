@@ -58,7 +58,7 @@ test.afterEach(async (t) => {
     });
 });
 
-test('GET /foo.txt', async (t) => {
+test.serial('GET /foo.txt', async (t) => {
     t.context.middleware = createMiddleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
@@ -73,7 +73,7 @@ test('GET /foo.txt', async (t) => {
     t.is(`${await res.text()}`, `${t.context.files['foo.txt']}`);
 });
 
-test('GET /', async (t) => {
+test.serial('GET /', async (t) => {
     t.context.middleware = createMiddleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
@@ -87,7 +87,7 @@ test('GET /', async (t) => {
     t.is(res.headers.get('content-type'), 'text/html');
 });
 
-test('GET /bar/', async (t) => {
+test.serial('GET /bar/', async (t) => {
     t.context.middleware = createMiddleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
@@ -104,7 +104,7 @@ test('GET /bar/', async (t) => {
     t.true(html.includes('baz2'));
 });
 
-test('GET /middleware-static-livereload.js', async (t) => {
+test.serial('GET /middleware-static-livereload.js', async (t) => {
     t.context.middleware = createMiddleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
@@ -118,7 +118,7 @@ test('GET /middleware-static-livereload.js', async (t) => {
     t.is(res.headers.get('content-type'), 'text/javascript');
 });
 
-test('GET /middleware-static-livereload.js/connect', async (t) => {
+test.serial('GET /middleware-static-livereload.js/connect', async (t) => {
     t.context.middleware = createMiddleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
