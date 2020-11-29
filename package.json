@@ -70,7 +70,8 @@
         "require": [
             "ts-node/register"
         ],
-        "timeout": "2m"
+        "timeout": "2m",
+        "concurrency": 1
     },
     "eslintConfig": {
         "ignorePatterns": [
