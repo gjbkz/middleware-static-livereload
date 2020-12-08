@@ -46,7 +46,7 @@
         "@types/node": "14.14.9",
         "@types/selenium-webdriver": "4.0.10",
         "@typescript-eslint/eslint-plugin": "4.8.1",
-        "@typescript-eslint/parser": "4.8.1",
+        "@typescript-eslint/parser": "4.9.1",
         "abort-controller": "3.0.0",
         "ava": "3.13.0",
         "browserstack-local": "1.4.8",
