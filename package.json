@@ -36,7 +36,7 @@
     },
     "dependencies": {
         "chokidar": "3.4.3",
-        "event-source-polyfill": "1.0.21"
+        "event-source-polyfill": "1.0.22"
     },
     "devDependencies": {
         "@nlib/changelog": "0.1.9",
