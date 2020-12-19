@@ -39,10 +39,10 @@ if (userName && accessKey) {
         [{browserName: 'Chrome'}, {os: 'OS X', osVersion: 'Catalina'}],
         [{browserName: 'Firefox'}, {os: 'OS X', osVersion: 'Catalina'}],
         [{browserName: 'Safari'}, {os: 'OS X', osVersion: 'Catalina'}],
-        [{browserName: 'Safari'}, {osVersion: '14', deviceName: 'iPhone 8', realMobile: 'true'}],
-        [{browserName: 'Safari'}, {osVersion: '13', deviceName: 'iPhone 8', realMobile: 'true'}],
-        [{browserName: 'Chrome'}, {osVersion: '10.0', deviceName: 'Google Pixel 3', realMobile: 'true'}],
-        [{browserName: 'Chrome'}, {osVersion: '9.0', deviceName: 'Google Pixel 3', realMobile: 'true'}],
+        [{browserName: 'Safari'}, {osVersion: '14', deviceName: 'iPhone 12', realMobile: 'true'}],
+        [{browserName: 'Safari'}, {osVersion: '13', deviceName: 'iPhone 12', realMobile: 'true'}],
+        [{browserName: 'Chrome'}, {osVersion: '11.0', deviceName: 'Google Pixel 4', realMobile: 'true'}],
+        [{browserName: 'Chrome'}, {osVersion: '10.0', deviceName: 'Google Pixel 4', realMobile: 'true'}],
     ];
     capabilities.push(...list.map(([capability, options], index) => {
         const merged: IBrowsetStackOptions = {
