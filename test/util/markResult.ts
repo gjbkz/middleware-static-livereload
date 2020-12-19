@@ -9,7 +9,7 @@ export const markResult = async (
 ): Promise<void> => {
     if (browserStack) {
         const sessionId = session.getId();
-        const res = await fetch(`https://${browserStack.user}:${browserStack.key}@api.browserstack.com/automate/sessions/${sessionId}.json`, {
+        const res = await fetch(`https://${browserStack.userName}:${browserStack.accessKey}@api.browserstack.com/automate/sessions/${sessionId}.json`, {
             method: 'PUT',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({status: passed ? 'passed' : 'failed'}),

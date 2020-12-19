@@ -14,7 +14,7 @@ test('listen an available port', async (t) => {
         ports.unshift(listening);
     }
     await Promise.all(servers.map(async (server) => {
-        await new Promise((resolve, reject) => {
+        await new Promise<void>((resolve, reject) => {
             server.close((error) => {
                 if (error) {
                     reject(error);

@@ -2,17 +2,6 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export const createTemporaryDirectory = async (
+export const createTemporaryDirectory = (
     prefix = 'temp-',
-): Promise<string> => {
-    const createdDirectory = await new Promise<string>((resolve, reject) => {
-        fs.mkdtemp(path.join(os.tmpdir(), prefix), (error, directory) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(directory);
-            }
-        });
-    });
-    return createdDirectory;
-};
+): string => fs.mkdtempSync(path.join(os.tmpdir(), prefix));
