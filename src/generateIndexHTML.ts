@@ -1,5 +1,5 @@
 import * as path from 'path';
-import {readdir, stat} from './fs';
+import * as fs from 'fs';
 
 const style = `
 <style>
@@ -37,9 +37,9 @@ export const generateIndexHTML = async (
     '<tr><th>Name</th><th>Size</th><th>Last modified</th></tr>',
     '<tr><td><a href="..">..</a></td><td></td><td></td></tr>',
     ...(await Promise.all(
-        (await readdir(absolutePath)).map(async (name) => {
+        (await fs.promises.readdir(absolutePath)).map(async (name) => {
             const filePath = path.join(absolutePath, name);
-            const stats = await stat(filePath);
+            const stats = await fs.promises.stat(filePath);
             const isDirectory = stats.isDirectory();
             const href = `${name}${isDirectory ? '/' : ''}`;
             return [

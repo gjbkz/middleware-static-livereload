@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs';
 import * as http from 'http';
 import * as connect from 'connect';
 import * as stream from 'stream';
@@ -11,7 +12,6 @@ import {prepareFiles} from './test-util/prepareFiles';
 import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
 import {LogLevel} from './LogLevel';
 import {getBaseUrlForServer} from './test-util/getBaseUrl';
-import {writeFile} from './fs';
 import {parseEvents} from './test-util/parseEvents';
 
 const app = connect();
@@ -102,7 +102,7 @@ ava('reload', async (t) => {
     t.is(indexRes.headers.get('content-type'), 'text/html');
     const [changeEvent] = await Promise.all([
         waitMessageChange('changeEvent'),
-        writeFile(indexFilePath, Buffer.from('<!doctype html>\nindex2')),
+        fs.promises.writeFile(indexFilePath, Buffer.from('<!doctype html>\nindex2')),
     ]);
     t.like(changeEvent, {data: 'index.html', event: 'change'});
 });
