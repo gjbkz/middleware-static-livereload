@@ -93,7 +93,7 @@ capabilities.forEach((capability, index) => {
         if (browserStack) {
             builder.usingServer(browserStack.server);
             t.context.bsLocal = await createBrowserStackLocal({
-                accessKey: browserStack.key,
+                accessKey: browserStack.accessKey,
                 port,
                 localIdentifier: capability['bstack:options'].localIdentifier,
             });
