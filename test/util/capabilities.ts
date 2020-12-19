@@ -34,21 +34,16 @@ if (browserStack) {
         projectName,
         buildName,
         sessionName,
-        local: 'true',
+        local: 'true' as const,
         userName: browserStack.userName,
         accessKey: browserStack.accessKey,
     };
     const generateOptions = (
         options: Partial<BrowsetStackOptions>,
     ): BrowsetStackOptions => ({
-        projectName,
-        buildName,
-        sessionName,
-        local: 'true',
-        userName: browserStack.userName,
-        accessKey: browserStack.accessKey,
-        localIdentifier: generateLocalIdentifier(),
+        ...baseOptions,
         ...options,
+        localIdentifier: generateLocalIdentifier(),
     });
     for (const browserName of ['Chrome', 'Firefox', 'Edge', 'IE']) {
         capabilities.push({
