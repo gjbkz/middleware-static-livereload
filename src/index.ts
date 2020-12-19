@@ -8,7 +8,7 @@ export * from './createInserter';
 export * from './createSnippetInjector';
 export * from './createWriter';
 export * from './ensureArray';
-export * from './fs';
+export * from './statOrNull';
 export * from './getFile';
 export * from './getTools';
 export * from './handleError';

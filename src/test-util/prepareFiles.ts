@@ -1,5 +1,5 @@
+import * as fs from 'fs';
 import * as path from 'path';
-import {writeFilep} from '../fs';
 
 export const prepareFiles = async (
     files: Record<string, Buffer>,
@@ -9,6 +9,7 @@ export const prepareFiles = async (
     for (const relativePath of paths) {
         const dest = path.join(directory, relativePath);
         const content = files[relativePath];
-        await writeFilep(dest, content);
+        await fs.promises.mkdir(path.dirname(dest), {recursive: true});
+        await fs.promises.writeFile(dest, content);
     }
 };
