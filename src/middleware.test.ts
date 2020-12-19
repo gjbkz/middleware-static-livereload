@@ -10,9 +10,7 @@ import {middleware as createMiddleware} from './middleware';
 import {listen} from './listen';
 import {prepareFiles} from './test-util/prepareFiles';
 import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
-import {getBaseURL} from './test-util/getBaseURL';
 import {LogLevel} from './LogLevel';
-import {createLogger} from './test-util/createLogger';
 import {writeFile} from './fs';
 
 const test = anyTest as TestInterface<{
@@ -26,10 +24,10 @@ const test = anyTest as TestInterface<{
     connection?: http.IncomingMessage,
 }>;
 
-test.before(async (t) => {
+test.beforeEach(async (t) => {
     const app = t.context.app = connect();
     const server = t.context.server = http.createServer(app);
-    const directory = t.context.directory = await createTemporaryDirectory();
+    const directory = t.context.directory = createTemporaryDirectory();
     const files = t.context.files = {
         'foo.txt': Buffer.from('foo'),
         'index.html': Buffer.from('<!doctype html>\nindex'),
@@ -38,17 +36,34 @@ test.before(async (t) => {
     };
     t.context.port = await listen(server, 9200);
     await prepareFiles(files, directory);
-    t.context.baseURL = getBaseURL(server.address());
+    const addressInfo = server.address();
+    if (typeof addressInfo === 'object' && addressInfo) {
+        const {address, family, port} = addressInfo;
+        const hostname = family === 'IPv6' ? `[${address}]` : address;
+        t.context.baseURL = new URL(`http://${hostname}:${port}`);
+    } else {
+        throw new Error(`Invalid address: ${addressInfo}`);
+    }
     t.context.middleware = createMiddleware({
         documentRoot: t.context.directory,
         logLevel: LogLevel.debug,
-        stdout: createLogger(t),
-        stderr: createLogger(t),
+        stdout: new stream.Writable({
+            write(chunk, _encoding, callback) {
+                t.log(`${chunk}`);
+                callback();
+            },
+        }),
+        stderr: new stream.Writable({
+            write(chunk, _encoding, callback) {
+                t.log(`${chunk}`);
+                callback();
+            },
+        }),
     });
     t.context.app.use(t.context.middleware);
 });
 
-test.after(async (t) => {
+test.afterEach(async (t) => {
     const {server, middleware, connection} = t.context;
     if (middleware.fileWatcher) {
         await middleware.fileWatcher.close();

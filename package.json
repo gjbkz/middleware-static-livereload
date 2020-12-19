@@ -142,8 +142,7 @@
                 "files": [
                     "src/types.ts",
                     "src/stringify.ts",
-                    "src/createWriter.ts",
-                    "src/test-util/createLogger.ts"
+                    "src/createWriter.ts"
                 ],
                 "rules": {
                     "@typescript-eslint/no-explicit-any": "off"
