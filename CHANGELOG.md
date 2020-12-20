@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.2.17 (2020-12-20)
+
+### Code Refactoring
+
+- fs (#154) (bd95b7b)
+
+### Dependency Upgrades
+
+- upgrade dependencies (#138) (8ea8405)
+
+
 ## v1.2.16 (2020-11-10)
 
 ### Tests
