@@ -50,7 +50,7 @@
         "@typescript-eslint/eslint-plugin": "4.11.1",
         "@typescript-eslint/parser": "4.10.0",
         "abort-controller": "3.0.0",
-        "ava": "3.14.0",
+        "ava": "3.15.0",
         "browserstack-local": "1.4.8",
         "connect": "3.7.0",
         "eslint": "7.16.0",
