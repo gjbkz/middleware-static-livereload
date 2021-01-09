@@ -36,7 +36,7 @@
         "version:add": "git add ."
     },
     "dependencies": {
-        "chokidar": "3.4.3",
+        "chokidar": "3.5.0",
         "event-source-polyfill": "1.0.22"
     },
     "devDependencies": {
