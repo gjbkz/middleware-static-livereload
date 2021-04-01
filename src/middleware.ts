@@ -1,10 +1,10 @@
 import * as fs from 'fs';
-import * as connect from 'connect';
-import * as stream from 'stream';
-import * as chokidar from 'chokidar';
+import type * as connect from 'connect';
+import type * as stream from 'stream';
+import type * as chokidar from 'chokidar';
 import {URL} from 'url';
 import {handleError} from './handleError';
-import {IOptions} from './types';
+import type {IOptions} from './types';
 import {getTools} from './getTools';
 
 export const middleware = (

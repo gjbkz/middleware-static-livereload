@@ -4,14 +4,15 @@
  * servers using BrowserStack?
  * → We support all ports for all browsers other than Safari.
  */
-import anyTest, {TestInterface} from 'ava';
+import type {TestInterface} from 'ava';
+import anyTest from 'ava';
 import {URL} from 'url';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as selenium from 'selenium-webdriver';
 import * as chrome from 'selenium-webdriver/chrome';
-import * as BrowserStack from 'browserstack-local';
+import type * as BrowserStack from 'browserstack-local';
 import * as connect from 'connect';
 import {browserStack} from './util/constants';
 import {createBrowserStackLocal} from './util/createBrowserStackLocal';

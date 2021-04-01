@@ -1,5 +1,5 @@
 import * as path from 'path';
-import {IFile} from './types';
+import type {IFile} from './types';
 import {statOrNull} from './statOrNull';
 import {LibError} from './LibError';
 

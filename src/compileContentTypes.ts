@@ -1,6 +1,6 @@
 import * as path from 'path';
 import {ensureArray} from './ensureArray';
-import {IContentTypeGetter, IOptions} from './types';
+import type {IContentTypeGetter, IOptions} from './types';
 import {defaultContentTypes} from './defaultContentTypes';
 
 export const compileContentTypes = (

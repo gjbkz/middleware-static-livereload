@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import {ensureArray} from './ensureArray';
-import {IFileFinder, IOptions} from './types';
+import type {IFileFinder, IOptions} from './types';
 import {absolutify} from './absolutify';
 import {statOrNull} from './statOrNull';
 import {generateIndexHTML} from './generateIndexHTML';
