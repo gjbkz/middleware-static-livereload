@@ -20,17 +20,17 @@
     ],
     "scripts": {
         "cleanup": "rimraf lib",
+        "lint": "run-s lint:*",
         "lint:tsc": "tsc --noEmit",
         "lint:tsctest": "tsc --project tsconfig.test.json --noEmit",
         "lint:ts": "eslint --ignore-pattern sample-project --ext .ts src test",
         "lint:js": "eslint --ignore-pattern sample-project src",
-        "lint": "run-s lint:*",
+        "build": "run-s cleanup build:*",
         "build:tsc": "tsc",
         "build:client": "ts-node test/copy.ts src/client-script.js lib/client-script.js",
-        "build": "run-s cleanup build:tsc build:client",
-        "test:ava": "ava -v 'lib/**/*.test.js'",
-        "test": "run-s test:*",
-        "test-client": "ava --timeout 2m test/run.ts",
+        "test": "run-s build test:*",
+        "test:ava": "ava",
+        "test-client": "ava --config ava.config.client.js",
         "version": "run-s version:changelog version:add",
         "version:changelog": "nlib-changelog --output CHANGELOG.md",
         "version:add": "git add ."
@@ -42,19 +42,19 @@
     "devDependencies": {
         "@nlib/changelog": "0.1.9",
         "@nlib/eslint-config": "3.17.21",
-        "@nlib/lint-commit": "0.1.3",
+        "@nlib/githooks": "0.0.5",
+        "@nlib/lint-commit": "0.1.4",
         "@types/connect": "3.4.34",
         "@types/node": "14.14.37",
         "@types/node-fetch": "2.5.8",
         "@types/selenium-webdriver": "4.0.12",
-        "@typescript-eslint/eslint-plugin": "4.19.0",
-        "@typescript-eslint/parser": "4.19.0",
+        "@typescript-eslint/eslint-plugin": "4.20.0",
+        "@typescript-eslint/parser": "4.20.0",
         "abort-controller": "3.0.0",
         "ava": "3.15.0",
         "browserstack-local": "1.4.8",
         "connect": "3.7.0",
         "eslint": "7.23.0",
-        "husky": "4.3.8",
         "lint-staged": "10.5.4",
         "node-fetch": "2.6.1",
         "npm-run-all": "4.1.5",
@@ -62,16 +62,6 @@
         "selenium-webdriver": "4.0.0-beta.2",
         "ts-node": "9.1.1",
         "typescript": "4.2.3"
-    },
-    "ava": {
-        "extensions": [
-            "ts",
-            "js"
-        ],
-        "require": [
-            "ts-node/register"
-        ],
-        "timeout": "2m"
     },
     "eslintConfig": {
         "ignorePatterns": [
