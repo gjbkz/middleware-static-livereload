@@ -30,7 +30,7 @@
         "build:client": "ts-node test/copy.ts src/client-script.js lib/client-script.js",
         "test": "run-s build test:*",
         "test:ava": "ava",
-        "test-client": "ava test/run.ts",
+        "test-client": "ava --config ava.config.client.js",
         "version": "run-s version:changelog version:add",
         "version:changelog": "nlib-changelog --output CHANGELOG.md",
         "version:add": "git add ."
@@ -62,19 +62,6 @@
         "selenium-webdriver": "4.0.0-beta.2",
         "ts-node": "9.1.1",
         "typescript": "4.2.3"
-    },
-    "ava": {
-        "extensions": [
-            "ts",
-            "js"
-        ],
-        "require": [
-            "ts-node/register"
-        ],
-        "timeout": "2m",
-        "files": [
-            "lib/**/*.test.js"
-        ]
     },
     "eslintConfig": {
         "ignorePatterns": [
