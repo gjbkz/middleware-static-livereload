@@ -21,14 +21,14 @@
     "scripts": {
         "cleanup": "rimraf lib",
         "lint": "run-s lint:*",
-        "lint:tsc": "tsc --noEmit",
-        "lint:tsctest": "tsc --project tsconfig.test.json --noEmit",
         "lint:ts": "eslint --ignore-pattern sample-project --ext .ts src test",
         "lint:js": "eslint --ignore-pattern sample-project src",
         "build": "run-s cleanup build:*",
         "build:tsc": "tsc",
         "build:client": "ts-node test/copy.ts src/client-script.js lib/client-script.js",
         "test": "run-s build test:*",
+        "test:tsc": "tsc --noEmit",
+        "test:tsctest": "tsc --project tsconfig.test.json --noEmit",
         "test:ava": "ava",
         "test-client": "ava --config ava.config.client.js",
         "version": "run-s version:changelog version:add",
@@ -36,8 +36,7 @@
         "version:add": "git add ."
     },
     "dependencies": {
-        "chokidar": "3.5.1",
-        "event-source-polyfill": "1.0.22"
+        "chokidar": "3.5.1"
     },
     "devDependencies": {
         "@nlib/changelog": "0.1.9",
@@ -48,8 +47,8 @@
         "@types/node": "14.14.37",
         "@types/node-fetch": "2.5.9",
         "@types/selenium-webdriver": "4.0.12",
-        "@typescript-eslint/eslint-plugin": "4.20.0",
-        "@typescript-eslint/parser": "4.20.0",
+        "@typescript-eslint/eslint-plugin": "4.21.0",
+        "@typescript-eslint/parser": "4.21.0",
         "abort-controller": "3.0.0",
         "ava": "3.15.0",
         "browserstack-local": "1.4.8",

@@ -1,7 +1,7 @@
 import * as stream from 'stream';
 import test from 'ava';
 import {handleError} from './handleError';
-import {IServerResponseLike} from './types';
+import type {IServerResponseLike} from './types';
 import {createConsole} from './createConsole';
 
 test('404', (t) => {

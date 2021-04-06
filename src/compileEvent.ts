@@ -1,4 +1,4 @@
-import {IEventCompiler} from './types';
+import type {IEventCompiler} from './types';
 
 let eventId = 0;
 

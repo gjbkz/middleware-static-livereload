@@ -1,4 +1,4 @@
-import {IConsole, IServerResponseLike} from './types';
+import type {IConsole, IServerResponseLike} from './types';
 
 export const handleError = (
     id: string,

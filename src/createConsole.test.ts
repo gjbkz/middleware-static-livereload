@@ -5,7 +5,7 @@ import {createConsole} from './createConsole';
 
 interface ITest {
     logLevel: LogLevel,
-    logs: Array<['debug' | 'info' | 'error', string | number]>,
+    logs: Array<['debug' | 'error' | 'info', number | string]>,
     expected: {
         stdout: string,
         stderr: string,

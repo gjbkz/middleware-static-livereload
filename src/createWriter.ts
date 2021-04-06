@@ -1,9 +1,10 @@
-import * as util from 'util';
+import type * as util from 'util';
+import type {Writable} from 'stream';
 import {stringify} from './stringify';
-import {ILog} from './types';
+import type {ILog} from './types';
 
 export const createWriter = (
-    stream: NodeJS.WritableStream,
+    stream: Writable,
     inspectOptions: util.InspectOptions,
 ): ILog => (...args: Array<any>) => {
     const message = args.map((arg) => stringify(arg, inspectOptions)).join(' ');

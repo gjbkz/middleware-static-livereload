@@ -31,6 +31,8 @@ jobs:
         node:
           - 14.x
     steps:
+      - run: git config --global core.autocrlf false
+      - run: git config --global core.eol lf
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
@@ -53,6 +55,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm run build
+      - run: npm run lint
   Test:
     runs-on: ${{ matrix.os }}
     needs:
@@ -68,6 +71,8 @@ jobs:
           - 14.x
           - 12.x
     steps:
+      - run: git config --global core.autocrlf false
+      - run: git config --global core.eol lf
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
@@ -96,6 +101,8 @@ jobs:
         node:
           - 14.x
     steps:
+      - run: git config --global core.autocrlf false
+      - run: git config --global core.eol lf
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
@@ -126,6 +133,8 @@ jobs:
         node:
           - 14.x
     steps:
+      - run: git config --global core.autocrlf false
+      - run: git config --global core.eol lf
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:

@@ -1,4 +1,4 @@
-import {IConsole, IOptions} from './types';
+import type {IConsole, IOptions} from './types';
 import {LogLevel} from './LogLevel';
 import {createWriter} from './createWriter';
 

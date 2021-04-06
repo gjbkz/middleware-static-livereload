@@ -1,9 +1,9 @@
-import * as fs from 'fs';
-import * as stream from 'stream';
-import * as http from 'http';
-import * as util from 'util';
-import * as chokidar from 'chokidar';
-import {LogLevel} from './LogLevel';
+import type * as fs from 'fs';
+import type * as stream from 'stream';
+import type * as http from 'http';
+import type * as util from 'util';
+import type * as chokidar from 'chokidar';
+import type {LogLevel} from './LogLevel';
 
 export interface ILog {
     (...args: Array<any>): void,
@@ -14,8 +14,8 @@ export interface IConsole {
     info: ILog,
     error: ILog,
     logLevel: LogLevel,
-    stdout: NodeJS.WritableStream,
-    stderr: NodeJS.WritableStream,
+    stdout: stream.Writable,
+    stderr: stream.Writable,
 }
 
 export interface IFile {
@@ -62,7 +62,7 @@ export interface IOptions {
      *   RETURN 404
      * @default process.cwd()
      */
-    documentRoot?: string | Array<string>,
+    documentRoot?: Array<string> | string,
     /**
      * If it is `false` or `null`, the middleware doesn't watch files.
      * Otherwise, the middleware watches the served files and send events
@@ -71,7 +71,7 @@ export interface IOptions {
      * you can pass the watcher object itself.
      * @default {ignoreInitial:false, useFsEvents:false}
      */
-    watch?: chokidar.WatchOptions | chokidar.FSWatcher | boolean | null,
+    watch?: chokidar.FSWatcher | chokidar.WatchOptions | boolean | null,
     /**
      * If this value is `foo.txt`, the middleware respond `/foo.txt` to `GET /`,
      * `/foo/foo.txt` to `GET /foo/`.
@@ -83,7 +83,7 @@ export interface IOptions {
      * If you given a map, it extends the default map.
      * @default See [src/defaultContentTypes.ts](src/defaultContentTypes.ts).
      */
-    contentTypes?: Record<string, string | Array<string>>,
+    contentTypes?: Record<string, Array<string> | string>,
     /**
      * 0: debug, 1: info, 2: error, 3: silent
      * @default 1
@@ -93,12 +93,12 @@ export interface IOptions {
      * Streams where the middleware writes message to.
      * @default process.stdout
      */
-    stdout?: NodeJS.WritableStream,
+    stdout?: stream.Writable,
     /**
      * Streams where the middleware writes message to.
      * @default process.stderr
      */
-    stderr?: NodeJS.WritableStream,
+    stderr?: stream.Writable,
     /**
      * A pattern or patterns to detect the position before which a <script> tag
      * is inserted.
@@ -106,7 +106,7 @@ export interface IOptions {
      * response will be `abc <script src="..."></script>x def`.
      * @default [/<\/head/i, /<\/body/i, /<meta/i, /<title/i, /<script/i, /<link/i]
      */
-    insertBefore?: string | RegExp | Array<string | RegExp>,
+    insertBefore?: Array<RegExp | string> | RegExp | string,
     /**
      * A pattern or patterns to detect the position after which a <script> tag
      * is inserted.
@@ -114,13 +114,14 @@ export interface IOptions {
      * response will be `abc x<script src="..."></script> def`.
      * @default [/<!doctype\s*html\s*>/i]
      */
-    insertAfter?: string | RegExp | Array<string | RegExp>,
+    insertAfter?: Array<RegExp | string> | RegExp | string,
     /**
      * A pathname for the script enables live reloading.
      * If the default value conflicts with other middlewares, change this value.
      * @default 'middleware-static-livereload.js'
      */
     scriptPath?: string,
+    // eslint-disable-next-line no-undef
     encoding?: BufferEncoding,
     inspectOptions?: util.InspectOptions,
 }

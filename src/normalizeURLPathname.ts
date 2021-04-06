@@ -1,5 +1,5 @@
 import * as path from 'path';
-import {URL} from 'url';
+import type {URL} from 'url';
 
 export const normalizeURLPathname = (
     url: URL,

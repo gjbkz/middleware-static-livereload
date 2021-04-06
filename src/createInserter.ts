@@ -1,5 +1,5 @@
 import {ensureArray} from './ensureArray';
-import {IOptions} from './types';
+import type {IOptions} from './types';
 
 export const defaultInsertBefore = [
     /<\/head/i,
@@ -23,7 +23,7 @@ export const createInserter = (
     ] : [defaultInsertBefore, defaultInsertAfter];
     return (
         input: string,
-        insertee: string | Buffer,
+        insertee: Buffer | string,
     ): string | null => {
         for (const pattern of insertBefore) {
             const result = input.replace(pattern, `${insertee}$&`);

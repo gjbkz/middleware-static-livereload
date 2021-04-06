@@ -1,8 +1,8 @@
 import * as chokidar from 'chokidar';
-import {IOptions} from './types';
+import type {IOptions} from './types';
 
 const isFSWatcher = (
-    x: boolean | chokidar.WatchOptions | chokidar.FSWatcher | undefined,
+    x: chokidar.FSWatcher | chokidar.WatchOptions | boolean | undefined,
 ): x is chokidar.FSWatcher => typeof x === 'object'
 && 'add' in x
 && typeof x.add === 'function'

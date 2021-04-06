@@ -1,5 +1,6 @@
-import * as http from 'http';
+import type * as http from 'http';
 const hostname = 'localhost';
+const isRecord = (input: unknown): input is Record<string, unknown> => typeof input === 'object' && input !== null;
 
 export const listenPort = async (
     server: http.Server,
@@ -7,8 +8,8 @@ export const listenPort = async (
 ) => {
     await new Promise<void>((resolve, reject) => {
         server
-        .once('error', (error: NodeJS.ErrnoException) => {
-            if (error.code === 'EADDRINUSE' || error.code === 'EADDRNOTAVAIL') {
+        .once('error', (error: unknown) => {
+            if (isRecord(error) && (error.code === 'EADDRINUSE' || error.code === 'EADDRNOTAVAIL')) {
                 resolve();
             } else {
                 reject(error);

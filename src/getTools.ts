@@ -5,7 +5,7 @@ import {compileContentTypes} from './compileContentTypes';
 import {createSnippetInjector} from './createSnippetInjector';
 import {createConnectionHandler} from './createConnectionHandler';
 import {createFileWatcher} from './createFileWatcher';
-import {IOptions} from './types';
+import type {IOptions} from './types';
 
 export const getTools = (
     options: IOptions = {},
@@ -13,7 +13,6 @@ export const getTools = (
     const clientScriptPath = `/${options.scriptPath || 'middleware-static-livereload.js'}`.replace(/^\/+/, '/');
     const findFile = createFileFinder(options, {
         [clientScriptPath]: path.join(__dirname, 'client-script.js'),
-        [`${clientScriptPath}/polyfill.js`]: require.resolve('event-source-polyfill/src/eventsource.min.js'),
     });
     const console = createConsole(options);
     const handleConnection = createConnectionHandler({console});

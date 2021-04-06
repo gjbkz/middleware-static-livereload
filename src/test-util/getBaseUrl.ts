@@ -1,8 +1,8 @@
 import {URL} from 'url';
-import {AddressInfo, Server} from 'net';
+import type {AddressInfo, Server} from 'net';
 
 export const getBaseUrl = (
-    addressInfo: string | AddressInfo | null,
+    addressInfo: AddressInfo | string | null,
     pathname = '/',
 ): URL => {
     if (typeof addressInfo === 'object' && addressInfo) {

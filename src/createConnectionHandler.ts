@@ -1,5 +1,5 @@
-import * as http from 'http';
-import {IConsole, IConnectionHandler} from './types';
+import type * as http from 'http';
+import type {IConsole, IConnectionHandler} from './types';
 import {compileEvent} from './compileEvent';
 
 export const createConnectionHandler = (

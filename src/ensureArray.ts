@@ -1,5 +1,5 @@
 export const ensureArray = <TType>(
-    input: TType | Array<TType>,
+    input: Array<TType> | TType,
 ): Array<TType> => {
     if (Array.isArray(input)) {
         return input.slice();
