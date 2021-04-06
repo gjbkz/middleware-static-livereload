@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.2.18 (2021-04-06)
+
+### Dependency Upgrades
+
+- remove event-source-polyfill (#197) (71c68d2)
+- upgrade dependencies (#193) (4224072)
+
+
 ## v1.2.17 (2020-12-20)
 
 ### Code Refactoring
