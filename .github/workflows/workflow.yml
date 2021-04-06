@@ -71,7 +71,7 @@ jobs:
           - windows-latest
         node:
           - 14.x
-          - 12.x
+          # - 12.x
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
