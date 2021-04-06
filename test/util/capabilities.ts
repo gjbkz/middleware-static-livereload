@@ -45,7 +45,7 @@ if (browserStack) {
         ...options,
         localIdentifier: generateLocalIdentifier(),
     });
-    for (const browserName of ['Chrome', 'Firefox', 'Edge', 'IE']) {
+    for (const browserName of ['Chrome', 'Firefox', 'Edge']) {
         capabilities.push({
             browserName,
             'bstack:options': generateOptions({os: 'Windows', osVersion: '10'}),
