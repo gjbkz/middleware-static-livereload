@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.19 (2021-05-01)
+
+
 ## v1.2.18 (2021-04-06)
 
 ### Dependency Upgrades
