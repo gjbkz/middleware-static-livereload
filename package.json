@@ -193,12 +193,6 @@
             "@commitlint/config-conventional"
         ]
     },
-    "husky": {
-        "hooks": {
-            "commit-msg": "nlib-lint-commit --input HUSKY_GIT_PARAMS",
-            "pre-commit": "lint-staged"
-        }
-    },
     "lint-staged": {
         "*.ts": [
             "eslint"
