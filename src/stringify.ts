@@ -1,9 +1,6 @@
 import * as util from 'util';
 
-export const stringify = (
-    item: any,
-    inspectOptions: util.InspectOptions,
-): string => {
+export const stringify = (item: unknown, inspectOptions: util.InspectOptions): string => {
     if (typeof item === 'string') {
         return item.trim();
     }

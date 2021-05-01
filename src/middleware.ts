@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import * as fs from 'fs';
 import type * as connect from 'connect';
 import type * as stream from 'stream';

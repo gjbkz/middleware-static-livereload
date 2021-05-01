@@ -25,7 +25,7 @@
         "lint:js": "eslint --ignore-pattern sample-project src",
         "build": "run-s cleanup build:*",
         "build:tsc": "tsc",
-        "build:client": "ts-node test/copy.ts src/client-script.js lib/client-script.js",
+        "build:client": "ts-node src/copy.ts src/client-script.js lib/client-script.js",
         "test": "run-s build test:*",
         "test:tsc": "tsc --noEmit",
         "test:tsctest": "tsc --project tsconfig.test.json --noEmit",

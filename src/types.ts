@@ -6,7 +6,7 @@ import type * as chokidar from 'chokidar';
 import type {LogLevel} from './LogLevel';
 
 export interface ILog {
-    (...args: Array<any>): void,
+    (...args: Array<unknown>): void,
 }
 
 export interface IConsole {

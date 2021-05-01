@@ -12,6 +12,7 @@ module.exports = {
     },
     rules: {
         '@nlib/no-globals': 'off',
+        '@typescript-eslint/no-redeclare': 'off',
     },
     overrides: [
         {
@@ -31,6 +32,7 @@ module.exports = {
             },
             rules: {
                 'max-lines-per-function': 'off',
+                'no-console': 'off',
                 'no-process-env': 'off',
                 '@typescript-eslint/no-triple-slash-reference': 'off',
             },
@@ -61,65 +63,6 @@ module.exports = {
                     'ObjectPattern',
                     'ArrowFunctionExpression',
                 ],
-            },
-        },
-        {
-            files: [
-                'src/types.ts',
-                'src/stringify.ts',
-                'src/createWriter.ts',
-            ],
-            rules: {
-                '@typescript-eslint/no-explicit-any': 'off',
-            },
-        },
-        {
-            files: [
-                'src/createWriter.ts',
-            ],
-            rules: {
-                'no-console': 'off',
-            },
-        },
-        {
-            files: [
-                'src/middleware.ts',
-            ],
-            rules: {
-                '@typescript-eslint/no-floating-promises': 'off',
-            },
-        },
-        {
-            files: [
-                'copy.ts',
-                'test/**/*',
-            ],
-            rules: {
-                'no-console': 'off',
-            },
-        },
-        {
-            files: [
-                'test/run.ts',
-            ],
-            rules: {
-                'require-atomic-updates': 'off',
-            },
-        },
-        {
-            files: [
-                'test/util/createBrowserStackLocal.ts',
-            ],
-            rules: {
-                '@typescript-eslint/no-unnecessary-condition': 'off',
-            },
-        },
-        {
-            files: [
-                'src/LogLevel.ts',
-            ],
-            rules: {
-                '@typescript-eslint/no-redeclare': 'off',
             },
         },
     ],
