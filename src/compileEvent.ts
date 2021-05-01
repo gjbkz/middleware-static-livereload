@@ -1,8 +1,6 @@
-import type {IEventCompiler} from './types';
-
 let eventId = 0;
 
-export const compileEvent: IEventCompiler = (data, eventName) => {
+export const compileEvent = (data: string, eventName?: string) => {
     const eventData = data.trim().split(/\r\n|\r|\n/).map((line) => `data: ${line}`);
     if (eventName) {
         eventData.unshift(`event: ${eventName}`);

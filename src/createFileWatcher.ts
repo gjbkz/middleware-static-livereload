@@ -1,5 +1,5 @@
 import * as chokidar from 'chokidar';
-import type {IOptions} from './types';
+import type {Options} from './types';
 
 const isFSWatcher = (
     x: chokidar.FSWatcher | chokidar.WatchOptions | boolean | undefined,
@@ -10,7 +10,7 @@ const isFSWatcher = (
 && typeof x.unwatch === 'function';
 
 export const createFileWatcher = (
-    {watch}: IOptions,
+    {watch}: Options,
 ): chokidar.FSWatcher | null => {
     if (watch === false || watch === null) {
         return null;

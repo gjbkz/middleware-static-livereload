@@ -1,11 +1,11 @@
 import * as path from 'path';
 import {ensureArray} from './ensureArray';
-import type {IContentTypeGetter, IOptions} from './types';
+import type {Options} from './types';
 import {defaultContentTypes} from './defaultContentTypes';
 
 export const compileContentTypes = (
-    overrides: IOptions['contentTypes'] = {},
-): IContentTypeGetter => {
+    overrides: Options['contentTypes'] = {},
+) => {
     const map = new Map<string, string>();
     for (const types of [defaultContentTypes, overrides]) {
         for (const [type, extensions] of Object.entries(types)) {

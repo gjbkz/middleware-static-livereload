@@ -5,11 +5,11 @@ import type * as stream from 'stream';
 import type * as chokidar from 'chokidar';
 import {URL} from 'url';
 import {handleError} from './handleError';
-import type {IOptions} from './types';
+import type {Options} from './types';
 import {getTools} from './getTools';
 
 export const middleware = (
-    options?: IOptions,
+    options?: Options,
 ): connect.NextHandleFunction & {fileWatcher: chokidar.FSWatcher | null} => {
     const {fileWatcher, console, connectionPath, handleConnection, findFile, getContentType, injectSnippet} = getTools(options);
     let counter = 0;

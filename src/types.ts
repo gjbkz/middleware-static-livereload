@@ -5,54 +5,29 @@ import type * as util from 'util';
 import type * as chokidar from 'chokidar';
 import type {LogLevel} from './LogLevel';
 
-export interface ILog {
-    (...args: Array<unknown>): void,
-}
-
-export interface IConsole {
-    debug: ILog,
-    info: ILog,
-    error: ILog,
+export interface ConsoleLike {
+    debug: (...args: Array<unknown>) => void,
+    info: (...args: Array<unknown>) => void,
+    error: (...args: Array<unknown>) => void,
     logLevel: LogLevel,
     stdout: stream.Writable,
     stderr: stream.Writable,
 }
 
-export interface IFile {
+export interface FileInfo {
     path: string,
     relativePath: string,
     stats: fs.Stats,
 }
 
-export interface IFileFinder {
-    documentRoots: Array<string>,
-    isReserved: (file: string) => boolean,
-    (pathname: string): Promise<IFile>,
+export interface ServerResponseLike {
+    end: http.ServerResponse['end'],
+    statusCode?: http.ServerResponse['statusCode'],
+    headersSent?: http.ServerResponse['headersSent'],
+    writableEnded?: http.ServerResponse['writableEnded'],
 }
 
-export interface IContentTypeGetter {
-    (pathname: string): string | null,
-}
-
-export interface ISnippetInjector {
-    size: number,
-    (readable: stream.Readable): stream.Transform,
-}
-
-export interface IEventCompiler {
-    (data: string, eventName?: string): string,
-}
-
-export interface ISendEvent {
-    (...args: Parameters<IEventCompiler>): void,
-}
-
-export interface IConnectionHandler {
-    sendEvent: ISendEvent,
-    (req: http.IncomingMessage, res: http.ServerResponse): void,
-}
-
-export interface IOptions {
+export interface Options {
     /**
      * Directories which contains the files to be served.
      * If it is an array, it is processed as following pseudo code:
@@ -124,11 +99,4 @@ export interface IOptions {
     // eslint-disable-next-line no-undef
     encoding?: BufferEncoding,
     inspectOptions?: util.InspectOptions,
-}
-
-export interface IServerResponseLike {
-    end: http.ServerResponse['end'],
-    statusCode?: http.ServerResponse['statusCode'],
-    headersSent?: http.ServerResponse['headersSent'],
-    writableEnded?: http.ServerResponse['writableEnded'],
 }

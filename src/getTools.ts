@@ -5,10 +5,10 @@ import {compileContentTypes} from './compileContentTypes';
 import {createSnippetInjector} from './createSnippetInjector';
 import {createConnectionHandler} from './createConnectionHandler';
 import {createFileWatcher} from './createFileWatcher';
-import type {IOptions} from './types';
+import type {Options} from './types';
 
 export const getTools = (
-    options: IOptions = {},
+    options: Options = {},
 ) => {
     const clientScriptPath = `/${options.scriptPath || 'middleware-static-livereload.js'}`.replace(/^\/+/, '/');
     const findFile = createFileFinder(options, {

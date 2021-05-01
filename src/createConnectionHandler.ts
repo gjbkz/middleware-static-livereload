@@ -1,10 +1,10 @@
 import type * as http from 'http';
-import type {IConsole, IConnectionHandler} from './types';
+import type {ConsoleLike} from './types';
 import {compileEvent} from './compileEvent';
 
 export const createConnectionHandler = (
-    options: {console: IConsole},
-): IConnectionHandler => {
+    options: {console: ConsoleLike},
+) => {
     const {console} = options;
     const EventStreamType = 'text/event-stream';
     const connections = new Set<http.ServerResponse>();
