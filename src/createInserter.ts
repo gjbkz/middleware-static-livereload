@@ -1,5 +1,5 @@
 import {ensureArray} from './ensureArray';
-import type {IOptions} from './types';
+import type {Options} from './types';
 
 export const defaultInsertBefore = [
     /<\/head/i,
@@ -15,7 +15,7 @@ export const defaultInsertAfter = [
 ];
 
 export const createInserter = (
-    options: IOptions = {},
+    options: Options = {},
 ) => {
     const [insertBefore, insertAfter] = (options.insertBefore || options.insertAfter) ? [
         ensureArray(options.insertBefore || []),

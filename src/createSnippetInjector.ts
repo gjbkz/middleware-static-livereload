@@ -1,12 +1,12 @@
 import * as stream from 'stream';
 import {StringDecoder} from 'string_decoder';
-import type {ISnippetInjector, IOptions} from './types';
+import type {Options} from './types';
 import {createInserter} from './createInserter';
 
 export const createSnippetInjector = (
-    options: IOptions,
+    options: Options,
     injecteeSource: Buffer | string,
-): ISnippetInjector => {
+) => {
     const injectee = Buffer.isBuffer(injecteeSource) ? injecteeSource : Buffer.from(injecteeSource);
     return Object.assign(
         (readable: stream.Readable) => {

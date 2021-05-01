@@ -1,10 +1,10 @@
-import type {IConsole, IServerResponseLike} from './types';
+import type {ConsoleLike, ServerResponseLike} from './types';
 
 export const handleError = (
     id: string,
-    res: IServerResponseLike,
+    res: ServerResponseLike,
     error: Error & {code?: string},
-    console: IConsole,
+    console: ConsoleLike,
 ) => {
     console.error(id, error.stack || error);
     if (!res.writableEnded) {

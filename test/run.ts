@@ -1,3 +1,4 @@
+/* eslint-disable require-atomic-updates */
 /**
  * https://www.browserstack.com/question/664
  * Question: What ports can I use to test development environments or private
@@ -8,7 +9,7 @@ import type {TestInterface} from 'ava';
 import anyTest from 'ava';
 import {URL} from 'url';
 import * as path from 'path';
-import * as fs from 'fs';
+import {promises as afs} from 'fs';
 import * as http from 'http';
 import * as selenium from 'selenium-webdriver';
 import * as chrome from 'selenium-webdriver/chrome';
@@ -18,9 +19,8 @@ import {browserStack} from './util/constants';
 import {createBrowserStackLocal} from './util/createBrowserStackLocal';
 import {markResult} from './util/markResult';
 import {capabilities} from './util/capabilities';
-import {copy} from './copy';
-import {middleware} from '..';
-const {promises: afs} = fs;
+import {copy} from '../src/copy';
+import {middleware} from '../src';
 
 interface ITextContext {
     session?: selenium.Session,
@@ -32,6 +32,32 @@ interface ITextContext {
 }
 
 const test = anyTest as TestInterface<ITextContext>;
+const directory = {
+    src: path.join(__dirname, 'src'),
+    webroot: path.join(__dirname, 'webroot'),
+    output: path.join(__dirname, 'output'),
+    test1: path.join(__dirname, 'test-1'),
+    test2: path.join(__dirname, 'test-2'),
+    test3: path.join(__dirname, 'test-3'),
+};
+const createServer = async (
+    port: number,
+    host: string,
+    onError: (error: unknown) => void,
+): Promise<http.Server> => {
+    const app = connect();
+    app.use(middleware({logLevel: 0, documentRoot: directory.webroot}));
+    return await new Promise((resolve, reject) => {
+        const server = http.createServer(app);
+        server.once('error', reject);
+        server.once('listening', () => {
+            server.removeListener('error', reject);
+            server.once('error', onError);
+            resolve(server);
+        });
+        server.listen(port, host);
+    });
+};
 
 test.afterEach(async ({context: {session, driver, server, bsLocal, passed}}) => {
     await Promise.all([
@@ -53,42 +79,17 @@ test.afterEach(async ({context: {session, driver, server, bsLocal, passed}}) => 
 });
 
 capabilities.forEach((capability, index) => {
-    const name = capability['bstack:options'].sessionName;
-    const directory = {
-        src: path.join(__dirname, 'src'),
-        webroot: path.join(__dirname, 'webroot'),
-        output: path.join(__dirname, 'output'),
-        test1: path.join(__dirname, 'test-1'),
-        test2: path.join(__dirname, 'test-2'),
-        test3: path.join(__dirname, 'test-3'),
-    };
-    const subTitle = [
-        capability['bstack:options'].os || capability['bstack:options'].deviceName || '-',
-        capability.browserName,
-    ].join(' ');
+    const {'bstack:options': bstack} = capability;
+    const name = bstack.sessionName;
+    const subTitle = `${bstack.os || bstack.deviceName || '-'} ${capability.browserName}`;
     test.serial(`#${index + 1} ${name} ${subTitle}`, async (t) => {
         t.timeout(120000);
-        await Promise.all([
-            copy(directory.src, directory.webroot),
-            afs.mkdir(directory.output, {recursive: true}),
-        ]);
+        await copy(directory.src, directory.webroot);
+        await afs.mkdir(directory.output, {recursive: true});
         const port = 9200 + index;
         const host = (/safari/i).test(capability.browserName) ? 'bs-local.com' : 'localhost';
         const baseURL = new URL(`http://${host}:${port}`);
-        {
-            const app = connect();
-            app.use(middleware({logLevel: 0, documentRoot: directory.webroot}));
-            t.context.server = await new Promise((resolve, reject) => {
-                const server = http.createServer(app);
-                server.once('error', reject);
-                server.once('listening', () => {
-                    server.removeListener('error', reject);
-                    server.once('error', t.log);
-                    resolve(server);
-                });
-                server.listen(port, host);
-            });
-        }
+        t.context.server = await createServer(port, host, t.log);
         const builder = new selenium.Builder().withCapabilities(capability);
         t.context.builder = builder;
         if (browserStack) {
@@ -96,7 +97,7 @@ capabilities.forEach((capability, index) => {
             t.context.bsLocal = await createBrowserStackLocal({
                 accessKey: browserStack.accessKey,
                 port,
-                localIdentifier: capability['bstack:options'].localIdentifier,
+                localIdentifier: bstack.localIdentifier,
             });
         } else {
             builder.setChromeOptions(new chrome.Options().addArguments('--auto-open-devtools-for-tabs'));

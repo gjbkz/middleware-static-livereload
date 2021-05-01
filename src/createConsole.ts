@@ -1,4 +1,4 @@
-import type {IConsole, IOptions} from './types';
+import type {ConsoleLike, Options} from './types';
 import {LogLevel} from './LogLevel';
 import {createWriter} from './createWriter';
 
@@ -7,8 +7,8 @@ const createNoop = () => () => {
 };
 
 export const createConsole = (
-    parameters: IOptions = {},
-): IConsole => {
+    parameters: Options = {},
+): ConsoleLike => {
     const inspectOptions = {
         colors: true,
         breakLength: 40,

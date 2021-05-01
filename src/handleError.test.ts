@@ -1,7 +1,7 @@
 import * as stream from 'stream';
 import test from 'ava';
 import {handleError} from './handleError';
-import type {IServerResponseLike} from './types';
+import type {ServerResponseLike} from './types';
 import {createConsole} from './createConsole';
 
 test('404', (t) => {
@@ -14,7 +14,7 @@ test('404', (t) => {
         },
     });
     const console = createConsole({stdout: writable, stderr: writable});
-    const res: IServerResponseLike = {end: () => endIsCalled++};
+    const res: ServerResponseLike = {end: () => endIsCalled++};
     const error = Object.assign(new Error(), {code: 'ENOENT'});
     handleError('', res, error, console);
     t.is(res.statusCode, 404);
@@ -31,7 +31,7 @@ test('500', (t) => {
         },
     });
     const console = createConsole({stdout: writable, stderr: writable});
-    const res: IServerResponseLike = {end: () => endIsCalled++};
+    const res: ServerResponseLike = {end: () => endIsCalled++};
     const error = Object.assign(new Error(), {code: 'ERROR'});
     handleError('', res, error, console);
     t.is(res.statusCode, 500);
@@ -48,7 +48,7 @@ test('401', (t) => {
         },
     });
     const console = createConsole({stdout: writable, stderr: writable});
-    const res: IServerResponseLike = {
+    const res: ServerResponseLike = {
         headersSent: true,
         statusCode: 401,
         end: () => endIsCalled++,
@@ -69,7 +69,7 @@ test('Ended', (t) => {
         },
     });
     const console = createConsole({stdout: writable, stderr: writable});
-    const res: IServerResponseLike = {
+    const res: ServerResponseLike = {
         writableEnded: true,
         statusCode: 200,
         end: () => endIsCalled++,

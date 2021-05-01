@@ -2,16 +2,16 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import {ensureArray} from './ensureArray';
-import type {IFileFinder, IOptions} from './types';
+import type {Options} from './types';
 import {absolutify} from './absolutify';
 import {statOrNull} from './statOrNull';
 import {generateIndexHTML} from './generateIndexHTML';
 import {LibError} from './LibError';
 
 export const createFileFinder = (
-    {documentRoot = process.cwd(), index = 'index.html'}: IOptions = {},
+    {documentRoot = process.cwd(), index = 'index.html'}: Options = {},
     reservedPaths: Record<string, string> = {},
-): IFileFinder => {
+) => {
     const absoluteDocumentRoots = ensureArray(documentRoot).map((pathString) => absolutify(pathString));
     const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'node-server-'));
     return Object.assign(
