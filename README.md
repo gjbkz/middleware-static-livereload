@@ -26,7 +26,7 @@ const server = http.createServer(app).listen(3000);
 
 ## Options
 
-```javascript
+```typescript
 {
   /**
     * Directories which contains the files to be served.
