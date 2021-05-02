@@ -58,7 +58,7 @@ export interface Options {
      * If you given a map, it extends the default map.
      * @default See [src/defaultContentTypes.ts](src/defaultContentTypes.ts).
      */
-    contentTypes?: Record<string, Array<string> | string>,
+    contentTypes?: Record<string, Array<string>>,
     /**
      * 0: debug, 1: info, 2: error, 3: silent
      * @default 1

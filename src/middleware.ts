@@ -8,9 +8,11 @@ import {handleError} from './handleError';
 import type {Options} from './types';
 import {getTools} from './getTools';
 
-export const middleware = (
-    options?: Options,
-): connect.NextHandleFunction & {fileWatcher: chokidar.FSWatcher | null} => {
+interface MiddlewareResult extends connect.NextHandleFunction {
+    fileWatcher: chokidar.FSWatcher | null,
+}
+
+export const middleware = (options?: Options): MiddlewareResult => {
     const {fileWatcher, console, connectionPath, handleConnection, findFile, getContentType, injectSnippet} = getTools(options);
     let counter = 0;
     const middlewareFn: connect.NextHandleFunction = (req, res, next) => {

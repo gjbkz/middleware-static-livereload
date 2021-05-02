@@ -9,7 +9,7 @@ import {generateIndexHTML} from './generateIndexHTML';
 import {LibError} from './LibError';
 
 export const createFileFinder = (
-    {documentRoot = process.cwd(), index = 'index.html'}: Options = {},
+    {documentRoot = [process.cwd()], index = 'index.html'}: Options = {},
     reservedPaths: Record<string, string> = {},
 ) => {
     const absoluteDocumentRoots = ensureArray(documentRoot).map((pathString) => absolutify(pathString));
