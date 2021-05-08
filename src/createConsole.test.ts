@@ -99,14 +99,14 @@ interface ITest {
     test(`#${index + 1} logLevel: ${logLevel}`, (t) => {
         const stdoutResult: Array<Buffer> = [];
         const stdout = new stream.Writable({
-            write(chunk, _encoding, callback) {
+            write(chunk: Buffer, _encoding, callback) {
                 stdoutResult.push(chunk);
                 callback();
             },
         });
         const stderrResult: Array<Buffer> = [];
         const stderr = new stream.Writable({
-            write(chunk, _encoding, callback) {
+            write(chunk: Buffer, _encoding, callback) {
                 stderrResult.push(chunk);
                 callback();
             },

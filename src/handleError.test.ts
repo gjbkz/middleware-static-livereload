@@ -8,7 +8,7 @@ test('404', (t) => {
     let endIsCalled = 0;
     const written: Array<Buffer> = [];
     const writable = new stream.Writable({
-        write(chunk, _encoding, callback) {
+        write(chunk: Buffer, _encoding, callback) {
             written.push(chunk);
             callback();
         },
@@ -25,7 +25,7 @@ test('500', (t) => {
     let endIsCalled = 0;
     const written: Array<Buffer> = [];
     const writable = new stream.Writable({
-        write(chunk, _encoding, callback) {
+        write(chunk: Buffer, _encoding, callback) {
             written.push(chunk);
             callback();
         },
@@ -42,7 +42,7 @@ test('401', (t) => {
     let endIsCalled = 0;
     const written: Array<Buffer> = [];
     const writable = new stream.Writable({
-        write(chunk, _encoding, callback) {
+        write(chunk: Buffer, _encoding, callback) {
             written.push(chunk);
             callback();
         },
@@ -63,7 +63,7 @@ test('Ended', (t) => {
     let endIsCalled = 0;
     const written: Array<Buffer> = [];
     const writable = new stream.Writable({
-        write(chunk, _encoding, callback) {
+        write(chunk: Buffer, _encoding, callback) {
             written.push(chunk);
             callback();
         },

@@ -44,7 +44,7 @@ export const middleware = (options?: Options): MiddlewareResult => {
                     fileWatcher.add(file.path);
                 }
             })
-            .catch((error) => {
+            .catch((error: unknown) => {
                 handleError(id, res, error, console);
                 next(error);
             })

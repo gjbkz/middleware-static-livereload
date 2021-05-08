@@ -15,7 +15,7 @@ export const createSnippetInjector = (
             let done = false;
             const chunks: Array<string> = [];
             const injector = new stream.Transform({
-                transform(chunk, _encoding, callback) {
+                transform(chunk: Buffer, _encoding, callback) {
                     const string = stringDecoder.write(chunk);
                     if (!done) {
                         const inserted = insert(string, injectee);
