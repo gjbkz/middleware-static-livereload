@@ -37,7 +37,7 @@
         "version:add": "git add ."
     },
     "dependencies": {
-        "chokidar": "3.5.1"
+        "chokidar": "3.5.2"
     },
     "devDependencies": {
         "@nlib/changelog": "0.1.9",
