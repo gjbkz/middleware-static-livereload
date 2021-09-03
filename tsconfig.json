@@ -1,9 +1,19 @@
 {
-    "extends": "./tsconfig.base.json",
-    "compilerOptions": {
-        "outDir": "./lib"
+    "ts-node": {
+        "transpileOnly": true
     },
-    "include": [
-        "src/**/*.ts"
-    ]
+    "compilerOptions": {
+        "target": "es2018",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "strict": true,
+        "removeComments": true,
+        "declaration": true,
+        "sourceMap": false,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
+    }
 }
