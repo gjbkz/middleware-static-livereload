@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as http from 'http';
 import * as connect from 'connect';
 import * as stream from 'stream';
-import {pipeline} from 'stream/promises';
 import fetch from 'node-fetch';
 import AbortController from 'abort-controller';
 import ava from 'ava';
@@ -85,18 +84,12 @@ ava('reload', async (t) => {
             t.is(res.status, 200);
             t.is(res.headers.get('content-type'), 'text/event-stream');
             if (res.body) {
-                pipeline(
-                    res.body,
-                    new stream.Writable({
-                        write(chunk: Buffer, _encoding, callback) {
-                            receivedChunks.push(chunk);
-                            callback();
-                        },
-                    }),
-                ).catch((error: unknown) => {
-                    t.log(error);
-                    t.fail();
-                });
+                (res.body as unknown as stream.Readable).pipe(new stream.Writable({
+                    write(chunk: Buffer, _encoding, callback) {
+                        receivedChunks.push(chunk);
+                        callback();
+                    },
+                }));
             }
         }),
     ]);
