@@ -83,12 +83,14 @@ ava('reload', async (t) => {
             t.log(`${res.status} ${res.statusText}`);
             t.is(res.status, 200);
             t.is(res.headers.get('content-type'), 'text/event-stream');
-            res.body.pipe(new stream.Writable({
-                write(chunk: Buffer, _encoding, callback) {
-                    receivedChunks.push(chunk);
-                    callback();
-                },
-            }));
+            if (res.body) {
+                res.body.pipe(new stream.Writable({
+                    write(chunk: Buffer, _encoding, callback) {
+                        receivedChunks.push(chunk);
+                        callback();
+                    },
+                }));
+            }
         }),
     ]);
     t.like(configureEvent, {retry: '3000'});
