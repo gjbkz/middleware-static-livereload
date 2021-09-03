@@ -3,6 +3,6 @@ export default {
     require: ['ts-node/register'],
     timeout: '2m',
     files: [
-        'lib/**/*.test.js',
+        'src/**/*.test.ts',
     ],
 };
