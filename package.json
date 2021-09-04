@@ -30,17 +30,15 @@
         "test": "ava",
         "test-client": "ava --config ava.config.client.js",
         "version": "run-s version:changelog version:add",
-        "version:changelog": "nlib-changelog --output CHANGELOG.md",
+        "version:changelog": "npx @nlib/changelog --output CHANGELOG.md",
         "version:add": "git add ."
     },
     "dependencies": {
         "chokidar": "3.5.2"
     },
     "devDependencies": {
-        "@nlib/changelog": "0.1.10",
         "@nlib/eslint-config": "3.17.24",
         "@nlib/githooks": "0.0.5",
-        "@nlib/lint-commit": "0.1.4",
         "@types/connect": "3.4.35",
         "@types/node": "16.7.10",
         "@types/node-fetch": "2.5.12",
