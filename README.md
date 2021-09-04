@@ -1,6 +1,6 @@
 # middleware-static-livereload
 
-![Test](https://github.com/kei-ito/middleware-static-livereload/workflows/Test/badge.svg)
+[![Test](https://github.com/kei-ito/middleware-static-livereload/actions/workflows/test.yml/badge.svg)](https://github.com/kei-ito/middleware-static-livereload/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/kei-ito/middleware-static-livereload/branch/master/graph/badge.svg)](https://codecov.io/gh/kei-ito/middleware-static-livereload)
 [![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=cll6bnJraU9ROGpHdWZYR3J6VzZid3lwSGE0a2REaXd2eWk0Y1dDd1NsUT0tLXNHQjRueFRqcU9YQUc2TndUd05UN1E9PQ==--db592e073086b93668e627615526e58bc499fde2)](https://automate.browserstack.com/public-build/cll6bnJraU9ROGpHdWZYR3J6VzZid3lwSGE0a2REaXd2eWk0Y1dDd1NsUT0tLXNHQjRueFRqcU9YQUc2TndUd05UN1E9PQ==--db592e073086b93668e627615526e58bc499fde2)
 
