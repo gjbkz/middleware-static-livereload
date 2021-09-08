@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.2.21 (2021-09-08)
+
+### Features
+
+- add charset=UTF-8 ([9625202](https://github.com/kei-ito/middleware-static-livereload/commit/962520209b93a6a71a33c0ed3a1cc539f90dd602))
+
+### Continuous Integration
+
+- change conditions ([4d14aa6](https://github.com/kei-ito/middleware-static-livereload/commit/4d14aa679f26e2380594e30793ceec2ef7cc5dca))
+- omit name ([6f9e6dc](https://github.com/kei-ito/middleware-static-livereload/commit/6f9e6dc5d9728c253f98ab9c126c9996383503ef))
+
+### Dependency Upgrades
+
+- @nlib/eslint-config:3.17.24→3.17.25 @nlib/githooks:0.0.5→0.1.0 @types/node:16.7.10→16.7.13 @typescript-eslint/eslint-plugin:4.30.0→4.31.0 @typescript-eslint/parser:4.30.0→4.31.0 ([e91534f](https://github.com/kei-ito/middleware-static-livereload/commit/e91534f205f6174151438ab9d247e03869f6e271))
+- remove some packages ([daf533c](https://github.com/kei-ito/middleware-static-livereload/commit/daf533c12da172434bfcae54c7615bbad72dc500))
+
+
 ## v1.2.20 (2021-09-04)
 
 ### Styles
