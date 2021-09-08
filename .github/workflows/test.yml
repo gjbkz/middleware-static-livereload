@@ -3,28 +3,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  Setup:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: true
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        node: [16.x]
-    steps:
-      - run: git config --global core.autocrlf false
-      - run: git config --global core.eol lf
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node }}
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
   Test:
     runs-on: ${{ matrix.os }}
-    needs: [Setup]
     strategy:
-      fail-fast: true
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         node: [16.x, 14.x, 12.x]
@@ -35,28 +16,21 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-          cache: 'npm'
+          cache: npm
       - run: npm ci
       - run: npm run build
       - run: npx c8 npm test
       - run: npx c8 report --reporter=text-lcov > coverage.lcov
       - uses: codecov/codecov-action@v2
   TestClient:
-    if: ${{ contains(github.ref, 'master') || contains(github.ref, 'tags/v') || github.event_name == 'pull_request' }}
-    runs-on: ${{ matrix.os }}
-    needs: [Setup]
-    strategy:
-      fail-fast: true
-      matrix:
-        os: [ubuntu-latest]
-        node: [16.x]
+    runs-on: ubuntu-latest
     environment: test
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node }}
-          cache: 'npm'
+          node-version: 16.x
+          cache: npm
       - run: npm ci
       - run: npm run build
       - run: npm run test-client
