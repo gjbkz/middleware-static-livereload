@@ -101,7 +101,7 @@ ava('reload', async (t) => {
     ]);
     t.like(addEvent, {data: 'index.html', event: 'add'});
     t.is(indexRes.status, 200);
-    t.is(indexRes.headers.get('content-type'), 'text/html');
+    t.is(indexRes.headers.get('content-type'), 'text/html; charset=UTF-8');
     const [changeEvent] = await Promise.all([
         waitMessageChange('changeEvent'),
         fs.promises.writeFile(indexFilePath, Buffer.from('<!doctype html>\nindex2')),

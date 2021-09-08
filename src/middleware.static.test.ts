@@ -45,7 +45,7 @@ ava.serial('GET /foo.txt', async (t) => {
     const res = await fetch(`${url}`);
     t.log(`${res.status} ${res.statusText}`);
     t.is(res.status, 200);
-    t.is(res.headers.get('content-type'), 'text/plain');
+    t.is(res.headers.get('content-type'), 'text/plain; charset=UTF-8');
     t.is(`${await res.text()}`, `${files['foo.txt']}`);
 });
 
@@ -55,7 +55,7 @@ ava.serial('GET /', async (t) => {
     const res = await fetch(`${url}`);
     t.log(`${res.status} ${res.statusText}`);
     t.is(res.status, 200);
-    t.is(res.headers.get('content-type'), 'text/html');
+    t.is(res.headers.get('content-type'), 'text/html; charset=UTF-8');
 });
 
 ava.serial('GET /bar/', async (t) => {
@@ -64,7 +64,7 @@ ava.serial('GET /bar/', async (t) => {
     const res = await fetch(`${url}`);
     t.log(`${res.status} ${res.statusText}`);
     t.is(res.status, 200);
-    t.is(res.headers.get('content-type'), 'text/html');
+    t.is(res.headers.get('content-type'), 'text/html; charset=UTF-8');
     const html = await res.text();
     t.true(html.includes('baz1'));
     t.true(html.includes('baz2'));
@@ -76,7 +76,7 @@ ava.serial('GET /middleware-static-livereload.js', async (t) => {
     const res = await fetch(`${url}`);
     t.log(`${res.status} ${res.statusText}`);
     t.is(res.status, 200);
-    t.is(res.headers.get('content-type'), 'text/javascript');
+    t.is(res.headers.get('content-type'), 'text/javascript; charset=UTF-8');
 });
 
 ava.serial('GET /middleware-static-livereload.js/connect', async (t) => {
