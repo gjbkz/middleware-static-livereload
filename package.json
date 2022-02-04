@@ -34,7 +34,7 @@
         "version:add": "git add ."
     },
     "dependencies": {
-        "chokidar": "3.5.2"
+        "chokidar": "3.5.3"
     },
     "devDependencies": {
         "@nlib/eslint-config": "3.17.29",
