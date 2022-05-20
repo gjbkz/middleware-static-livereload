@@ -5,22 +5,21 @@
  * servers using BrowserStack?
  * → We support all ports for all browsers other than Safari.
  */
-import type {TestInterface} from 'ava';
+import type {TestFn} from 'ava';
 import anyTest from 'ava';
-import {URL} from 'url';
-import * as path from 'path';
+import type * as BrowserStack from 'browserstack-local';
+import connect from 'connect';
 import {promises as afs} from 'fs';
 import * as http from 'http';
 import * as selenium from 'selenium-webdriver';
 import * as chrome from 'selenium-webdriver/chrome';
-import type * as BrowserStack from 'browserstack-local';
-import * as connect from 'connect';
+import {URL} from 'url';
+import {middleware} from '../src';
+import {copy} from '../src/copy';
+import {capabilities} from './util/capabilities';
 import {browserStack} from './util/constants';
 import {createBrowserStackLocal} from './util/createBrowserStackLocal';
 import {markResult} from './util/markResult';
-import {capabilities} from './util/capabilities';
-import {copy} from '../src/copy';
-import {middleware} from '../src';
 
 interface ITextContext {
     session?: selenium.Session,
@@ -31,14 +30,15 @@ interface ITextContext {
     server?: http.Server,
 }
 
-const test = anyTest as TestInterface<ITextContext>;
+const test = anyTest as TestFn<ITextContext>;
+const testDirectory = new URL('.', import.meta.url);
 const directory = {
-    src: path.join(__dirname, 'src'),
-    webroot: path.join(__dirname, 'webroot'),
-    output: path.join(__dirname, 'output'),
-    test1: path.join(__dirname, 'test-1'),
-    test2: path.join(__dirname, 'test-2'),
-    test3: path.join(__dirname, 'test-3'),
+    src: new URL('src', testDirectory),
+    webroot: new URL('webroot', testDirectory),
+    output: new URL('output', testDirectory),
+    test1: new URL('test-1', testDirectory),
+    test2: new URL('test-2', testDirectory),
+    test3: new URL('test-3', testDirectory),
 };
 const createServer = async (
     port: number,
@@ -107,11 +107,11 @@ capabilities.forEach((capability, index) => {
         await driver.get(`${new URL('/', baseURL)}`);
         for (const testName of ['test-1', 'test-2', 'test-3']) {
             t.log(`Title: ${await driver.getTitle()}`);
-            await copy(path.join(__dirname, testName), directory.webroot);
+            await copy(new URL(testName, testDirectory), directory.webroot);
             await driver.wait(selenium.until.titleIs(`passed: ${testName}`), 5000);
             const base64 = await driver.takeScreenshot();
             const screenShot = Buffer.from(base64, 'base64');
-            await afs.writeFile(path.join(directory.output, `${Date.now()}-${testName}.png`), screenShot);
+            await afs.writeFile(new URL(`${Date.now()}-${testName}.png`, directory.output), screenShot);
         }
         t.context.passed = true;
         t.pass();

@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as fs from 'fs';
 
 const style = `
@@ -24,33 +23,29 @@ td, th {
 </style>
 `.trim();
 
-export const generateIndexHTML = async (
-    absolutePath: string,
+export const generateIndexHTML = async function* (
+    absolutePath: URL,
     relativePath: string,
-): Promise<string> => [
-    '<!doctype html>',
-    '<meta charset="utf-8">',
-    '<meta name="viewport" content="width=device-width">',
-    `<title>Index of /${relativePath}</title>`,
-    style,
-    '<table>',
-    '<tr><th>Name</th><th>Size</th><th>Last modified</th></tr>',
-    '<tr><td><a href="..">..</a></td><td></td><td></td></tr>',
-    ...(await Promise.all(
-        (await fs.promises.readdir(absolutePath)).map(async (name) => {
-            const filePath = path.join(absolutePath, name);
-            const stats = await fs.promises.stat(filePath);
-            const isDirectory = stats.isDirectory();
-            const href = `${name}${isDirectory ? '/' : ''}`;
-            return [
-                '<tr>',
-                `<td><a href="./${href}">${href}</a></td>`,
-                `<td class="size">${stats.size}</td>`,
-                `<td><time datetime="${stats.mtime.toISOString()}">${stats.mtime.toLocaleString()}</td>`,
-                '</tr>',
-            ].join('');
-        }),
-    )),
-    `<tr><td colspan="3">Created at <time datetime="${new Date().toISOString()}">${new Date().toLocaleString()}</time></td></tr>`,
-    '</table>',
-].join('\n');
+) {
+    yield '<!doctype html>';
+    yield '<meta charset="utf-8">';
+    yield '<meta name="viewport" content="width=device-width">';
+    yield `<title>Index of /${relativePath}</title>`;
+    yield style;
+    yield '<table>';
+    yield '<tr><th>Name</th><th>Size</th><th>Last modified</th></tr>';
+    yield '<tr><td><a href="..">..</a></td><td></td><td></td></tr>';
+    for (const name of await fs.promises.readdir(absolutePath)) {
+        const filePath = new URL(name, absolutePath);
+        const stats = await fs.promises.stat(filePath);
+        const isDirectory = stats.isDirectory();
+        const href = `${name}${isDirectory ? '/' : ''}`;
+        yield '<tr>';
+        yield `    <td><a href="./${href}">${href}</a></td>`;
+        yield `    <td class="size">${stats.size}</td>`;
+        yield `    <td><time datetime="${stats.mtime.toISOString()}">${stats.mtime.toLocaleString()}</td>`;
+        yield '</tr>';
+    }
+    yield `<tr><td colspan="3">Created at <time datetime="${new Date().toISOString()}">${new Date().toLocaleString()}</time></td></tr>`;
+    yield '</table>';
+};

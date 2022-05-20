@@ -1,18 +1,19 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import * as http from 'http';
-import * as connect from 'connect';
-import * as stream from 'stream';
-import fetch from 'node-fetch';
+/* eslint-disable max-lines-per-function */
 import AbortController from 'abort-controller';
 import ava from 'ava';
-import {middleware as createMiddleware} from './middleware';
+import connect from 'connect';
+import * as fs from 'fs';
+import * as http from 'http';
+import fetch from 'node-fetch';
+import * as path from 'path';
+import * as stream from 'stream';
 import {listen} from './listen';
-import {prepareFiles} from './test-util/prepareFiles';
-import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
 import {LogLevel} from './LogLevel';
+import {middleware as createMiddleware} from './middleware';
+import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
 import {getBaseUrlForServer} from './test-util/getBaseUrl';
 import {parseEvents} from './test-util/parseEvents';
+import {prepareFiles} from './test-util/prepareFiles';
 
 const app = connect();
 const server = http.createServer(app);

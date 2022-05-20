@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import type * as connect from 'connect';
 import type * as stream from 'stream';
 import type * as chokidar from 'chokidar';
-import {URL} from 'url';
+import {fileURLToPath, URL} from 'url';
 import {handleError} from './handleError';
 import type {Options} from './types';
 import {getTools} from './getTools';
@@ -24,8 +24,8 @@ export const middleware = (options?: Options): MiddlewareResult => {
         } else {
             findFile(url.pathname)
             .then(async (file) => {
-                console.debug(id, '→', file.path);
-                const contentType = getContentType(file.path);
+                console.debug(id, '→', fileURLToPath(file.path));
+                const contentType = getContentType(file.path.pathname);
                 if (contentType) {
                     res.setHeader('content-type', contentType);
                 }
@@ -40,8 +40,8 @@ export const middleware = (options?: Options): MiddlewareResult => {
                     res.statusCode = 200;
                     reader.pipe(res).once('error', reject).once('finish', resolve);
                 });
-                if (fileWatcher && findFile.documentRoots.find((documentRoot) => file.path.startsWith(documentRoot))) {
-                    fileWatcher.add(file.path);
+                if (fileWatcher && findFile.documentRoots.find((documentRoot) => file.path.pathname.startsWith(documentRoot.pathname))) {
+                    fileWatcher.add(fileURLToPath(file.path));
                 }
             })
             .catch((error: unknown) => {
