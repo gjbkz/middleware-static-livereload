@@ -27,7 +27,7 @@
         "lint:js": "eslint --ignore-pattern sample-project src",
         "build": "run-s cleanup build:*",
         "build:tsc": "tsc --project tsconfig.build.json",
-        "build:client": "ts-node src/copy.ts src/client-script.js lib/client-script.js",
+        "build:client": "node --loader ts-node/esm src/copy.ts src/client-script.js lib/client-script.js",
         "test": "ava",
         "test-client": "ava --config ava.config.client.js",
         "version": "run-s version:changelog version:add",
@@ -58,6 +58,23 @@
         "selenium-webdriver": "4.1.2",
         "ts-node": "10.7.0",
         "typescript": "4.6.4"
+    },
+    "eslintConfig": {
+        "ignorePatterns": [
+            "test/src",
+            "test/test-*"
+        ],
+        "extends": [
+            "@nlib/eslint-config"
+        ],
+        "env": {
+            "es6": true,
+            "node": true
+        },
+        "rules": {
+            "@nlib/no-globals": "off",
+            "@typescript-eslint/no-redeclare": "off"
+        }
     },
     "lint-staged": {
         "*.{ts,tsx,js,mjs,cjs,jsx}": [

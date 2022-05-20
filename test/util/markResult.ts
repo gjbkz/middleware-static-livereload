@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import './fetch';
 import fetch from 'node-fetch';
 import type * as selenium from 'selenium-webdriver';

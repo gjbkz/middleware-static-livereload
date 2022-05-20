@@ -1,3 +1,4 @@
+/* eslint-disable */
 (function () {
     const g = self || window;
     const document = g.document;

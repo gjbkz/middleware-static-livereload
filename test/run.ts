@@ -5,7 +5,7 @@
  * servers using BrowserStack?
  * → We support all ports for all browsers other than Safari.
  */
-import type {TestInterface} from 'ava';
+import type {TestFn} from 'ava';
 import anyTest from 'ava';
 import {URL} from 'url';
 import * as path from 'path';
@@ -31,7 +31,7 @@ interface ITextContext {
     server?: http.Server,
 }
 
-const test = anyTest as TestInterface<ITextContext>;
+const test = anyTest as TestFn<ITextContext>;
 const directory = {
     src: path.join(__dirname, 'src'),
     webroot: path.join(__dirname, 'webroot'),
