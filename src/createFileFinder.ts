@@ -9,15 +9,33 @@ import {generateIndexHTML} from './generateIndexHTML';
 import {LibError} from './LibError';
 import {pathToFileURL} from 'url';
 
+const normalizeDocumentRoot = (pathLike: fs.PathLike) => {
+    const url = absolutify(pathLike);
+    if (!url.pathname.endsWith('/')) {
+        url.pathname = `${url.pathname}/`;
+    }
+    return url;
+};
+
+const normalizeRelativePath = (pathname: string) => {
+    let relativePath = pathname;
+    if (relativePath.startsWith('/')) {
+        relativePath = `.${relativePath}`;
+    } else {
+        relativePath = `./${relativePath}`;
+    }
+    return relativePath;
+};
+
 export const createFileFinder = (
     {documentRoot = [process.cwd()], index = 'index.html'}: Options = {},
     reservedPaths: Record<string, URL | undefined> = {},
 ) => {
-    const absoluteDocumentRoots = ensureArray(documentRoot).map((pathString) => absolutify(pathString));
+    const absoluteDocumentRoots = ensureArray(documentRoot).map(normalizeDocumentRoot);
     const temporaryDirectory = pathToFileURL(fs.mkdtempSync(path.join(os.tmpdir(), 'node-server-')));
     return Object.assign(
         async (pathname: string) => {
-            let relativePath = pathname.split('/').filter((x) => x).join(path.sep);
+            let relativePath = normalizeRelativePath(pathname);
             let absolutePath = reservedPaths[pathname] || null;
             let stats: fs.Stats | null = null;
             if (absolutePath) {
