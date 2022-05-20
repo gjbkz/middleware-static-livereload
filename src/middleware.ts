@@ -24,7 +24,7 @@ export const middleware = (options?: Options): MiddlewareResult => {
         } else {
             findFile(url.pathname)
             .then(async (file) => {
-                console.debug(id, '→', file.path);
+                console.debug(id, '→', fileURLToPath(file.path));
                 const contentType = getContentType(file.path.pathname);
                 if (contentType) {
                     res.setHeader('content-type', contentType);
