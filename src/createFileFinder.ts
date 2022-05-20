@@ -7,13 +7,14 @@ import {absolutify} from './absolutify';
 import {statOrNull} from './statOrNull';
 import {generateIndexHTML} from './generateIndexHTML';
 import {LibError} from './LibError';
+import {pathToFileURL} from 'url';
 
 export const createFileFinder = (
     {documentRoot = [process.cwd()], index = 'index.html'}: Options = {},
-    reservedPaths: Record<string, string> = {},
+    reservedPaths: Record<string, URL | undefined> = {},
 ) => {
     const absoluteDocumentRoots = ensureArray(documentRoot).map((pathString) => absolutify(pathString));
-    const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'node-server-'));
+    const temporaryDirectory = pathToFileURL(fs.mkdtempSync(path.join(os.tmpdir(), 'node-server-')));
     return Object.assign(
         async (pathname: string) => {
             let relativePath = pathname.split('/').filter((x) => x).join(path.sep);
@@ -23,19 +24,19 @@ export const createFileFinder = (
                 stats = await statOrNull(absolutePath);
             } else {
                 for (const absoluteDocumentRoot of absoluteDocumentRoots) {
-                    absolutePath = path.join(absoluteDocumentRoot, relativePath);
+                    absolutePath = new URL(relativePath, absoluteDocumentRoot);
                     stats = await statOrNull(absolutePath);
                     if (stats) {
                         if (stats.isFile()) {
                             break;
                         } else if (stats.isDirectory()) {
-                            stats = await statOrNull(path.join(absolutePath, index));
+                            stats = await statOrNull(new URL(index, absolutePath));
                             if (stats && stats.isFile()) {
-                                absolutePath = path.join(absolutePath, index);
+                                absolutePath = new URL(index, absolutePath);
                                 relativePath = path.join(relativePath, index);
                             } else {
                                 const indexHTML = await generateIndexHTML(absolutePath, relativePath);
-                                absolutePath = path.join(temporaryDirectory, `${relativePath.split(path.sep).join('sep')}.html`);
+                                absolutePath = new URL(`${relativePath.split(path.sep).join('sep')}.html`, temporaryDirectory);
                                 await fs.promises.writeFile(absolutePath, indexHTML);
                                 stats = await statOrNull(absolutePath);
                             }

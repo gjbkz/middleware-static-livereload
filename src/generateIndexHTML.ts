@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as fs from 'fs';
 
 const style = `
@@ -25,7 +24,7 @@ td, th {
 `.trim();
 
 export const generateIndexHTML = async (
-    absolutePath: string,
+    absolutePath: URL,
     relativePath: string,
 ): Promise<string> => [
     '<!doctype html>',
@@ -38,7 +37,7 @@ export const generateIndexHTML = async (
     '<tr><td><a href="..">..</a></td><td></td><td></td></tr>',
     ...(await Promise.all(
         (await fs.promises.readdir(absolutePath)).map(async (name) => {
-            const filePath = path.join(absolutePath, name);
+            const filePath = new URL(name, absolutePath);
             const stats = await fs.promises.stat(filePath);
             const isDirectory = stats.isDirectory();
             const href = `${name}${isDirectory ? '/' : ''}`;

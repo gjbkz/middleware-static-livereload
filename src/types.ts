@@ -37,7 +37,7 @@ export interface Options {
      *   RETURN 404
      * @default process.cwd()
      */
-    documentRoot?: Array<string> | string,
+    documentRoot?: Array<fs.PathLike> | fs.PathLike,
     /**
      * If it is `false` or `null`, the middleware doesn't watch files.
      * Otherwise, the middleware watches the served files and send events

@@ -1,14 +1,14 @@
-import * as http from 'http';
-import * as connect from 'connect';
-import fetch from 'node-fetch';
 import AbortController from 'abort-controller';
 import ava from 'ava';
-import {middleware as createMiddleware} from './middleware';
+import connect from 'connect';
+import * as http from 'http';
+import fetch from 'node-fetch';
 import {listen} from './listen';
-import {prepareFiles} from './test-util/prepareFiles';
-import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
 import {LogLevel} from './LogLevel';
+import {middleware as createMiddleware} from './middleware';
+import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
 import {getBaseUrlForServer} from './test-util/getBaseUrl';
+import {prepareFiles} from './test-util/prepareFiles';
 
 const app = connect();
 const server = http.createServer(app);

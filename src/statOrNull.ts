@@ -8,4 +8,4 @@ const ignoreENOENT = (error: unknown) => {
     }
 };
 
-export const statOrNull = async (filePath: string): Promise<fs.Stats | null> => await fs.promises.stat(filePath).catch(ignoreENOENT);
+export const statOrNull = async (filePath: fs.PathLike): Promise<fs.Stats | null> => await fs.promises.stat(filePath).catch(ignoreENOENT);

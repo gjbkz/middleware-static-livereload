@@ -6,13 +6,12 @@ import {createSnippetInjector} from './createSnippetInjector';
 import {createConnectionHandler} from './createConnectionHandler';
 import {createFileWatcher} from './createFileWatcher';
 import type {Options} from './types';
+import {fileURLToPath} from 'url';
 
-export const getTools = (
-    options: Options = {},
-) => {
+export const getTools = (options: Options = {}) => {
     const clientScriptPath = `/${options.scriptPath || 'middleware-static-livereload.js'}`.replace(/^\/+/, '/');
     const findFile = createFileFinder(options, {
-        [clientScriptPath]: path.join(__dirname, 'client-script.js'),
+        [clientScriptPath]: new URL('client-script.js', import.meta.url),
     });
     const console = createConsole(options);
     const handleConnection = createConnectionHandler({console});
@@ -20,10 +19,10 @@ export const getTools = (
     if (fileWatcher) {
         fileWatcher.on('all', (eventName, file) => {
             console.debug(`${eventName}: ${file}`);
-            const documentRoot = findFile.documentRoots.find((pathString) => file.startsWith(pathString));
+            const documentRoot = findFile.documentRoots.find((url) => file.startsWith(fileURLToPath(url)));
             if (documentRoot) {
                 handleConnection.sendEvent(
-                    path.relative(documentRoot, file).split(path.sep).join('/'),
+                    path.relative(fileURLToPath(documentRoot), file).split(path.sep).join('/'),
                     eventName,
                 );
             } else {

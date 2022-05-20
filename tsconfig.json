@@ -3,9 +3,10 @@
         "transpileOnly": true
     },
     "compilerOptions": {
-        "target": "es2018",
-        "module": "commonjs",
+        "target": "esnext",
+        "module": "esnext",
         "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
         "strict": true,
         "removeComments": true,
