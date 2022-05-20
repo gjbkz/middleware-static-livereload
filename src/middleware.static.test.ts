@@ -66,6 +66,7 @@ ava.serial('GET /bar/', async (t) => {
     t.is(res.status, 200);
     t.is(res.headers.get('content-type'), 'text/html; charset=UTF-8');
     const html = await res.text();
+    t.log(html);
     t.true(html.includes('baz1'));
     t.true(html.includes('baz2'));
 });

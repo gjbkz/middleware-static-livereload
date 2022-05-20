@@ -1,13 +1,13 @@
-import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import {ensureArray} from './ensureArray';
-import type {Options} from './types';
+import * as path from 'path';
+import {pathToFileURL} from 'url';
 import {absolutify} from './absolutify';
-import {statOrNull} from './statOrNull';
+import {ensureArray} from './ensureArray';
 import {generateIndexHTML} from './generateIndexHTML';
 import {LibError} from './LibError';
-import {pathToFileURL} from 'url';
+import {statOrNull} from './statOrNull';
+import type {Options} from './types';
 
 const normalizeDocumentRoot = (pathLike: fs.PathLike) => {
     const url = absolutify(pathLike);
@@ -17,14 +17,22 @@ const normalizeDocumentRoot = (pathLike: fs.PathLike) => {
     return url;
 };
 
-const normalizeRelativePath = (pathname: string) => {
-    let relativePath = pathname;
-    if (relativePath.startsWith('/')) {
-        relativePath = `.${relativePath}`;
-    } else {
-        relativePath = `./${relativePath}`;
+const generateIndex = async (
+    absolutePath: URL,
+    relativePath: string,
+    dest: URL,
+) => {
+    await fs.promises.mkdir(new URL('.', dest), {recursive: true});
+    const w = fs.createWriteStream(dest);
+    for await (const line of generateIndexHTML(absolutePath, relativePath)) {
+        w.write(`${line}\n`);
     }
-    return relativePath;
+    await new Promise((resolve, reject) => {
+        w.once('error', reject);
+        w.once('close', resolve);
+        w.end();
+    });
+    return dest;
 };
 
 export const createFileFinder = (
@@ -35,27 +43,26 @@ export const createFileFinder = (
     const temporaryDirectory = pathToFileURL(fs.mkdtempSync(path.join(os.tmpdir(), 'node-server-')));
     return Object.assign(
         async (pathname: string) => {
-            let relativePath = normalizeRelativePath(pathname);
+            let relativePath = pathname;
             let absolutePath = reservedPaths[pathname] || null;
             let stats: fs.Stats | null = null;
             if (absolutePath) {
                 stats = await statOrNull(absolutePath);
             } else {
                 for (const absoluteDocumentRoot of absoluteDocumentRoots) {
-                    absolutePath = new URL(relativePath, absoluteDocumentRoot);
+                    absolutePath = new URL(relativePath.slice(1), absoluteDocumentRoot);
                     stats = await statOrNull(absolutePath);
                     if (stats) {
                         if (stats.isFile()) {
                             break;
                         } else if (stats.isDirectory()) {
-                            stats = await statOrNull(new URL(index, absolutePath));
+                            const indexUrl = new URL(index, absolutePath);
+                            stats = await statOrNull(indexUrl);
                             if (stats && stats.isFile()) {
-                                absolutePath = new URL(index, absolutePath);
+                                absolutePath = indexUrl;
                                 relativePath = path.join(relativePath, index);
                             } else {
-                                const indexHTML = await generateIndexHTML(absolutePath, relativePath);
-                                absolutePath = new URL(`${relativePath}.html`, temporaryDirectory);
-                                await fs.promises.writeFile(absolutePath, indexHTML);
+                                absolutePath = await generateIndex(absolutePath, relativePath, new URL(`${relativePath.slice(1)}${index}`, temporaryDirectory));
                                 stats = await statOrNull(absolutePath);
                             }
                             break;

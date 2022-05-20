@@ -28,7 +28,7 @@
         "build": "run-s cleanup build:*",
         "build:tsc": "tsc --project tsconfig.build.json",
         "build:esmify": "esmify \"lib/**\"",
-        "build:client": "node --loader ts-node/esm src/copy.ts src/client-script.js lib/client-script.js",
+        "build:client": "node lib/copy.mjs src/client-script.js lib/client-script.js",
         "test": "ava",
         "test-client": "ava --config ava.config.client.js",
         "version": "run-s version:changelog version:add",
