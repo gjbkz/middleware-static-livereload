@@ -8,7 +8,7 @@
 import type {TestFn} from 'ava';
 import anyTest from 'ava';
 import type * as BrowserStack from 'browserstack-local';
-import * as connect from 'connect';
+import connect from 'connect';
 import {promises as afs} from 'fs';
 import * as http from 'http';
 import * as selenium from 'selenium-webdriver';
