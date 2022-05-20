@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import './fetch';
 import fetch from 'node-fetch';
 import type * as selenium from 'selenium-webdriver';
 import {browserStack} from './constants';
@@ -9,8 +8,11 @@ export const markResult = async (
     passed: boolean,
 ): Promise<void> => {
     if (browserStack) {
-        const sessionId = session.getId();
-        const res = await fetch(`https://${browserStack.userName}:${browserStack.accessKey}@api.browserstack.com/automate/sessions/${sessionId}.json`, {
+        const endpoint = new URL('https://api.browserstack.com');
+        endpoint.pathname = `/automate/sessions/${session.getId()}.json`;
+        endpoint.username = browserStack.userName;
+        endpoint.password = browserStack.accessKey;
+        const res = await fetch(endpoint.href, {
             method: 'PUT',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify({status: passed ? 'passed' : 'failed'}),
