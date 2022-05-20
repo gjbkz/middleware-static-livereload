@@ -54,7 +54,7 @@ export const createFileFinder = (
                                 relativePath = path.join(relativePath, index);
                             } else {
                                 const indexHTML = await generateIndexHTML(absolutePath, relativePath);
-                                absolutePath = new URL(`${relativePath.split(path.sep).join('sep')}.html`, temporaryDirectory);
+                                absolutePath = new URL(`${relativePath}.html`, temporaryDirectory);
                                 await fs.promises.writeFile(absolutePath, indexHTML);
                                 stats = await statOrNull(absolutePath);
                             }
