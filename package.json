@@ -48,7 +48,7 @@
         "@types/node-fetch": "2.6.2",
         "@types/selenium-webdriver": "4.1.1",
         "@typescript-eslint/eslint-plugin": "5.29.0",
-        "@typescript-eslint/parser": "5.27.1",
+        "@typescript-eslint/parser": "5.29.0",
         "abort-controller": "3.0.0",
         "ava": "4.3.0",
         "browserstack-local": "1.5.1",
