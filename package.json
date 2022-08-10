@@ -39,7 +39,7 @@
         "chokidar": "3.5.3"
     },
     "devDependencies": {
-        "@nlib/eslint-config": "3.18.0",
+        "@nlib/eslint-config": "3.19.4",
         "@nlib/esmify": "0.1.2",
         "@nlib/githooks": "0.1.0",
         "@nlib/lint-commit": "0.2.0",
