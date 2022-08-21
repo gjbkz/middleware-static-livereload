@@ -31,14 +31,15 @@
         "build:client": "node lib/copy.mjs src/client-script.js lib/client-script.js",
         "test": "ava",
         "test-client": "ava --config ava.config.client.js",
-        "version": "run-s version:changelog version:add",
-        "version:changelog": "npx @nlib/changelog --output CHANGELOG.md",
+        "version": "run-s version:*",
+        "version:changelog": "nlib-changelog --output CHANGELOG.md",
         "version:add": "git add ."
     },
     "dependencies": {
         "chokidar": "3.5.3"
     },
     "devDependencies": {
+        "@nlib/changelog": "0.2.3",
         "@nlib/eslint-config": "3.19.4",
         "@nlib/esmify": "0.3.0",
         "@nlib/githooks": "0.1.0",
