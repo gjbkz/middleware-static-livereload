@@ -47,7 +47,7 @@
         "@types/connect": "3.4.35",
         "@types/node": "18.11.5",
         "@types/node-fetch": "2.6.2",
-        "@types/selenium-webdriver": "4.1.6",
+        "@types/selenium-webdriver": "4.1.7",
         "@typescript-eslint/eslint-plugin": "5.41.0",
         "@typescript-eslint/parser": "5.40.1",
         "abort-controller": "3.0.0",
@@ -59,7 +59,7 @@
         "node-fetch": "3.2.10",
         "npm-run-all": "4.1.5",
         "rimraf": "3.0.2",
-        "selenium-webdriver": "4.5.0",
+        "selenium-webdriver": "4.6.0",
         "ts-node": "10.9.1",
         "typescript": "4.8.4"
     },
