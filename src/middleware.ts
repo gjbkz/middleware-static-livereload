@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import * as fs from 'fs';
-import type * as connect from 'connect';
 import type * as stream from 'stream';
-import type * as chokidar from 'chokidar';
 import {fileURLToPath, URL} from 'url';
+import type * as connect from 'connect';
+import type * as chokidar from 'chokidar';
 import {handleError} from './handleError';
 import type {Options} from './types';
 import {getTools} from './getTools';

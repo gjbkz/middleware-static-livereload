@@ -20,6 +20,7 @@ export const handleError = (
                 res.statusCode = 500;
             }
         }
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         res.end(`${error || 'Error'}`);
     }
 };

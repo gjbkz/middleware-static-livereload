@@ -1,7 +1,7 @@
-import AbortController from 'abort-controller';
+import * as http from 'http';
+import {AbortController} from 'abort-controller';
 import ava from 'ava';
 import connect from 'connect';
-import * as http from 'http';
 import fetch from 'node-fetch';
 import {listen} from './listen';
 import {LogLevel} from './LogLevel';

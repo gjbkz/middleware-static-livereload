@@ -1,19 +1,19 @@
-/* eslint-disable require-atomic-updates */
+/* eslint-disable import/no-relative-parent-imports, require-atomic-updates */
 /**
  * https://www.browserstack.com/question/664
  * Question: What ports can I use to test development environments or private
  * servers using BrowserStack?
  * → We support all ports for all browsers other than Safari.
  */
+import {promises as afs} from 'fs';
+import * as http from 'http';
+import {URL} from 'url';
 import type {TestFn} from 'ava';
 import anyTest from 'ava';
 import type * as BrowserStack from 'browserstack-local';
 import connect from 'connect';
-import {promises as afs} from 'fs';
-import * as http from 'http';
 import * as selenium from 'selenium-webdriver';
 import * as chrome from 'selenium-webdriver/chrome';
-import {URL} from 'url';
 import {middleware} from '../src';
 import {copy} from '../src/copy';
 import {capabilities} from './util/capabilities';

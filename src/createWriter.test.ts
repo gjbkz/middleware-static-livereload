@@ -1,5 +1,5 @@
-import test from 'ava';
 import {Writable} from 'stream';
+import test from 'ava';
 import {createWriter} from './createWriter';
 
 test('create a writer', (t) => {
