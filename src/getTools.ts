@@ -1,4 +1,5 @@
 import * as path from 'path';
+import {fileURLToPath} from 'url';
 import {createFileFinder} from './createFileFinder';
 import {createConsole} from './createConsole';
 import {compileContentTypes} from './compileContentTypes';
@@ -6,7 +7,6 @@ import {createSnippetInjector} from './createSnippetInjector';
 import {createConnectionHandler} from './createConnectionHandler';
 import {createFileWatcher} from './createFileWatcher';
 import type {Options} from './types';
-import {fileURLToPath} from 'url';
 
 export const getTools = (options: Options = {}) => {
     const clientScriptPath = `/${options.scriptPath || 'middleware-static-livereload.js'}`.replace(/^\/+/, '/');

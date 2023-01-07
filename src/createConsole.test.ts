@@ -1,5 +1,5 @@
-import test from 'ava';
 import * as stream from 'stream';
+import test from 'ava';
 import {LogLevel} from './LogLevel';
 import {createConsole} from './createConsole';
 
