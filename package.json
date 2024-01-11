@@ -46,7 +46,7 @@
         "@nlib/lint-commit": "0.2.0",
         "@types/connect": "3.4.38",
         "@types/node": "18.19.5",
-        "@types/node-fetch": "2.6.4",
+        "@types/node-fetch": "2.6.10",
         "@types/selenium-webdriver": "4.1.15",
         "@typescript-eslint/eslint-plugin": "5.62.0",
         "@typescript-eslint/parser": "5.61.0",
