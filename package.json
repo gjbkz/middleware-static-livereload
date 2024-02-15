@@ -43,7 +43,7 @@
         "@nlib/eslint-config": "3.20.5",
         "@nlib/esmify": "0.3.3",
         "@nlib/githooks": "0.2.0",
-        "@nlib/lint-commit": "0.2.0",
+        "@nlib/lint-commit": "1.0.1",
         "@types/connect": "3.4.38",
         "@types/node": "18.19.7",
         "@types/node-fetch": "2.6.10",
