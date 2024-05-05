@@ -1,7 +1,7 @@
 import * as path from 'path';
-import type {FileInfo} from './types';
-import {statOrNull} from './statOrNull';
-import {LibError} from './LibError';
+import {LibError} from './LibError.ts';
+import {statOrNull} from './statOrNull.ts';
+import type {FileInfo} from './types.ts';
 
 export const getFile = async (
     absolutePath: string,
@@ -9,7 +9,7 @@ export const getFile = async (
 ): Promise<FileInfo> => {
     const relativePath = path.relative(baseDirectory, absolutePath);
     const stats = await statOrNull(absolutePath);
-    if (stats && stats.isFile()) {
+    if (stats?.isFile()) {
         return {
             path: absolutePath,
             relativePath,

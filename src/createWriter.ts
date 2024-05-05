@@ -1,7 +1,7 @@
 import * as console from 'console';
-import type * as util from 'util';
 import type {Writable} from 'stream';
-import {stringify} from './stringify';
+import type * as util from 'util';
+import {stringify} from './stringify.ts';
 
 export const createWriter = (
     stream: Writable,

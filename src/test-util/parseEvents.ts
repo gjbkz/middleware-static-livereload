@@ -1,4 +1,4 @@
-import {splitString} from './splitString';
+import {splitString} from './splitString.ts';
 
 export const parseEventLine = (
     eventLine: string,

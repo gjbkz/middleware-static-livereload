@@ -1,6 +1,6 @@
-import type {ConsoleLike, Options} from './types';
-import {LogLevel} from './LogLevel';
-import {createWriter} from './createWriter';
+import {createWriter} from './createWriter.ts';
+import {LogLevel} from './LogLevel.ts';
+import type {ConsoleLike, Options} from './types.ts';
 
 const createNoop = () => () => {
     // noop
@@ -14,8 +14,8 @@ export const createConsole = (
         breakLength: 40,
         ...parameters.inspectOptions,
     };
-    const stdout = parameters.stdout || process.stdout;
-    const stderr = parameters.stderr || process.stderr;
+    const stdout = parameters.stdout ?? process.stdout;
+    const stderr = parameters.stderr ?? process.stderr;
     const out = createWriter(stdout, inspectOptions);
     const err = createWriter(stderr, inspectOptions);
     const ignore = Object.assign(createNoop(), {end: createNoop()});

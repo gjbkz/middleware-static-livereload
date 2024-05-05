@@ -1,9 +1,8 @@
 import type * as fs from 'fs';
 import type * as stream from 'stream';
-import type * as http from 'http';
 import type * as util from 'util';
 import type * as chokidar from 'chokidar';
-import type {LogLevel} from './LogLevel';
+import type {LogLevel} from './LogLevel.ts';
 
 export interface ConsoleLike {
     debug: (...args: Array<unknown>) => void,
@@ -18,13 +17,6 @@ export interface FileInfo {
     path: string,
     relativePath: string,
     stats: fs.Stats,
-}
-
-export interface ServerResponseLike {
-    end: http.ServerResponse['end'],
-    statusCode?: http.ServerResponse['statusCode'],
-    headersSent?: http.ServerResponse['headersSent'],
-    writableEnded?: http.ServerResponse['writableEnded'],
 }
 
 export interface Options {

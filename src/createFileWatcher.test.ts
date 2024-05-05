@@ -1,6 +1,6 @@
 import test from 'ava';
 import * as chokidar from 'chokidar';
-import {createFileWatcher} from './createFileWatcher';
+import {createFileWatcher} from './createFileWatcher.ts';
 
 test('return null', (t) => {
     t.is(createFileWatcher({watch: false}), null);

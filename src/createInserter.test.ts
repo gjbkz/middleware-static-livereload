@@ -1,5 +1,5 @@
 import test from 'ava';
-import {createInserter} from './createInserter';
+import {createInserter} from './createInserter.ts';
 
 test('HTML inserter', (t) => {
     const insert = createInserter();

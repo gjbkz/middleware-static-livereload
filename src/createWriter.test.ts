@@ -1,6 +1,6 @@
 import {Writable} from 'stream';
 import test from 'ava';
-import {createWriter} from './createWriter';
+import {createWriter} from './createWriter.ts';
 
 test('create a writer', (t) => {
     const chunks: Array<string> = [];

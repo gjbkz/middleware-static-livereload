@@ -8,7 +8,7 @@ export const absolutify = (
 ) => {
     if (typeof filePath === 'string' || Buffer.isBuffer(filePath)) {
         filePath = `${filePath}`;
-        return pathToFileURL(path.isAbsolute(filePath) ? filePath : path.join(baseDirectory, `${filePath}`));
+        return pathToFileURL(path.isAbsolute(filePath) ? filePath : path.join(baseDirectory, filePath));
     }
     return filePath;
 };

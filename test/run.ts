@@ -61,8 +61,8 @@ const createServer = async (
 
 test.afterEach(async ({context: {session, driver, server, bsLocal, passed}}) => {
     await Promise.all([
-        session && markResult(session, passed || false),
-        driver && driver.quit(),
+        session && markResult(session, Boolean(passed)),
+        driver?.quit(),
         server && new Promise<void>((resolve, reject) => {
             server.close((error) => {
                 if (error) {
@@ -81,7 +81,7 @@ test.afterEach(async ({context: {session, driver, server, bsLocal, passed}}) => 
 capabilities.forEach((capability, index) => {
     const {'bstack:options': bstack} = capability;
     const name = bstack.sessionName;
-    const subTitle = `${bstack.os || bstack.deviceName || '-'} ${capability.browserName}`;
+    const subTitle = `${bstack.os ?? bstack.deviceName ?? '-'} ${capability.browserName}`;
     test.serial(`#${index + 1} ${name} ${subTitle}`, async (t) => {
         t.timeout(120000);
         await copy(directory.src, directory.webroot);

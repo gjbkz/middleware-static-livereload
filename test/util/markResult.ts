@@ -2,7 +2,7 @@
 import type * as http from 'http';
 import * as https from 'https';
 import type * as selenium from 'selenium-webdriver';
-import {browserStack} from './constants';
+import {browserStack} from './constants.ts';
 
 export const markResult = async (
     session: selenium.Session,

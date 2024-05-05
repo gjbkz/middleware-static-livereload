@@ -1,9 +1,8 @@
-export default {
+const avaConfig = {
     extensions: {ts: 'module'},
-    nodeArguments: [
-        '--loader=ts-node/esm',
-        '--experimental-specifier-resolution=node',
-    ],
     timeout: '2m',
     files: ['test/run.ts'],
 };
+
+// eslint-disable-next-line import/no-default-export
+export default avaConfig;

@@ -2,7 +2,7 @@ import {
     projectName,
     buildName,
     browserStack,
-} from './constants';
+} from './constants.ts';
 
 interface BrowsetStackOptions {
     os?: 'OS X' | 'Windows',

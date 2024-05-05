@@ -1,14 +1,12 @@
 import * as http from 'http';
-import {AbortController} from 'abort-controller';
 import ava from 'ava';
 import connect from 'connect';
-import fetch from 'node-fetch';
-import {listen} from './listen';
-import {LogLevel} from './LogLevel';
-import {middleware as createMiddleware} from './middleware';
-import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
-import {getBaseUrlForServer} from './test-util/getBaseUrl';
-import {prepareFiles} from './test-util/prepareFiles';
+import {listen} from './listen.ts';
+import {LogLevel} from './LogLevel.ts';
+import {middleware as createMiddleware} from './middleware.ts';
+import {createTemporaryDirectory} from './test-util/createTemporaryDirectory.ts';
+import {getBaseUrlForServer} from './test-util/getBaseUrl.ts';
+import {prepareFiles} from './test-util/prepareFiles.ts';
 
 const app = connect();
 const server = http.createServer(app);
@@ -23,6 +21,7 @@ const middleware = createMiddleware({
     documentRoot: directory,
     logLevel: LogLevel.debug,
 });
+const abortController = new AbortController();
 
 ava.before(async () => {
     app.use(middleware);
@@ -30,6 +29,10 @@ ava.before(async () => {
         listen(server, 9200),
         prepareFiles(files, directory),
     ]);
+});
+
+ava.afterEach(() => {
+    abortController.abort();
 });
 
 ava.after(async () => {
@@ -46,7 +49,7 @@ ava.serial('GET /foo.txt', async (t) => {
     t.log(`${res.status} ${res.statusText}`);
     t.is(res.status, 200);
     t.is(res.headers.get('content-type'), 'text/plain; charset=UTF-8');
-    t.is(`${await res.text()}`, `${files['foo.txt']}`);
+    t.is(await res.text(), `${files['foo.txt']}`);
 });
 
 ava.serial('GET /', async (t) => {
@@ -83,7 +86,6 @@ ava.serial('GET /middleware-static-livereload.js', async (t) => {
 ava.serial('GET /middleware-static-livereload.js/connect', async (t) => {
     const url = getBaseUrlForServer(server, '/middleware-static-livereload.js/connect');
     t.log(`GET ${url}`);
-    const abortController = new AbortController();
     const res = await fetch(`${url}`, {
         signal: abortController.signal,
         headers: {
@@ -95,5 +97,4 @@ ava.serial('GET /middleware-static-livereload.js/connect', async (t) => {
     t.log(`${res.status} ${res.statusText}`);
     t.is(res.status, 200);
     t.is(res.headers.get('content-type'), 'text/event-stream');
-    abortController.abort();
 });

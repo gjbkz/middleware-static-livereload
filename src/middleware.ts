@@ -2,11 +2,11 @@
 import * as fs from 'fs';
 import type * as stream from 'stream';
 import {fileURLToPath, URL} from 'url';
-import type * as connect from 'connect';
 import type * as chokidar from 'chokidar';
-import {handleError} from './handleError';
-import type {Options} from './types';
-import {getTools} from './getTools';
+import type * as connect from 'connect';
+import {getTools} from './getTools.ts';
+import {handleError} from './handleError.ts';
+import type {Options} from './types.ts';
 
 interface MiddlewareResult extends connect.NextHandleFunction {
     fileWatcher: chokidar.FSWatcher | null,
@@ -18,7 +18,7 @@ export const middleware = (options?: Options): MiddlewareResult => {
     const middlewareFn: connect.NextHandleFunction = (req, res, next) => {
         const id = `#${counter++}`;
         console.info(id, '←', req.method, req.url);
-        const url = new URL(req.url || '/', 'http://localhost');
+        const url = new URL(req.url ?? '/', 'http://localhost');
         if (url.pathname.startsWith(connectionPath)) {
             handleConnection(req, res);
         } else {

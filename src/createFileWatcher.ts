@@ -1,5 +1,5 @@
 import * as chokidar from 'chokidar';
-import type {Options} from './types';
+import type {Options} from './types.ts';
 
 const isFSWatcher = (
     x: chokidar.FSWatcher | chokidar.WatchOptions | boolean | undefined,

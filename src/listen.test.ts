@@ -1,6 +1,6 @@
 import * as http from 'http';
 import test from 'ava';
-import {listen} from './listen';
+import {listen} from './listen.ts';
 
 test('listen an available port', async (t) => {
     const port = 3000;
@@ -10,7 +10,7 @@ test('listen an available port', async (t) => {
         const server = http.createServer();
         servers.unshift(server);
         const listening = await listen(server, port);
-        t.true(ports[0] < listening);
+        t.true((ports[0] ?? -1) < listening);
         ports.unshift(listening);
     }
     for (const server of servers) {

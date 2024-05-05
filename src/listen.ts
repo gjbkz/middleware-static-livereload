@@ -4,7 +4,7 @@ const hostname = 'localhost';
 const isRecord = (input: unknown): input is Record<string, unknown> => typeof input === 'object' && input !== null;
 
 export const listenPort = async (server: Server, port: number) => await new Promise<void>((resolve, reject) => {
-    server.once('error', (error: unknown) => {
+    server.once('error', (error: Error) => {
         if (isRecord(error) && (error.code === 'EADDRINUSE' || error.code === 'EADDRNOTAVAIL')) {
             resolve();
         } else {

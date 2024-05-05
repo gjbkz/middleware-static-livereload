@@ -1,7 +1,7 @@
 import * as console from 'console';
 import * as fs from 'fs';
 import {fileURLToPath} from 'url';
-import {pathLikeToFileUrl} from './pathLikeToFileUrl';
+import {pathLikeToFileUrl} from './pathLikeToFileUrl.ts';
 
 const getDirectoryUrl = (url: URL) => {
     const directoryUrl = new URL(url);

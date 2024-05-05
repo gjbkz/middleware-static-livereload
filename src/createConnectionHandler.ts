@@ -1,6 +1,6 @@
 import type * as http from 'http';
-import type {ConsoleLike} from './types';
-import {compileEvent} from './compileEvent';
+import {compileEvent} from './compileEvent.ts';
+import type {ConsoleLike} from './types.ts';
 
 export const createConnectionHandler = (
     options: {console: ConsoleLike},

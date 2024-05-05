@@ -2,12 +2,12 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import {pathToFileURL} from 'url';
-import {absolutify} from './absolutify';
-import {ensureArray} from './ensureArray';
-import {generateIndexHTML} from './generateIndexHTML';
-import {LibError} from './LibError';
-import {statOrNull} from './statOrNull';
-import type {Options} from './types';
+import {absolutify} from './absolutify.ts';
+import {ensureArray} from './ensureArray.ts';
+import {generateIndexHTML} from './generateIndexHTML.ts';
+import {LibError} from './LibError.ts';
+import {statOrNull} from './statOrNull.ts';
+import type {Options} from './types.ts';
 
 const normalizeDocumentRoot = (pathLike: fs.PathLike) => {
     const url = absolutify(pathLike);
@@ -44,7 +44,7 @@ export const createFileFinder = (
     return Object.assign(
         async (pathname: string) => {
             let relativePath = pathname;
-            let absolutePath = reservedPaths[pathname] || null;
+            let absolutePath = reservedPaths[pathname] ?? null;
             let stats: fs.Stats | null = null;
             if (absolutePath) {
                 stats = await statOrNull(absolutePath);
@@ -58,7 +58,7 @@ export const createFileFinder = (
                         } else if (stats.isDirectory()) {
                             const indexUrl = new URL(index, absolutePath);
                             stats = await statOrNull(indexUrl);
-                            if (stats && stats.isFile()) {
+                            if (stats?.isFile()) {
                                 absolutePath = indexUrl;
                                 relativePath = path.join(relativePath, index);
                             } else {

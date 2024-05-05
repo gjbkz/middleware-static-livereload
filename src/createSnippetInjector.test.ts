@@ -1,6 +1,6 @@
 import * as stream from 'stream';
 import test from 'ava';
-import {createSnippetInjector} from './createSnippetInjector';
+import {createSnippetInjector} from './createSnippetInjector.ts';
 
 test('inject the snippet', async (t) => {
     const injectee = 'abc';

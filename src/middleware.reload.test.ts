@@ -3,17 +3,15 @@ import * as fs from 'fs';
 import * as http from 'http';
 import * as path from 'path';
 import * as stream from 'stream';
-import {AbortController} from 'abort-controller';
 import ava from 'ava';
 import connect from 'connect';
-import fetch from 'node-fetch';
-import {listen} from './listen';
-import {LogLevel} from './LogLevel';
-import {middleware as createMiddleware} from './middleware';
-import {createTemporaryDirectory} from './test-util/createTemporaryDirectory';
-import {getBaseUrlForServer} from './test-util/getBaseUrl';
-import {parseEvents} from './test-util/parseEvents';
-import {prepareFiles} from './test-util/prepareFiles';
+import {listen} from './listen.ts';
+import {LogLevel} from './LogLevel.ts';
+import {middleware as createMiddleware} from './middleware.ts';
+import {createTemporaryDirectory} from './test-util/createTemporaryDirectory.ts';
+import {getBaseUrlForServer} from './test-util/getBaseUrl.ts';
+import {parseEvents} from './test-util/parseEvents.ts';
+import {prepareFiles} from './test-util/prepareFiles.ts';
 
 const app = connect();
 const server = http.createServer(app);
@@ -38,8 +36,11 @@ ava.before(async () => {
     ]);
 });
 
-ava.after(async () => {
+ava.afterEach(() => {
     abortController.abort();
+});
+
+ava.after(async () => {
     if (middleware.fileWatcher) {
         await middleware.fileWatcher.close();
     }
@@ -61,7 +62,13 @@ ava('reload', async (t) => {
                 const newMessage = `${Buffer.concat(receivedChunks.slice(currentLength))}`;
                 const events = [...parseEvents(newMessage)];
                 t.is(events.length, 1);
-                resolve(events[0]);
+                const event = events[0];
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                if (event) {
+                    resolve(event);
+                } else {
+                    reject(new Error('NoEvent'));
+                }
             } else if (count++ < 10) {
                 setTimeout(check, 500);
             } else {
@@ -108,4 +115,5 @@ ava('reload', async (t) => {
         fs.promises.writeFile(indexFilePath, Buffer.from('<!doctype html>\nindex2')),
     ]);
     t.like(changeEvent, {data: 'index.html', event: 'change'});
+    abortController.abort();
 });

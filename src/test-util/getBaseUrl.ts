@@ -1,5 +1,5 @@
-import {URL} from 'url';
 import type {AddressInfo, Server} from 'net';
+import {URL} from 'url';
 
 const isIPv6 = (family: number | string) => family === 6 || family === 'IPv6';
 

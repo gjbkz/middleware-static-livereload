@@ -1,7 +1,7 @@
 import * as stream from 'stream';
 import {StringDecoder} from 'string_decoder';
-import type {Options} from './types';
-import {createInserter} from './createInserter';
+import {createInserter} from './createInserter.ts';
+import type {Options} from './types.ts';
 
 export const createSnippetInjector = (
     options: Options,
@@ -35,7 +35,9 @@ export const createSnippetInjector = (
                     let string = stringDecoder.end();
                     if (string) {
                         process.stdout.write(`string: ${string}\n`);
-                        string = (!done && insert(string, injectee)) || string;
+                        if (!done) {
+                            string = insert(string, injectee) ?? string;
+                        }
                         chunks.push(string);
                         this.push(string);
                     }
