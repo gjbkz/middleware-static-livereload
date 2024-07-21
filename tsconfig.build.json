@@ -1,14 +1,9 @@
 {
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-        "noEmit": false,
-        "outDir": "./lib"
-    },
-    "include": [
-        "./src/**/*.ts"
-    ],
-    "exclude": [
-        "./src/*.test.ts",
-        "./src/test-util/**/*"
-    ]
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "./lib"
+  },
+  "include": ["./src/**/*.ts"],
+  "exclude": ["./src/*.test.ts"]
 }
