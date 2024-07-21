@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import * as fs from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import * as path from 'node:path';
+import { relative, extname, sep as pathSep } from 'node:path';
 import type * as stream from 'node:stream';
 import { fileURLToPath, pathToFileURL, URL } from 'node:url';
 import type * as util from 'node:util';
@@ -192,10 +192,7 @@ export class MiddlewareStaticLivereload {
     const documentRoot = this.fileFinder.findDocumentRoot(pathToFileURL(file));
     if (documentRoot) {
       this.connectionHandler.broadcast(
-        path
-          .relative(fileURLToPath(documentRoot), file)
-          .split(path.sep)
-          .join('/'),
+        relative(fileURLToPath(documentRoot), file).split(pathSep).join('/'),
         eventName,
       );
     } else {
@@ -204,7 +201,7 @@ export class MiddlewareStaticLivereload {
   }
 
   private getContentType(pathname: string): string | null {
-    return this.contentTypes.get(path.extname(pathname)) ?? null;
+    return this.contentTypes.get(extname(pathname)) ?? null;
   }
 
   public getId(item: IncomingMessage | ServerResponse): string {

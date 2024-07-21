@@ -1,20 +1,7 @@
 import * as assert from 'node:assert/strict';
-import { Writable } from 'node:stream';
 import { test } from 'node:test';
 import { LibConsole, LogLevel } from './LibConsole.ts';
-
-class Logger extends Writable {
-  public chunks: Array<Buffer> = [];
-
-  public override _write(chunk: Buffer, _: string, callback: () => void) {
-    this.chunks.push(chunk);
-    callback();
-  }
-
-  public getOutput(): string {
-    return Buffer.concat(this.chunks).toString();
-  }
-}
+import { Logger } from './Logger.test.ts';
 
 test('debug', () => {
   const stdout = new Logger();

@@ -1,6 +1,7 @@
 import * as console from 'node:console';
 import type { Writable } from 'node:stream';
-import * as util from 'node:util';
+import type { InspectOptions } from 'node:util';
+import { inspect } from 'node:util';
 
 export const LogLevel = {
   debug: 0,
@@ -21,11 +22,11 @@ export interface ConsoleLike {
 }
 
 const createWriter =
-  (stream: Writable, inspectOptions?: util.InspectOptions): WriterFn =>
+  (stream: Writable, inspectOptions?: InspectOptions): WriterFn =>
   (...args) => {
     const message = args
       .map((v) =>
-        (typeof v === 'string' ? v : util.inspect(v, inspectOptions)).trim(),
+        (typeof v === 'string' ? v : inspect(v, inspectOptions)).trim(),
       )
       .join(' ');
     if (stream.writable) {
@@ -55,7 +56,7 @@ export class LibConsole implements ConsoleLike {
     logLevel: LogLevel;
     stdout: Writable;
     stderr: Writable;
-    inspectOptions?: util.InspectOptions;
+    inspectOptions?: InspectOptions;
   }) {
     this.logLevel = logLevel;
     this.stdout = stdout;

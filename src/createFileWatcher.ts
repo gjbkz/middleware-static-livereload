@@ -1,8 +1,9 @@
-import * as chokidar from 'chokidar';
+import type { FSWatcher, WatchOptions } from 'chokidar';
+import { watch } from 'chokidar';
 
 const isFSWatcher = (
-  x: chokidar.FSWatcher | chokidar.WatchOptions | boolean | undefined,
-): x is chokidar.FSWatcher =>
+  x: FSWatcher | WatchOptions | boolean | undefined,
+): x is FSWatcher =>
   typeof x === 'object' &&
   'add' in x &&
   typeof x.add === 'function' &&
@@ -10,20 +11,18 @@ const isFSWatcher = (
   typeof x.unwatch === 'function';
 
 export const createFileWatcher = (
-  watch: chokidar.FSWatcher | chokidar.WatchOptions | boolean | null,
-): chokidar.FSWatcher | null => {
-  if (watch === false || watch === null) {
+  options: FSWatcher | WatchOptions | boolean | null,
+): FSWatcher | null => {
+  if (options === false || options === null) {
     return null;
   }
-  if (isFSWatcher(watch)) {
-    return watch;
+  if (isFSWatcher(options)) {
+    return options;
   }
-  return chokidar.watch([], {
+  return watch([], {
     useFsEvents: false,
     ignoreInitial: false,
-    awaitWriteFinish: {
-      stabilityThreshold: 300,
-    },
-    ...(typeof watch === 'object' ? watch : null),
+    awaitWriteFinish: { stabilityThreshold: 300 },
+    ...(typeof options === 'object' ? options : null),
   });
 };

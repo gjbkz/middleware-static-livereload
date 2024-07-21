@@ -1,4 +1,5 @@
-import * as fs from 'node:fs/promises';
+import { readdir, stat } from 'node:fs/promises';
+import { toDirUrl } from './toDirUrl.ts';
 
 const css = `
 :root {
@@ -21,13 +22,10 @@ td, th {
 }
 `.trim();
 
-/**
- * TODO: use template.html
- */
-export const generateIndexHtml = async function* (
-  dirUrl: URL,
-  relativePath: string,
-) {
+const sanitize = (s: string) => s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+const generate = async function* (dirUrl: URL, relativePath: string) {
+  dirUrl = toDirUrl(dirUrl);
   yield '<!doctype html>';
   yield '<meta charset="utf-8">';
   yield '<meta name="viewport" content="width=device-width">';
@@ -36,17 +34,29 @@ export const generateIndexHtml = async function* (
   yield '<table>';
   yield '<tr><th>Name</th><th>Size</th><th>Last modified</th></tr>';
   yield '<tr><td><a href="..">..</a></td><td></td><td></td></tr>';
-  for (const name of await fs.readdir(dirUrl)) {
+  for (const name of await readdir(dirUrl)) {
     const filePath = new URL(name, dirUrl);
-    const stats = await fs.stat(filePath);
-    const isDirectory = stats.isDirectory();
-    const href = `${name}${isDirectory ? '/' : ''}`;
+    const stats = await stat(filePath);
+    const suffix = stats.isDirectory() ? '/' : '';
     yield '<tr>';
-    yield `  <td><a href="./${href}">${href}</a></td>`;
+    const href = `./${encodeURIComponent(name)}${suffix}`;
+    const hrefText = sanitize(`${name}${suffix}`);
+    yield `  <td><a href="${href}">${hrefText}</a></td>`;
     yield `  <td class="size">${stats.size}</td>`;
     yield `  <td><time datetime="${stats.mtime.toISOString()}">${stats.mtime.toLocaleString()}</td>`;
     yield '</tr>';
   }
   yield `<tr><td colspan="3">Created at <time datetime="${new Date().toISOString()}">${new Date().toLocaleString()}</time></td></tr>`;
   yield '</table>';
+};
+
+export const generateIndexPageHtml = async (
+  dirUrl: URL,
+  relativePath: string,
+): Promise<string> => {
+  let html = '';
+  for await (const line of generate(dirUrl, relativePath)) {
+    html += `${line}\n`;
+  }
+  return html;
 };

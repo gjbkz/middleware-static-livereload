@@ -1,9 +1,11 @@
-import * as fs from 'node:fs';
-import * as os from 'node:os';
-import * as path from 'node:path';
+import type { PathLike, Stats } from 'node:fs';
+import { mkdtempSync } from 'node:fs';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ErrorWithCode } from './ErrorWithCode.ts';
-import { generateIndexHtml } from './generateIndexHTML.ts';
+import { generateIndexPageHtml } from './generateIndexPageHtml.ts';
 import { listItems } from './listItems.ts';
 import { pathLikeToFileUrl } from './pathLikeToFileUrl.ts';
 import { statOrNull } from './statOrNull.ts';
@@ -11,13 +13,13 @@ import { toDirUrl } from './toDirUrl.ts';
 
 interface FileFinderResult {
   fileUrl: URL;
-  stats: fs.Stats;
+  stats: Stats;
   relativePath: string;
 }
 
 interface FileFinderConstructorOptions {
   baseDir: string;
-  documentRoot: Array<fs.PathLike> | fs.PathLike;
+  documentRoot: Array<PathLike> | PathLike;
   index: string;
 }
 
@@ -37,7 +39,7 @@ export class FileFinder {
   ) {
     this.tempDir = toDirUrl(
       pathToFileURL(
-        fs.mkdtempSync(path.join(os.tmpdir(), 'middleware-static-livereload')),
+        mkdtempSync(join(tmpdir(), 'middleware-static-livereload')),
       ),
     );
     this.indexFileBaseName = index;
@@ -91,7 +93,7 @@ export class FileFinder {
     let stats = await statOrNull(fileUrl);
     let relativePath = relativeDirPath;
     if (stats?.isFile()) {
-      relativePath = path.join(relativePath, this.indexFileBaseName);
+      relativePath = join(relativePath, this.indexFileBaseName);
     } else {
       fileUrl = await this.generateIndexPageFile(dirUrl, relativeDirPath);
       stats = await statOrNull(fileUrl);
@@ -113,12 +115,8 @@ export class FileFinder {
       `${relativePath.slice(1)}${this.indexFileBaseName}`,
       this.tempDir,
     );
-    await fs.promises.mkdir(new URL('.', dest), { recursive: true });
-    let html = '';
-    for await (const line of generateIndexHtml(dirUrl, relativePath)) {
-      html += `${line}\n`;
-    }
-    await fs.promises.writeFile(dest, html);
+    await mkdir(new URL('.', dest), { recursive: true });
+    await writeFile(dest, await generateIndexPageHtml(dirUrl, relativePath));
     return dest;
   }
 
