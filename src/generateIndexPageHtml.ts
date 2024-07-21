@@ -33,7 +33,9 @@ const generate = async function* (dirUrl: URL, relativePath: string) {
   yield `<style>${css}</style>`;
   yield '<table>';
   yield '<tr><th>Name</th><th>Size</th><th>Last modified</th></tr>';
-  yield '<tr><td><a href="..">..</a></td><td></td><td></td></tr>';
+  if (relativePath !== '/') {
+    yield '<tr><td><a href="..">..</a></td><td></td><td></td></tr>';
+  }
   for (const name of await readdir(dirUrl)) {
     const filePath = new URL(name, dirUrl);
     const stats = await stat(filePath);

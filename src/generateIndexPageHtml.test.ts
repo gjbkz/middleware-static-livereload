@@ -6,8 +6,8 @@ import { test } from 'node:test';
 import { pathToFileURL } from 'node:url';
 import { generateIndexPageHtml } from './generateIndexPageHtml.ts';
 
-test('generateIndexPageHtml', async () => {
-  const dir = await mkdtemp(join(tmpdir(), 'generateIndexPageHtml-'));
+test('generateIndexPageHtml', async (ctx) => {
+  const dir = await mkdtemp(join(tmpdir(), ctx.name));
   const file1 = 'file1.txt';
   await writeFile(join(dir, file1), file1);
   const file2 = 'fileあ>.txt';

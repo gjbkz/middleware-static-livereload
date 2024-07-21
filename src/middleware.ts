@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import * as fs from 'node:fs';
+import type { PathLike } from 'node:fs';
+import { createReadStream } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { relative, extname, sep as pathSep } from 'node:path';
-import type * as stream from 'node:stream';
+import type { Readable, Writable } from 'node:stream';
 import { fileURLToPath, pathToFileURL, URL } from 'node:url';
-import type * as util from 'node:util';
-import type * as chokidar from 'chokidar';
-import type * as connect from 'connect';
+import type { InspectOptions } from 'node:util';
+import type { FSWatcher, WatchOptions } from 'chokidar';
 import { ConnectionHandler } from './ConnectionHandler.ts';
 import { createFileWatcher } from './createFileWatcher.ts';
 import { FileFinder } from './FileFinder.ts';
@@ -24,7 +24,7 @@ export interface MiddlewareOptions {
    *       RETURN the file
    *   RETURN 404
    */
-  documentRoot: Array<fs.PathLike> | fs.PathLike;
+  documentRoot: Array<PathLike> | PathLike;
   /**
    * The base directory where the middleware resolves the documentRoot.
    */
@@ -36,7 +36,7 @@ export interface MiddlewareOptions {
    * If you need to do something with the watcher outside this middleware,
    * you can pass the watcher object itself.
    */
-  watch: chokidar.FSWatcher | chokidar.WatchOptions | boolean | null;
+  watch: FSWatcher | WatchOptions | boolean | null;
   /**
    * If this value is `foo.txt`, the middleware respond `/foo.txt` to `GET /`,
    * `/foo/foo.txt` to `GET /foo/`.
@@ -54,11 +54,11 @@ export interface MiddlewareOptions {
   /**
    * Streams where the middleware writes message to.
    */
-  stdout: stream.Writable;
+  stdout: Writable;
   /**
    * Streams where the middleware writes message to.
    */
-  stderr: stream.Writable;
+  stderr: Writable;
   /**
    * A pattern or patterns to detect the position before which a <script> tag
    * is inserted.
@@ -79,7 +79,7 @@ export interface MiddlewareOptions {
    */
   scriptPath: string;
   encoding: BufferEncoding;
-  inspectOptions: util.InspectOptions;
+  inspectOptions: InspectOptions;
 }
 
 const defaultOptions: MiddlewareOptions = {
@@ -125,6 +125,8 @@ const defaultOptions: MiddlewareOptions = {
 export class MiddlewareStaticLivereload {
   private readonly idStore: WeakMap<IncomingMessage | ServerResponse, string>;
 
+  private requestCount: number;
+
   private readonly options: Readonly<MiddlewareOptions>;
 
   private readonly console: LibConsole;
@@ -135,12 +137,13 @@ export class MiddlewareStaticLivereload {
 
   private readonly connectionHandler: ConnectionHandler;
 
-  private readonly fileWatcher: chokidar.FSWatcher | null;
+  private readonly fileWatcher: FSWatcher | null;
 
   private readonly contentTypes: Map<string, string>;
 
   public constructor(options: MiddlewareOptions) {
     this.idStore = new WeakMap();
+    this.requestCount = 0;
     this.options = options;
     this.console = new LibConsole(options);
     this.contentTypes = new Map();
@@ -158,33 +161,37 @@ export class MiddlewareStaticLivereload {
     if (this.fileWatcher) {
       this.fileWatcher.on('all', this.onFileEvent.bind(this));
     }
-    let requestCount = 0;
-    type Args = Parameters<typeof this.handleRequest>;
-    // eslint-disable-next-line no-constructor-return
-    return new Proxy(this, {
-      apply: (target, _thisArg, [req, res, next]: Args) => {
-        const requestId = `#${requestCount++}`;
-        this.idStore.set(req, requestId);
-        this.idStore.set(res, requestId);
-        this.console.info(requestId, '←', req.method, req.url);
-        target
-          .handleRequest(req, res, next)
-          .catch((error) => {
-            this.console.error(error);
-            if (!res.writableEnded) {
-              if (!res.headersSent) {
-                const errorCode = isErrorWithCode(error) && error.code;
-                res.statusCode = errorCode === 'ENOENT' ? 404 : 500;
-              }
-              res.end(`${error || 'Error'}`);
+  }
+
+  public get middleware() {
+    return (req: IncomingMessage, res: ServerResponse) => {
+      const requestId = `#${this.requestCount++}`;
+      this.idStore.set(req, requestId);
+      this.idStore.set(res, requestId);
+      this.console.info(requestId, '←', req.method, req.url);
+      this.handleRequest(req, res)
+        .catch((error) => {
+          this.console.error(error);
+          if (!res.writableEnded) {
+            if (!res.headersSent) {
+              const errorCode = isErrorWithCode(error) && error.code;
+              res.statusCode = errorCode === 'ENOENT' ? 404 : 500;
             }
-          })
-          .finally(() => {
-            const headers = { ...res.getHeaders() };
-            this.console.debug(requestId, '→', res.statusCode, headers);
-          });
-      },
-    });
+            res.end(`${error || 'Error'}`);
+          }
+        })
+        .finally(() => {
+          const headers = { ...res.getHeaders() };
+          this.console.debug(requestId, '→', res.statusCode, headers);
+        });
+    };
+  }
+
+  public async close() {
+    this.connectionHandler.close();
+    if (this.fileWatcher) {
+      await this.fileWatcher.close();
+    }
   }
 
   private onFileEvent(eventName: string, file: string) {
@@ -208,11 +215,7 @@ export class MiddlewareStaticLivereload {
     return this.idStore.get(item) ?? '#unknown';
   }
 
-  public async handleRequest(
-    req: IncomingMessage,
-    res: ServerResponse,
-    _next: connect.NextFunction,
-  ) {
+  private async handleRequest(req: IncomingMessage, res: ServerResponse) {
     const url = new URL(req.url ?? '/', 'http://localhost');
     if (url.pathname.startsWith(this.clientScriptPath)) {
       this.connectionHandler.handle(req, res);
@@ -232,7 +235,7 @@ export class MiddlewareStaticLivereload {
     if (contentType) {
       res.setHeader('content-type', contentType);
     }
-    let reader: stream.Readable = fs.createReadStream(file.fileUrl);
+    let reader: Readable = createReadStream(file.fileUrl);
     let contentLength = file.stats.size;
     if (contentType?.startsWith('text/html')) {
       const injector = new SnippetInjector(this.options, this.snippet);
@@ -250,5 +253,8 @@ export class MiddlewareStaticLivereload {
   }
 }
 
-export const middleware = (options: Partial<MiddlewareOptions> = {}) =>
-  new MiddlewareStaticLivereload({ ...defaultOptions, ...options });
+export const middleware = (options: Partial<MiddlewareOptions> = {}) => {
+  const msl = new MiddlewareStaticLivereload({ ...defaultOptions, ...options });
+  const close = async () => await msl.close();
+  return Object.assign(msl.middleware, { close });
+};
