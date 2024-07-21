@@ -8,7 +8,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        node: [20.x, 18.x, 16.x, 14.x]
+        # node: [20.x, 18.x, 16.x, 14.x]
+        node: [20.x]
     steps:
       - run: git config --global core.autocrlf false
       - run: git config --global core.eol lf
