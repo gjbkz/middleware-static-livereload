@@ -1,10 +1,13 @@
-import type * as fs from 'fs';
-import * as path from 'path';
-import {pathToFileURL} from 'url';
+import type { PathLike } from 'node:fs';
+import * as path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
-export const pathLikeToFileUrl = (absolutePathLike: fs.PathLike) => {
-    if (typeof absolutePathLike === 'string' || Buffer.isBuffer(absolutePathLike)) {
-        return pathToFileURL(path.normalize(`${absolutePathLike}`));
-    }
-    return absolutePathLike;
+export const pathLikeToFileUrl = (pathLike: PathLike, baseDir: string): URL => {
+  if (typeof pathLike === 'string' || Buffer.isBuffer(pathLike)) {
+    pathLike = `${pathLike}`;
+    return pathToFileURL(
+      path.isAbsolute(pathLike) ? pathLike : path.join(baseDir, pathLike),
+    );
+  }
+  return pathLike;
 };
