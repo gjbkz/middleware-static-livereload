@@ -1,6 +1,6 @@
 import * as assert from 'node:assert/strict';
 import * as console from 'node:console';
-import { mkdtemp, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import type { Server } from 'node:http';
 import { createServer as httpCreateServer } from 'node:http';
 import { tmpdir } from 'node:os';
@@ -65,46 +65,72 @@ test.afterEach(async () => {
   closeFunctions.clear();
 });
 
-test('root 200', async (ctx) => {
-  const dir = await mkdtemp(join(tmpdir(), ctx.name));
-  const url = await createServer(ctx, { documentRoot: [dir], watch: null });
+test('/ 200', async (ctx) => {
+  const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
+  const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   const res = await fetch(url);
   assert.equal(res.status, 200);
 });
 
-test('root content-type', async (ctx) => {
-  const dir = await mkdtemp(join(tmpdir(), ctx.name));
-  const url = await createServer(ctx, { documentRoot: [dir], watch: null });
+test('/ content-type', async (ctx) => {
+  const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
+  const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   const res = await fetch(url);
   assert.equal(res.status, 200);
 });
 
-test('root html', async (ctx) => {
-  const dir = await mkdtemp(join(tmpdir(), ctx.name));
-  const url = await createServer(ctx, { documentRoot: [dir], watch: null });
+test('/ index', async (ctx) => {
+  const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
+  const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   const res1 = await fetch(url);
   assert.deepEqual(listLinks(await res1.text()), []);
-  await writeFile(join(dir, 'foo'), '');
+  await writeFile(join(rootDir, 'foo'), '');
   const res2 = await fetch(url);
   assert.deepEqual(listLinks(await res2.text()), [['./foo', 'foo']]);
 });
 
-test('root html (encoded)', async (ctx) => {
-  const dir = await mkdtemp(join(tmpdir(), ctx.name));
-  const url = await createServer(ctx, { documentRoot: [dir], watch: null });
-  await writeFile(join(dir, 'あ'), '');
+test('/ index (encoded)', async (ctx) => {
+  const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
+  const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
+  await writeFile(join(rootDir, 'あ'), '');
   const res = await fetch(url);
   assert.deepEqual(listLinks(await res.text()), [
     [`./${encodeURIComponent('あ')}`, 'あ'],
   ]);
 });
 
-test('root html (sanitized)', async (ctx) => {
-  const dir = await mkdtemp(join(tmpdir(), ctx.name));
-  const url = await createServer(ctx, { documentRoot: [dir], watch: null });
-  await writeFile(join(dir, 'あ>あ'), '');
+test('/ index (sanitized)', async (ctx) => {
+  const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
+  const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
+  await writeFile(join(rootDir, 'あ>あ'), '');
   const res = await fetch(url);
   assert.deepEqual(listLinks(await res.text()), [
     [`./${encodeURIComponent('あ>あ')}`, 'あ&gt;あ'],
   ]);
+});
+
+test('/dir index', async (ctx) => {
+  const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
+  const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
+  const dir = join(rootDir, 'dir');
+  await mkdir(dir);
+  const body = `${Date.now()}`;
+  await writeFile(join(dir, 'あ>あ'), body);
+  const res = await fetch(new URL('./dir', url));
+  assert.deepEqual(listLinks(await res.text()), [
+    ['..', '..'],
+    [`./${encodeURIComponent('あ>あ')}`, 'あ&gt;あ'],
+  ]);
+});
+
+test('/dir file', async (ctx) => {
+  const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
+  const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
+  const dir = join(rootDir, 'dir');
+  await mkdir(dir);
+  const body = `${Date.now()}`;
+  const filePath = join(dir, 'あ>あ');
+  await writeFile(filePath, body);
+  const res = await fetch(new URL('./dir/あ>あ', url));
+  assert.equal(await res.text(), body);
 });
