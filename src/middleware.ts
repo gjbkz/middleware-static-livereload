@@ -168,7 +168,9 @@ export class MiddlewareStaticLivereload {
       const requestId = `#${this.requestCount++}`;
       this.idStore.set(req, requestId);
       this.idStore.set(res, requestId);
-      this.console.info(requestId, '←', req.method, req.url);
+      this.console.info(
+        `${requestId} ← ${req.method} ${decodeURIComponent(`${req.url}`)}`,
+      );
       this.handleRequest(req, res)
         .catch((error) => {
           this.console.error(error);

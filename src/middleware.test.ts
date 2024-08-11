@@ -12,6 +12,7 @@ import type { MiddlewareOptions } from './middleware.ts';
 import { middleware } from './middleware.ts';
 
 const closeFunctions = new Set<() => Promise<unknown>>();
+
 const closeServer = async (server: Server) =>
   await new Promise((resolve, reject) => {
     const onClose = (error?: Error) => {
@@ -29,6 +30,7 @@ const closeServer = async (server: Server) =>
       onClose();
     }
   });
+
 const createServer = async (
   ctx: SuiteContext,
   options: Partial<MiddlewareOptions>,
@@ -50,12 +52,49 @@ const createServer = async (
   const baseUrl = new URL(`http://${hostname}:${port}`);
   return baseUrl;
 };
+
 const listLinks = (html: string) => {
   const links: Array<[string | undefined, string | undefined]> = [];
   for (const match of html.matchAll(/<a[^>]*?href="([^"]+)"[^>]*?>([^<]+)</g)) {
     links.push([match[1], match[2]]);
   }
   return links;
+};
+
+const listenServerSentEvents = async (url: URL) => {
+  const abc = new AbortController();
+  const res = await fetch(url, {
+    headers: { accept: 'text/event-stream' },
+    signal: abc.signal,
+  });
+  const read = async () => {
+    if (!res.body) {
+      throw new Error('NoBody');
+    }
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+    // Read the stream
+    while (true) {
+      const { done, value } = await reader.read().catch((error) => {
+        if (
+          abc.signal.aborted &&
+          error instanceof DOMException &&
+          error.name === 'AbortError'
+        ) {
+          return { done: true, value: undefined };
+        }
+        throw error;
+      });
+      if (done) {
+        break;
+      }
+      buffer += decoder.decode(value, { stream: true });
+    }
+    return buffer.trim();
+  };
+  const abort = () => abc.abort();
+  return { abort, read };
 };
 
 test.afterEach(async () => {
@@ -133,4 +172,17 @@ test('/dir file', async (ctx) => {
   await writeFile(filePath, body);
   const res = await fetch(new URL('./dir/あ>あ', url));
   assert.equal(await res.text(), body);
+});
+
+test('sse:connect', async (ctx) => {
+  const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
+  const filePath = join(rootDir, 'あ>あ');
+  await writeFile(filePath, `${Date.now()}`);
+  const scriptPath = 'client.js';
+  const url = await createServer(ctx, { documentRoot: [rootDir], scriptPath });
+  const sseEndpoint = new URL(`/${scriptPath}/connect`, url);
+  const sse = await listenServerSentEvents(sseEndpoint);
+  setTimeout(() => sse.abort());
+  const sseData = await sse.read();
+  assert.equal(sseData, ['retry: 3000', 'data: #0'].join('\n'));
 });

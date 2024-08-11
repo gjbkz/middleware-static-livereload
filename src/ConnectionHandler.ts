@@ -43,7 +43,7 @@ export class ConnectionHandler {
         this.connections.delete(res);
         this.console.info(`disconnected: #${id}`);
       });
-      res.write(`retry: 3000\ndata: #${id}`);
+      res.write(`retry: 3000\ndata: #${id}\n\n`);
       this.console.info(`connected: #${id} ${req.headers['user-agent']}`);
     } else {
       const message = `Invaild event-stream request: ${req.headers.accept}`;

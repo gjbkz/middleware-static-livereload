@@ -48,6 +48,17 @@ test('generate index', async (ctx) => {
   assert.ok(html.includes('<a href="./file1.txt"'));
 });
 
+test('return from reservedPaths', async () => {
+  const dir = pathToFileURL(process.cwd());
+  const fileFinder = new FileFinder(
+    { documentRoot: [dir], baseDir: process.cwd(), index: 'index.html' },
+    { '/foo': dir },
+  );
+  const result = await fileFinder.findFile('/foo');
+  assert.equal(result.relativePath, '/foo');
+  assert.deepEqual(result.fileUrl, dir);
+});
+
 test('documentRoots is public', () => {
   const dir = pathToFileURL(process.cwd());
   const fileFinder = new FileFinder({
