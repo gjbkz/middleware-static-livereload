@@ -241,6 +241,9 @@ export class MiddlewareStaticLivereload {
 
   private async respondFile(res: ServerResponse, url: URL) {
     const file = await this.fileFinder.findFile(url.pathname);
+    if (this.fileWatcher && this.findDocumentRoot(file.fileUrl)) {
+      this.fileWatcher.add(fileURLToPath(file.fileUrl));
+    }
     this.console.debug(this.getId(res), '→', fileURLToPath(file.fileUrl));
     const contentType = this.getContentType(file.fileUrl.pathname);
     if (contentType) {
@@ -258,9 +261,6 @@ export class MiddlewareStaticLivereload {
       res.statusCode = 200;
       reader.pipe(res).once('error', reject).once('finish', resolve);
     });
-    if (this.fileWatcher && this.findDocumentRoot(file.fileUrl)) {
-      this.fileWatcher.add(fileURLToPath(file.fileUrl));
-    }
   }
 }
 
