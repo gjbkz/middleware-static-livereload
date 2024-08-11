@@ -29,7 +29,7 @@ const generate = async function* (dirUrl: URL, relativePath: string) {
   yield '<!doctype html>';
   yield '<meta charset="utf-8">';
   yield '<meta name="viewport" content="width=device-width">';
-  yield `<title>Index of /${relativePath}</title>`;
+  yield `<title>Index of ${relativePath}</title>`;
   yield `<style>${css}</style>`;
   yield '<table>';
   yield '<tr><th>Name</th><th>Size</th><th>Last modified</th></tr>';

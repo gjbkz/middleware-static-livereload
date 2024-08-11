@@ -154,7 +154,7 @@ export class MiddlewareStaticLivereload {
     }
     this.clientScriptPath = `/${options.scriptPath}`.replace(/^\/+/, '/');
     this.fileFinder = new FileFinder(options, {
-      [this.clientScriptPath]: new URL('client-script.js', import.meta.url),
+      [this.clientScriptPath]: new URL('clientScript.js', import.meta.url),
     });
     this.connectionHandler = new ConnectionHandler(this.console);
     this.fileWatcher = createFileWatcher(options.watch);
@@ -194,9 +194,18 @@ export class MiddlewareStaticLivereload {
     }
   }
 
+  private findDocumentRoot(fileUrl: URL): URL | null {
+    for (const documentRoot of this.fileFinder.documentRoots) {
+      if (fileUrl.pathname.startsWith(documentRoot.pathname)) {
+        return documentRoot;
+      }
+    }
+    return null;
+  }
+
   private onFileEvent(eventName: string, file: string) {
     this.console.debug(`${eventName}: ${file}`);
-    const documentRoot = this.fileFinder.findDocumentRoot(pathToFileURL(file));
+    const documentRoot = this.findDocumentRoot(pathToFileURL(file));
     if (documentRoot) {
       this.connectionHandler.broadcast(
         relative(fileURLToPath(documentRoot), file).split(pathSep).join('/'),
@@ -247,7 +256,7 @@ export class MiddlewareStaticLivereload {
       res.statusCode = 200;
       reader.pipe(res).once('error', reject).once('finish', resolve);
     });
-    if (this.fileWatcher && this.fileFinder.findDocumentRoot(file.fileUrl)) {
+    if (this.fileWatcher && this.findDocumentRoot(file.fileUrl)) {
       this.fileWatcher.add(fileURLToPath(file.fileUrl));
     }
   }

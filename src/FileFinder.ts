@@ -28,7 +28,7 @@ export class FileFinder {
 
   private readonly indexFileBaseName: string;
 
-  private readonly documentRootList: ReadonlyArray<URL>;
+  public readonly documentRoots: ReadonlyArray<URL>;
 
   private readonly reservedPaths: Readonly<Record<string, URL | undefined>> =
     {};
@@ -43,11 +43,11 @@ export class FileFinder {
       ),
     );
     this.indexFileBaseName = index;
-    const documentRootList = [];
+    const documentRoots = [];
     for (const item of listItems(documentRoot)) {
-      documentRootList.push(toDirUrl(pathLikeToFileUrl(item, baseDir)));
+      documentRoots.push(toDirUrl(pathLikeToFileUrl(item, baseDir)));
     }
-    this.documentRootList = documentRootList;
+    this.documentRoots = documentRoots;
     this.reservedPaths = reservedPaths;
   }
 
@@ -60,7 +60,7 @@ export class FileFinder {
         return { fileUrl: reservedFileUrl, relativePath, stats };
       }
     }
-    for (const documentRoot of this.documentRootList) {
+    for (const documentRoot of this.documentRoots) {
       const result = await this.findFileInDir(documentRoot, relativePath);
       if (result) {
         return result;
@@ -118,14 +118,5 @@ export class FileFinder {
     await mkdir(new URL('.', dest), { recursive: true });
     await writeFile(dest, await generateIndexPageHtml(dirUrl, relativePath));
     return dest;
-  }
-
-  public findDocumentRoot(fileUrl: URL): URL | null {
-    for (const documentRoot of this.documentRootList) {
-      if (fileUrl.pathname.startsWith(documentRoot.pathname)) {
-        return documentRoot;
-      }
-    }
-    return null;
   }
 }
