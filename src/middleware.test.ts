@@ -83,6 +83,18 @@ const readResponseBody = async function* (res: Response) {
   yield decoder.decode();
 };
 
+const readServerSentEvents = async function* (src: AsyncGenerator<string>) {
+  const delimiter = '\n\n';
+  let buffer = '';
+  for await (const chunk of src) {
+    const events = `${buffer}${chunk}`.split(delimiter);
+    buffer = events.pop() ?? '';
+    for (const event of events) {
+      yield event;
+    }
+  }
+};
+
 const listenServerSentEvents = async (url: URL) => {
   const abc = new AbortController();
   const abort = () => abc.abort();
@@ -90,18 +102,7 @@ const listenServerSentEvents = async (url: URL) => {
     headers: { accept: 'text/event-stream' },
     signal: abc.signal,
   });
-  const readEvent = async function* () {
-    const delimiter = '\n\n';
-    let buffer = '';
-    for await (const chunk of readResponseBody(res)) {
-      const events = `${buffer}${chunk}`.split(delimiter);
-      buffer = events.pop() ?? '';
-      for (const event of events) {
-        yield event;
-      }
-    }
-  };
-  const events = readEvent();
+  const events = readServerSentEvents(readResponseBody(res));
   const next = async () => await events.next();
   return { abort, next };
 };
