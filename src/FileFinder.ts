@@ -103,7 +103,7 @@ export class FileFinder {
     let stats = await statOrNull(fileUrl);
     let relativePath = relativeDirPath;
     if (stats?.isFile()) {
-      relativePath = join(relativePath, this.indexFileBaseName);
+      relativePath = [relativePath, this.indexFileBaseName].join('/');
     } else {
       fileUrl = await this.generateIndexPageFile(dirUrl, relativeDirPath);
       stats = await statOrNull(fileUrl);
