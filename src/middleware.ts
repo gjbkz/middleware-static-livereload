@@ -7,6 +7,7 @@ import type { Readable, Writable } from 'node:stream';
 import { fileURLToPath, pathToFileURL, URL } from 'node:url';
 import type { InspectOptions } from 'node:util';
 import type { FSWatcher, WatchOptions } from 'chokidar';
+import { clientScript } from './clientScript.ts';
 import { ConnectionHandler } from './ConnectionHandler.ts';
 import { createFileWatcher } from './createFileWatcher.ts';
 import { FileFinder } from './FileFinder.ts';
@@ -154,7 +155,7 @@ export class MiddlewareStaticLivereload {
     }
     this.clientScriptPath = `/${options.scriptPath}`.replace(/^\/+/, '/');
     this.fileFinder = new FileFinder(options, {
-      [this.clientScriptPath]: new URL('clientScript.js', import.meta.url),
+      [this.clientScriptPath]: clientScript,
     });
     this.connectionHandler = new ConnectionHandler(this.console);
     this.fileWatcher = createFileWatcher(options.watch);

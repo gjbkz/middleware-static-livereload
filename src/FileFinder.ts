@@ -1,5 +1,5 @@
 import type { PathLike, Stats } from 'node:fs';
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, writeFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -35,7 +35,7 @@ export class FileFinder {
 
   public constructor(
     { baseDir, documentRoot, index }: FileFinderConstructorOptions,
-    reservedPaths: Record<string, URL | undefined> = {},
+    reserved: Record<string, Buffer | URL | undefined> = {},
   ) {
     this.tempDir = toDirUrl(
       pathToFileURL(
@@ -48,6 +48,16 @@ export class FileFinder {
       documentRoots.push(toDirUrl(pathLikeToFileUrl(item, baseDir)));
     }
     this.documentRoots = documentRoots;
+    const reservedPaths: Record<string, URL> = {};
+    for (const [key, value] of Object.entries(reserved)) {
+      if (Buffer.isBuffer(value)) {
+        const dest = new URL(key.replace(/^\//, './'), this.tempDir);
+        writeFileSync(dest, value);
+        reservedPaths[key] = dest;
+      } else if (value && 'href' in value) {
+        reservedPaths[key] = value;
+      }
+    }
     this.reservedPaths = reservedPaths;
   }
 
