@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, unlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import { isErrorWithCode } from './isErrorWithCode.ts';
 import { createServer, listenServerSentEvents } from './server.test.ts';
 
 const listLinks = (html: string) => {
@@ -50,7 +51,15 @@ test('/ index (encoded)', async (ctx) => {
 test('/ index (sanitized)', async (ctx) => {
   const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
   const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
-  await writeFile(join(rootDir, 'あ>あ'), '');
+  try {
+    await writeFile(join(rootDir, 'あ>あ'), '');
+  } catch (error) {
+    if (isErrorWithCode(error) && error.code === 'ENOENT') {
+      // Windows does not allow creating a file with '>' in the name.
+      ctx.skip();
+      return;
+    }
+  }
   const res = await fetch(url);
   assert.deepEqual(listLinks(await res.text()), [
     [`./${encodeURIComponent('あ>あ')}`, 'あ&gt;あ'],
@@ -63,11 +72,11 @@ test('/dir index', async (ctx) => {
   const dir = join(rootDir, 'dir');
   await mkdir(dir, { recursive: true });
   const body = `${Date.now()}`;
-  await writeFile(join(dir, 'あ>あ'), body);
+  await writeFile(join(dir, 'あ-あ'), body);
   const res = await fetch(new URL('./dir', url));
   assert.deepEqual(listLinks(await res.text()), [
     ['..', '..'],
-    [`./${encodeURIComponent('あ>あ')}`, 'あ&gt;あ'],
+    [`./${encodeURIComponent('あ-あ')}`, 'あ-あ'],
   ]);
 });
 
@@ -77,9 +86,9 @@ test('/dir file', async (ctx) => {
   const dir = join(rootDir, 'dir');
   await mkdir(dir, { recursive: true });
   const body = `${Date.now()}`;
-  const filePath = join(dir, 'あ>あ');
+  const filePath = join(dir, 'あ-あ');
   await writeFile(filePath, body);
-  const res = await fetch(new URL('./dir/あ>あ', url));
+  const res = await fetch(new URL('./dir/あ-あ', url));
   assert.equal(await res.text(), body);
 });
 
@@ -95,7 +104,7 @@ test('respond the client script', async (ctx) => {
 
 test('server sent event: connect', async (ctx) => {
   const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
-  const filePath = join(rootDir, 'あ>あ');
+  const filePath = join(rootDir, 'file.txt');
   await writeFile(filePath, `${Date.now()}`);
   const scriptPath = 'client.js';
   const url = await createServer(ctx, { documentRoot: [rootDir], scriptPath });
