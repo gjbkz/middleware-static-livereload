@@ -4,6 +4,7 @@ import { createServer as httpCreateServer } from 'node:http';
 import type { SuiteContext } from 'node:test';
 import { test } from 'node:test';
 import connect from 'connect';
+import { isErrorWithCode } from './isErrorWithCode.ts';
 import { LogLevel } from './LibConsole.ts';
 import type { MiddlewareOptions } from './middleware.ts';
 import { middleware } from './middleware.ts';
@@ -46,10 +47,16 @@ export const createServer = async (
   const server = httpCreateServer(app);
   const close = async () => await closeServer(server);
   closeFunctions.add(close);
-  const port = 3000;
+  let port = 3000;
   const hostname = 'localhost';
   await new Promise((resolve, reject) => {
-    server.once('error', reject);
+    server.once('error', (error) => {
+      if (isErrorWithCode(error) && error.code === 'EADDRINUSE') {
+        server.listen(++port, hostname);
+      } else {
+        reject(error);
+      }
+    });
     server.once('listening', resolve);
     server.listen(port, hostname);
   });
