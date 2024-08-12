@@ -61,7 +61,7 @@ test('/dir index', async (ctx) => {
   const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
   const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   const dir = join(rootDir, 'dir');
-  await mkdir(dir);
+  await mkdir(dir, { recursive: true });
   const body = `${Date.now()}`;
   await writeFile(join(dir, 'あ>あ'), body);
   const res = await fetch(new URL('./dir', url));
@@ -75,7 +75,7 @@ test('/dir file', async (ctx) => {
   const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
   const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   const dir = join(rootDir, 'dir');
-  await mkdir(dir);
+  await mkdir(dir, { recursive: true });
   const body = `${Date.now()}`;
   const filePath = join(dir, 'あ>あ');
   await writeFile(filePath, body);
@@ -112,7 +112,7 @@ test('server sent event: connect', async (ctx) => {
 test('server sent event: watch only requested files', async (ctx) => {
   const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
   const dir = join(rootDir, 'dir');
-  await mkdir(dir);
+  await mkdir(dir, { recursive: true });
   const file1 = join(dir, 'file1.txt');
   await writeFile(file1, `${Date.now()}`);
   const file2 = join(dir, 'file2.txt');
