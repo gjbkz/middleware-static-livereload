@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, unlinkSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, unlinkSync } from 'node:fs';
 import { builtinModules } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import * as esbuild from 'esbuild';
@@ -19,6 +19,7 @@ if (typeof packageJson === 'object' && packageJson) {
   }
 }
 
+mkdirSync(destDir, { recursive: true });
 for (const name of readdirSync(destDir, readdirOptions)) {
   unlinkSync(new URL(name, destDir));
 }
