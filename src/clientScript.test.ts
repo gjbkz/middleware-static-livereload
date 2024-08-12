@@ -72,7 +72,7 @@ const testBackgroundColor = async (
 };
 
 test('update stylesheet', async (ctx) => {
-  const rootDir = await mkdtemp(join(tmpdir(), ctx.name));
+  const rootDir = await mkdtemp(tmpdir());
   const pageFilePath = join(rootDir, 'page.html');
   await writeFile(
     pageFilePath,

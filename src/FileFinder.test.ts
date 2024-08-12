@@ -6,8 +6,8 @@ import { test } from 'node:test';
 import { pathToFileURL } from 'node:url';
 import { FileFinder } from './FileFinder.ts';
 
-test('find .txt', async (ctx) => {
-  const dir = await mkdtemp(join(tmpdir(), ctx.name));
+test('find .txt', async () => {
+  const dir = await mkdtemp(tmpdir());
   const file1 = 'file1.txt';
   await writeFile(join(dir, file1), file1);
   const fileFinder = new FileFinder({
@@ -19,8 +19,8 @@ test('find .txt', async (ctx) => {
   assert.equal(result.relativePath, '/file1.txt');
 });
 
-test('find index', async (ctx) => {
-  const dir = await mkdtemp(join(tmpdir(), ctx.name));
+test('find index', async () => {
+  const dir = await mkdtemp(tmpdir());
   const file1 = 'file1.txt';
   await writeFile(join(dir, file1), file1);
   const fileFinder = new FileFinder({
@@ -32,8 +32,8 @@ test('find index', async (ctx) => {
   assert.equal(result.relativePath, '/file1.txt');
 });
 
-test('generate index', async (ctx) => {
-  const dir = await mkdtemp(join(tmpdir(), ctx.name));
+test('generate index', async () => {
+  const dir = await mkdtemp(tmpdir());
   const file1 = 'file1.txt';
   await writeFile(join(dir, file1), file1);
   const fileFinder = new FileFinder({
