@@ -7,7 +7,7 @@ import { pathToFileURL } from 'node:url';
 import { FileFinder } from './FileFinder.ts';
 
 test('find .txt', async () => {
-  const dir = await mkdtemp(tmpdir());
+  const dir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const file1 = 'file1.txt';
   await writeFile(join(dir, file1), file1);
   const fileFinder = new FileFinder({
@@ -20,7 +20,7 @@ test('find .txt', async () => {
 });
 
 test('find index', async () => {
-  const dir = await mkdtemp(tmpdir());
+  const dir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const file1 = 'file1.txt';
   await writeFile(join(dir, file1), file1);
   const fileFinder = new FileFinder({
@@ -33,7 +33,7 @@ test('find index', async () => {
 });
 
 test('generate index', async () => {
-  const dir = await mkdtemp(tmpdir());
+  const dir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const file1 = 'file1.txt';
   await writeFile(join(dir, file1), file1);
   const fileFinder = new FileFinder({

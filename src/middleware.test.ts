@@ -15,21 +15,21 @@ const listLinks = (html: string) => {
 };
 
 test('/ 200', async (ctx) => {
-  const rootDir = await mkdtemp(tmpdir());
+  const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   const res = await fetch(url);
   assert.equal(res.status, 200);
 });
 
 test('/ content-type', async (ctx) => {
-  const rootDir = await mkdtemp(tmpdir());
+  const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   const res = await fetch(url);
   assert.equal(res.status, 200);
 });
 
 test('/ index', async (ctx) => {
-  const rootDir = await mkdtemp(tmpdir());
+  const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   const res1 = await fetch(url);
   assert.deepEqual(listLinks(await res1.text()), []);
@@ -39,7 +39,7 @@ test('/ index', async (ctx) => {
 });
 
 test('/ index (encoded)', async (ctx) => {
-  const rootDir = await mkdtemp(tmpdir());
+  const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   await writeFile(join(rootDir, 'あ'), '');
   const res = await fetch(url);
@@ -49,7 +49,7 @@ test('/ index (encoded)', async (ctx) => {
 });
 
 test('/ index (sanitized)', async (ctx) => {
-  const rootDir = await mkdtemp(tmpdir());
+  const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   try {
     await writeFile(join(rootDir, 'あ>あ'), '');
@@ -68,7 +68,7 @@ test('/ index (sanitized)', async (ctx) => {
 });
 
 test('/dir index', async (ctx) => {
-  const rootDir = await mkdtemp(tmpdir());
+  const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   const dir = join(rootDir, 'dir');
   await mkdir(dir, { recursive: true });
@@ -82,7 +82,7 @@ test('/dir index', async (ctx) => {
 });
 
 test('/dir file', async (ctx) => {
-  const rootDir = await mkdtemp(tmpdir());
+  const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
   const dir = join(rootDir, 'dir');
   await mkdir(dir, { recursive: true });
@@ -94,7 +94,7 @@ test('/dir file', async (ctx) => {
 });
 
 test('respond the client script', async (ctx) => {
-  const rootDir = await mkdtemp(tmpdir());
+  const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const scriptPath = 'client.js';
   const url = await createServer(ctx, { documentRoot: [rootDir], scriptPath });
   const res = await fetch(new URL(`/${scriptPath}`, url));
@@ -104,7 +104,7 @@ test('respond the client script', async (ctx) => {
 });
 
 test('server sent event: connect', async (ctx) => {
-  const rootDir = await mkdtemp(tmpdir());
+  const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const filePath = join(rootDir, 'file.txt');
   await writeFile(filePath, `${Date.now()}`);
   const scriptPath = 'client.js';
@@ -120,7 +120,7 @@ test('server sent event: connect', async (ctx) => {
 });
 
 test('server sent event: watch only requested files', async (ctx) => {
-  const rootDir = await mkdtemp(tmpdir());
+  const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const dir = join(rootDir, 'dir');
   await mkdir(dir, { recursive: true });
   const file1 = join(dir, 'file1.txt');

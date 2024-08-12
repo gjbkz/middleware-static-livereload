@@ -8,7 +8,7 @@ import { generateIndexPageHtml } from './generateIndexPageHtml.ts';
 import { isErrorWithCode } from './isErrorWithCode.ts';
 
 test('generateIndexPageHtml', async () => {
-  const dir = await mkdtemp(tmpdir());
+  const dir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
   const file1 = 'fileあ.txt';
   await writeFile(join(dir, file1), file1);
   let file2: string | null = 'fileあ>.txt';
