@@ -3,6 +3,27 @@ import { ErrorWithCode } from './ErrorWithCode.ts';
 import type { ConsoleLike } from './LibConsole.ts';
 import { splitString } from './splitString.ts';
 
+const negotiage = (
+  accept: string | undefined,
+  type: string,
+  subtype: string,
+): boolean => {
+  if (!accept) {
+    return false;
+  }
+  for (const part of accept.split(',')) {
+    const [mediaType = ''] = part.trim().split(';');
+    if (mediaType === '*/*') {
+      return true;
+    }
+    const [partType, partSubtype] = mediaType.trim().split('/');
+    if (partType === type && (partSubtype === subtype || partSubtype === '*')) {
+      return true;
+    }
+  }
+  return false;
+};
+
 export class ConnectionHandler {
   private eventId = 0;
 
@@ -34,7 +55,7 @@ export class ConnectionHandler {
   }
 
   public handle(req: IncomingMessage, res: ServerResponse) {
-    if (req.headers.accept === 'text/event-stream') {
+    if (negotiage(req.headers.accept, 'text', 'event-stream')) {
       const id = this.eventId++;
       this.connections.add(res);
       res.statusCode = 200;
@@ -46,7 +67,7 @@ export class ConnectionHandler {
       res.write(`retry: 3000\ndata: #${id}\n\n`);
       this.console.info(`connected: #${id} ${req.headers['user-agent']}`);
     } else {
-      const message = `Invaild event-stream request: ${req.headers.accept}`;
+      const message = `Invaild request.headers.accept: ${req.headers.accept}`;
       res.statusCode = 400;
       this.console.error(message);
       res.end(message);

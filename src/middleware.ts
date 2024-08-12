@@ -228,7 +228,7 @@ export class MiddlewareStaticLivereload {
 
   private async handleRequest(req: IncomingMessage, res: ServerResponse) {
     const url = new URL(req.url ?? '/', 'http://localhost');
-    if (url.pathname.startsWith(this.clientScriptPath)) {
+    if (url.pathname === `${this.clientScriptPath}/connect`) {
       this.connectionHandler.handle(req, res);
     } else {
       await this.respondFile(res, url);

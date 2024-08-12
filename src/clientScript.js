@@ -1,35 +1,5 @@
 /* eslint-disable */
 (function () {
-  const g = self || window;
-  const document = g.document;
-  const location = g.location;
-  const console = g.console;
-  /**
-   * @param {(endpoint: string) => void} callback
-   */
-  function setup(callback) {
-    const scriptElement = document.querySelector(
-      '#middleware-static-livereload',
-    );
-    const src = scriptElement && scriptElement.getAttribute('src');
-    const endpoint = src && src + '/connect';
-    if (!endpoint) {
-      throw new Error('Failed to get the livereload endpoint');
-    }
-    let loading = false;
-    function getEventSource() {
-      if ('EventSource' in g) {
-        callback(endpoint);
-      } else if (!loading) {
-        const polyfillElement = document.createElement('script');
-        polyfillElement.src = src + '/polyfill.js';
-        polyfillElement.onload = getEventSource;
-        scriptElement.parentElement.appendChild(polyfillElement);
-        loading = true;
-      }
-    }
-    getEventSource();
-  }
   /**
    * removes parameters from given URL.
    * @param {string} inputPathWithParameters
@@ -78,13 +48,13 @@
     const pathname = event.data;
     if (extname(pathname) === '.css') {
       const selector = 'link[rel="stylesheet"][href*="' + pathname + '"]';
-      const element = g.document.querySelector(selector);
+      const element = document.querySelector(selector);
       if (element) {
         const absolutePath = absolutify(element.getAttribute('href'));
         element.setAttribute('href', absolutePath + '?reload=' + Date.now());
       }
     } else {
-      g.location.reload();
+      location.reload();
     }
   }
   /**
@@ -94,11 +64,15 @@
   function onError(event) {
     console.error(event);
   }
-  setup(function (endpoint) {
-    const eventSource = new g.EventSource(endpoint);
-    eventSource.addEventListener('error', onError);
-    eventSource.addEventListener('add', onChange);
-    eventSource.addEventListener('change', onChange);
-    eventSource.addEventListener('unlink', onChange);
-  });
+  const scriptElement = document.querySelector('#middleware-static-livereload');
+  const src = scriptElement && scriptElement.getAttribute('src');
+  const endpoint = src && src + '/connect';
+  if (!endpoint) {
+    throw new Error('Failed to get the livereload endpoint');
+  }
+  const eventSource = new EventSource(endpoint);
+  eventSource.addEventListener('error', onError);
+  eventSource.addEventListener('add', onChange);
+  eventSource.addEventListener('change', onChange);
+  eventSource.addEventListener('unlink', onChange);
 })();
