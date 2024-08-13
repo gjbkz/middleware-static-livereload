@@ -5,6 +5,7 @@ concurrency:
 jobs:
   Test:
     runs-on: ${{ matrix.os }}
+    environment: test
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
