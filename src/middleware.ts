@@ -16,6 +16,8 @@ import { LibConsole, LogLevel } from './LibConsole.ts';
 import type { BufferEncoding } from './SnippetInjector.ts';
 import { SnippetInjector } from './SnippetInjector.ts';
 
+export { LogLevel };
+
 export interface MiddlewareOptions {
   /**
    * Directories which contains the files to be served.

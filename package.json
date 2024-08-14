@@ -12,7 +12,7 @@
         "node": ">=14"
     },
     "repository": "kei-ito/middleware-static-livereload",
-    "type": "module",
+    "type": "commonjs",
     "main": "lib/middleware.js",
     "files": [
         "lib",
@@ -21,11 +21,13 @@
     ],
     "scripts": {
         "lint": "eslint src",
-        "prebuild": "node --import=@nlib/tsm/register.mjs buildClientScript.ts",
-        "build": "node --import=@nlib/tsm/register.mjs build.ts",
-        "pretest": "node --import=@nlib/tsm/register.mjs buildClientScript.ts",
-        "test": "node --import=@nlib/tsm/register.mjs --test src/*.test.ts",
-        "test-client": "node --import=@nlib/tsm/register.mjs --test client.test.ts",
+        "build": "run-s build:*",
+        "build:clientScript": "node buildClientScript.mjs",
+        "build:bundle": "node build.mjs",
+        "build:types": "tsc --project tsconfig.build.json",
+        "test": "run-s build:clientScript test:*",
+        "test:node": "node --import=@nlib/tsm/register.mjs --test src/*.test.ts",
+        "test-client": "node --test client.test.cjs",
         "version": "run-s version:*",
         "version:changelog": "nlib-changelog --output CHANGELOG.md",
         "version:add": "git add ."
