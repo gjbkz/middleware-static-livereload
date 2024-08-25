@@ -35,7 +35,7 @@ export class ConnectionHandler {
 
   public constructor(
     console: ConsoleLike = globalThis.console,
-    keepaliveIntervalMs = 8000,
+    keepaliveIntervalMs = 5000,
   ) {
     this.console = console;
     if (0 < keepaliveIntervalMs) {
@@ -58,13 +58,17 @@ export class ConnectionHandler {
     if (negotiage(req.headers.accept, 'text', 'event-stream')) {
       const id = this.eventId++;
       this.connections.add(res);
-      res.statusCode = 200;
-      res.setHeader('content-type', 'text/event-stream');
+      req.once('close', () => res.end());
       res.once('close', () => {
         this.connections.delete(res);
         this.console.info(`disconnected: #${id}`);
       });
-      res.write(`retry: 3000\ndata: #${id}\n\n`);
+      res.statusCode = 200;
+      res.setHeader('content-type', 'text/event-stream');
+      res.setHeader('cache-control', 'no-cache');
+      res.setHeader('connection', 'keep-alive');
+      res.flushHeaders();
+      res.write(`retry: 3000\r\ndata: #${id}\r\n\r\n`);
       this.console.info(`connected: #${id} ${req.headers['user-agent']}`);
     } else {
       const message = `Invaild request.headers.accept: ${req.headers.accept}`;
@@ -85,13 +89,13 @@ export class ConnectionHandler {
   }
 
   private *serializeEvent(data: string, eventName?: string): Generator<string> {
-    yield `id: ${this.eventId++}\n`;
+    yield `id: ${this.eventId++}\r\n`;
     if (eventName) {
-      yield `event: ${eventName}\n`;
+      yield `event: ${eventName}\r\n`;
     }
     for (const line of splitString(data.trim(), /\r\n|\r|\n/g)) {
-      yield `data: ${line}\n`;
+      yield `data: ${line}\r\n`;
     }
-    yield '\n';
+    yield '\r\n';
   }
 }
