@@ -89,10 +89,9 @@ const readResponseBody = async function* (res: Response) {
 const readServerSentEvents = async function* (
   src: AsyncGenerator<string>,
 ): AsyncGenerator<[string, string]> {
-  const delimiter = '\n\n';
   let buffer = '';
   for await (const chunk of src) {
-    const events = `${buffer}${chunk}`.split(delimiter);
+    const events = `${buffer}${chunk}`.split('\r\n\r\n');
     buffer = events.pop() ?? '';
     for await (const block of events) {
       const data: Array<string> = [];

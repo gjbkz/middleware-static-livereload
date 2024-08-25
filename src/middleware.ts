@@ -140,9 +140,9 @@ export class MiddlewareStaticLivereload {
 
   private readonly connectionHandler: ConnectionHandler;
 
-  private readonly fileWatcher: FSWatcher | null;
-
   private readonly contentTypes: Map<string, string>;
+
+  public readonly fileWatcher: FSWatcher | null;
 
   public constructor(options: MiddlewareOptions) {
     this.idStore = new WeakMap();
@@ -244,7 +244,7 @@ export class MiddlewareStaticLivereload {
 
   private async respondFile(res: ServerResponse, url: URL) {
     const file = await this.fileFinder.findFile(url.pathname);
-    if (this.fileWatcher && this.findDocumentRoot(file.fileUrl)) {
+    if (this.fileWatcher && this.findDocumentRoot(file.fileUrl) !== null) {
       this.fileWatcher.add(fileURLToPath(file.fileUrl));
     }
     this.console.debug(this.getId(res), '→', fileURLToPath(file.fileUrl));
@@ -269,6 +269,7 @@ export class MiddlewareStaticLivereload {
 
 export const middleware = (options: Partial<MiddlewareOptions> = {}) => {
   const msl = new MiddlewareStaticLivereload({ ...defaultOptions, ...options });
-  const close = async () => await msl.close();
-  return Object.assign(msl.middleware, { close });
+  const { fileWatcher } = msl;
+  const close = msl.close.bind(msl);
+  return Object.assign(msl.middleware, { close, fileWatcher });
 };
