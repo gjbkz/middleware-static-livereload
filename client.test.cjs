@@ -127,12 +127,13 @@ const getDriver = async () => {
         os: process.env.BROWSERSTACK_OS,
         osVersion: process.env.BROWSERSTACK_OS_VERSION,
         browserVersion: process.env.BROWSERSTACK_BROWSER_VERSION,
-        userName: process.env.BROWSERSTACK_USERNAME,
-        accessKey: process.env.BROWSERSTACK_ACCESS_KEY,
       },
     };
+    const serverUrl = new URL('https://hub-cloud.browserstack.com/wd/hub');
+    serverUrl.username = `${process.env.BROWSERSTACK_USERNAME}`;
+    serverUrl.password = `${process.env.BROWSERSTACK_ACCESS_KEY}`;
     return await new Builder()
-      .usingServer('https://hub-cloud.browserstack.com/wd/hub')
+      .usingServer(`${serverUrl}`)
       .withCapabilities(capability)
       .build();
   }
