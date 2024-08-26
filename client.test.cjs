@@ -11,6 +11,8 @@ const { Local } = require('browserstack-local');
 const { Builder, Browser } = require('selenium-webdriver');
 const { middleware, LogLevel } = require('./lib/middleware.js');
 
+const localIdentifier = `test-${Date.now()}`;
+
 /** @type {Set<() => Promise<void | unknown>>} */
 const closeFunctions = new Set();
 
@@ -98,13 +100,21 @@ const getDriver = async () => {
   if (process.env.BROWSERSTACK_BROWSERNAME) {
     await new Promise((resolve, reject) => {
       bsLocal = new Local();
-      bsLocal.start({ key: process.env.BROWSERSTACK_ACCESS_KEY }, (error) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(null);
-        }
-      });
+      bsLocal.start(
+        {
+          key: process.env.BROWSERSTACK_ACCESS_KEY,
+          onlyAutomate: true,
+          forceLocal: true,
+          localIdentifier,
+        },
+        (error) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(null);
+          }
+        },
+      );
     });
     const capability = {
       'browserName': process.env.BROWSERSTACK_BROWSERNAME,
