@@ -118,6 +118,7 @@ const getDriver = async () => {
     });
     const capability = {
       'browserName': process.env.BROWSERSTACK_BROWSERNAME,
+      'browserstack.local': true,
       'bstacks:options': {
         os: process.env.BROWSERSTACK_OS,
         osVersion: process.env.BROWSERSTACK_OS_VERSION,
