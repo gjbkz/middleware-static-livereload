@@ -82,9 +82,22 @@ const createFileEventLogger = (fileWatcher) => {
   return { clear, waitForEvent };
 };
 
+const getDriver = async () => {
+  if (process.env.BROWSERSTACK_CAPABILITY) {
+    const capability = JSON.parse(process.env.BROWSERSTACK_CAPABILITY);
+    console.info(capability);
+    Object.assign(capability['bstacks:options'], {
+      userName: process.env.BROWSERSTACK_USERNAME,
+      accessKey: process.env.BROWSERSTACK_ACCESS_KEY,
+    });
+    return await new Builder().withCapabilities(capability).build();
+  }
+  return await new Builder().forBrowser(Browser.CHROME).build();
+};
+
 const setup = async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-client-'));
-  const driver = await new Builder().forBrowser(Browser.CHROME).build();
+  const driver = await getDriver();
   closeFunctions.add(async () => await driver.quit());
   const handler = middleware({ documentRoot: [dir], logLevel: LogLevel.debug });
   const { fileWatcher } = handler;
