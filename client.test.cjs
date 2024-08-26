@@ -7,6 +7,7 @@ const fs = require('fs');
 const http = require('http');
 const os = require('os');
 const path = require('path');
+const { Local } = require('browserstack-local');
 const { Builder, Browser } = require('selenium-webdriver');
 const { middleware, LogLevel } = require('./lib/middleware.js');
 
@@ -18,6 +19,17 @@ const closeAll = async () => {
     await closeFunction();
   }
 };
+/** @type {import('browserstack-local').Local | null} */
+let bsLocal = null;
+closeFunctions.add(async () => {
+  await new Promise((resolve) => {
+    if (bsLocal) {
+      bsLocal.stop(() => resolve(null));
+    } else {
+      resolve(null);
+    }
+  });
+});
 
 /**
  * @typedef {{name: string, file: string, date: number}} EventLog
@@ -84,6 +96,16 @@ const createFileEventLogger = (fileWatcher) => {
 
 const getDriver = async () => {
   if (process.env.BROWSERSTACK_BROWSERNAME) {
+    await new Promise((resolve, reject) => {
+      bsLocal = new Local();
+      bsLocal.start({ key: process.env.BROWSERSTACK_ACCESS_KEY }, (error) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(null);
+        }
+      });
+    });
     const capability = {
       'browserName': process.env.BROWSERSTACK_BROWSERNAME,
       'bstacks:options': {
