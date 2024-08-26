@@ -83,13 +83,18 @@ const createFileEventLogger = (fileWatcher) => {
 };
 
 const getDriver = async () => {
-  if (process.env.BROWSERSTACK_CAPABILITY) {
-    const capability = JSON.parse(process.env.BROWSERSTACK_CAPABILITY);
+  if (process.env.BROWSERSTACK_BROWSERNAME) {
+    const capability = {
+      'browserName': process.env.BROWSERSTACK_BROWSERNAME,
+      'bstacks:options': {
+        os: process.env.BROWSERSTACK_OS,
+        osVersion: process.env.BROWSERSTACK_OS_VERSION,
+        browserVersion: process.env.BROWSERSTACK_BROWSER_VERSION,
+        userName: process.env.BROWSERSTACK_USERNAME,
+        accessKey: process.env.BROWSERSTACK_ACCESS_KEY,
+      },
+    };
     console.info(capability);
-    Object.assign(capability['bstacks:options'], {
-      userName: process.env.BROWSERSTACK_USERNAME,
-      accessKey: process.env.BROWSERSTACK_ACCESS_KEY,
-    });
     return await new Builder().withCapabilities(capability).build();
   }
   return await new Builder().forBrowser(Browser.CHROME).build();

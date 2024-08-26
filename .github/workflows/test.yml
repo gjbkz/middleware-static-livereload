@@ -43,13 +43,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [22.x, 20.x, 18.x, 16.x]
+        node: [22.x]
         capability:
           - browserName: Chrome
-            bstack:options:
-              os: Windows
-              osVersion: 11
-              browserVersion: latest
+            os: Windows
+            osVersion: 11
+            browserVersion: latest
     runs-on: ${{ matrix.os }}
     environment: test
     steps:
@@ -63,8 +62,11 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
-      - run: echo "BROWSERSTACK_CAPABILITY=$(echo '${{ toJson(matrix.capability) }}')" >> $GITHUB_ENV
       - run: npm run test-client
         env:
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
           BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          BROWSERSTACK_BROWSERNAME: ${{ matrix.capability.browserName }}
+          BROWSERSTACK_OS: ${{ matrix.capability.os }}
+          BROWSERSTACK_OS_VERSION: ${{ matrix.capability.osVersion }}
+          BROWSERSTACK_BROWSER_VERSION: ${{ matrix.capability.browserVersion }}
