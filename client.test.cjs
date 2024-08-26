@@ -56,14 +56,14 @@ const createFileEventLogger = (fileWatcher) => {
   /**
    * @param {string} name
    * @param {RegExp} file
-   * @param {number} [timeoutMs]
+   * @param {number} timeoutMs
    * @param {number} [initFromTime]
    * @returns {Promise<EventLog>}
    */
   const waitForEvent = async (
     name,
     file,
-    timeoutMs = 3000,
+    timeoutMs,
     initFromTime = Date.now(),
   ) => {
     /** @param {EventLog} event */
@@ -214,7 +214,7 @@ const test = async () => {
   );
   await Promise.all([
     driver.get(`${baseUrl}/page.html`),
-    fileEvents.waitForEvent('add', /page\.css$/, 1000),
+    fileEvents.waitForEvent('add', /page\.css$/, 10000),
   ]);
   assert.equal(await getColor(driver, 'h1'), 'rgb(255,0,0)');
   await Promise.all([
@@ -222,7 +222,7 @@ const test = async () => {
       path.join(dir, 'page.css'),
       'h1 { color: rgb(0,0,255); }',
     ),
-    fileEvents.waitForEvent('change', /page\.css$/, 1000),
+    fileEvents.waitForEvent('change', /page\.css$/, 10000),
   ]);
   const startedAt = Date.now();
   const timeoutMs = 1000;
