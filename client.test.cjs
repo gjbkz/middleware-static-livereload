@@ -12,7 +12,14 @@ const { Builder, Browser } = require('selenium-webdriver');
 const { middleware, LogLevel } = require('./lib/middleware.js');
 
 const projectName = 'middleware-static-livereload';
-const localIdentifier = `${projectName}-${Date.now()}`;
+const buildName = `${projectName}#${
+  process.env.GITHUB_RUN_ID || new Date().toISOString()
+}`;
+const sessionName = 'ClientTest';
+const localIdentifier = `${projectName}-${Date.now().toString(36)}`;
+const userName = `${process.env.BROWSERSTACK_USERNAME}`;
+const accessKey = `${process.env.BROWSERSTACK_ACCESS_KEY}`;
+const browserName = `${process.env.BROWSERSTACK_BROWSERNAME}`;
 
 /** @type {Set<() => Promise<void | unknown>>} */
 const closeFunctions = new Set();
@@ -22,17 +29,6 @@ const closeAll = async () => {
     await closeFunction();
   }
 };
-/** @type {import('browserstack-local').Local | null} */
-let bsLocal = null;
-closeFunctions.add(async () => {
-  await new Promise((resolve) => {
-    if (bsLocal) {
-      bsLocal.stop(() => resolve(null));
-    } else {
-      resolve(null);
-    }
-  });
-});
 
 /**
  * @typedef {{name: string, file: string, date: number}} EventLog
@@ -97,53 +93,88 @@ const createFileEventLogger = (fileWatcher) => {
   return { clear, waitForEvent };
 };
 
-const getDriver = async () => {
-  if (process.env.BROWSERSTACK_BROWSERNAME) {
-    await new Promise((resolve, reject) => {
-      bsLocal = new Local();
-      bsLocal.start(
-        {
-          key: process.env.BROWSERSTACK_ACCESS_KEY,
-          onlyAutomate: true,
-          forceLocal: true,
-          localIdentifier,
-        },
-        (error) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(null);
-          }
-        },
-      );
+/**
+ * @param {number} port
+ */
+const startBrowserStackLocal = async (port) => {
+  const bsLocal = new Local();
+  closeFunctions.add(async () => {
+    await new Promise((resolve) => {
+      if (bsLocal) {
+        bsLocal.stop(() => resolve(null));
+      } else {
+        resolve(null);
+      }
     });
-    const capability = {
-      'browserName': process.env.BROWSERSTACK_BROWSERNAME,
-      'bstacks:options': {
-        projectName,
-        buildName: `${projectName}#${process.env.GITHUB_RUN_ID}`,
-        sessionName: 'ClientTest',
-        local: 'true',
-        os: process.env.BROWSERSTACK_OS,
-        osVersion: process.env.BROWSERSTACK_OS_VERSION,
-        browserVersion: process.env.BROWSERSTACK_BROWSER_VERSION,
+  });
+  const error = await new Promise((resolve) => {
+    bsLocal.start(
+      {
+        key: accessKey,
+        verbose: true,
+        forceLocal: true,
+        onlyAutomate: true,
+        only: `localhost,${port},0`,
+        localIdentifier,
       },
-    };
-    const serverUrl = new URL('https://hub-cloud.browserstack.com/wd/hub');
-    serverUrl.username = `${process.env.BROWSERSTACK_USERNAME}`;
-    serverUrl.password = `${process.env.BROWSERSTACK_ACCESS_KEY}`;
-    return await new Builder()
-      .usingServer(`${serverUrl}`)
-      .withCapabilities(capability)
-      .build();
+      resolve,
+    );
+  });
+  if (error) {
+    throw error;
   }
-  return await new Builder().forBrowser(Browser.CHROME).build();
+  const startedAt = Date.now();
+  const timeoutMs = 20000;
+  await new Promise((resolve, reject) => {
+    const check = function () {
+      if (bsLocal.isRunning()) {
+        resolve(null);
+      } else if (Date.now() - startedAt < timeoutMs) {
+        setTimeout(check, 300);
+      } else {
+        reject(new Error('Timeout: Failed to start browserstack-local'));
+      }
+    };
+    check();
+  });
+  console.info('BrowserStackLocal is running');
+  return bsLocal;
+};
+
+/**
+ * @param {number} port
+ */
+const getDriver = async (port) => {
+  if (!accessKey) {
+    return await new Builder().forBrowser(Browser.CHROME).build();
+  }
+  await startBrowserStackLocal(port);
+  const serverUrl = new URL('https://hub-cloud.browserstack.com/wd/hub');
+  serverUrl.username = userName;
+  serverUrl.password = accessKey;
+  const capability = {
+    browserName,
+    'bstacks:options': {
+      projectName,
+      buildName,
+      sessionName,
+      local: true,
+      os: 'Windows',
+      osVersion: '10',
+      localIdentifier,
+      userName,
+      accessKey,
+    },
+  };
+  console.info(capability);
+  return await new Builder()
+    .usingServer(`${serverUrl}`)
+    .withCapabilities(capability)
+    .build();
 };
 
 const setup = async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-client-'));
-  const driver = await getDriver();
-  closeFunctions.add(async () => await driver.quit());
   const handler = middleware({ documentRoot: [dir], logLevel: LogLevel.debug });
   const { fileWatcher } = handler;
   if (fileWatcher === null) {
@@ -171,6 +202,8 @@ const setup = async () => {
     throw new Error('Server address is not available');
   }
   const baseUrl = `http://localhost:${address.port}`;
+  const driver = await getDriver(address.port);
+  closeFunctions.add(async () => await driver.quit());
   return { baseUrl, dir, driver, fileEvents };
 };
 
