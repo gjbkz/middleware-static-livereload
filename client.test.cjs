@@ -5,6 +5,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const http = require('http');
+const https = require('https');
 const os = require('os');
 const path = require('path');
 const { Local } = require('browserstack-local');
@@ -18,22 +19,24 @@ const userName = `${process.env.BROWSERSTACK_USERNAME}`;
 const accessKey = `${process.env.BROWSERSTACK_ACCESS_KEY}`;
 const useBrowserStack = Boolean(userName && accessKey);
 const bsServerUrl = 'https://hub-cloud.browserstack.com/wd/hub';
+const browserName = process.env.BROWSERSTACK_BROWSER_NAME;
+const browserVersion = process.env.BROWSERSTACK_BROWSER_VERSION;
 
 const capabilities = {
   'bstack:options': {
     os: 'Windows',
     osVersion: '11',
-    browserVersion: 'latest',
+    browserVersion,
     consoleLogs: 'info',
     projectName: pkg.name,
     buildName: `${pkg.name}#${buildId}`,
-    sessionName: 'ClientTest',
+    sessionName: `${os.platform}.${os.arch}.${process.version}`,
     local: true,
     userName,
     accessKey,
     localIdentifier,
   },
-  'browserName': `${process.env.BROWSERSTACK_BROWSERNAME}`,
+  browserName,
 };
 
 const bsLocalOptions = {
@@ -269,13 +272,18 @@ const markResult = async (passed) => {
     endpoint.pathname = `/automate/sessions/${session.getId()}.json`;
     endpoint.username = userName;
     endpoint.password = accessKey;
-    const res = await fetch(endpoint, {
-      method: 'PUT',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ status: passed ? 'passed' : 'failed' }),
+    /** @type {import('http').ServerResponse} */
+    const res = await new Promise((resolve, reject) => {
+      const req = https.request(endpoint, {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+      });
+      req.once('error', reject);
+      req.once('response', resolve);
+      req.write(JSON.stringify({ status: passed ? 'passed' : 'failed' }));
+      req.end();
     });
-    console.log(`${res.status} ${res.statusText}`);
-    console.log(await res.text());
+    console.log(`${res.statusCode} ${res.statusMessage}`);
   }
 };
 

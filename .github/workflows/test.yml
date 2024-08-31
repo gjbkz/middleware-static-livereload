@@ -43,11 +43,15 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [22.x]
+        node: [22.x, 20.x, 18.x]
         capability:
-          - browserName: Chrome
-            os: Windows
+          - os: Windows
             osVersion: 11
+            browserName: Chrome
+            browserVersion: latest
+          - os: OS X
+            osVersion: Sequoia
+            browserName: Safari
             browserVersion: latest
     runs-on: ${{ matrix.os }}
     environment: test
@@ -66,7 +70,7 @@ jobs:
         env:
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
           BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-          BROWSERSTACK_BROWSERNAME: ${{ matrix.capability.browserName }}
           BROWSERSTACK_OS: ${{ matrix.capability.os }}
           BROWSERSTACK_OS_VERSION: ${{ matrix.capability.osVersion }}
+          BROWSERSTACK_BROWSER_NAME: ${{ matrix.capability.browserName }}
           BROWSERSTACK_BROWSER_VERSION: ${{ matrix.capability.browserVersion }}
