@@ -10,16 +10,36 @@ const path = require('path');
 const { Local } = require('browserstack-local');
 const { Builder, Browser } = require('selenium-webdriver');
 const { middleware, LogLevel } = require('./lib/middleware.js');
+const pkg = require('./package.json');
 
-const projectName = 'middleware-static-livereload';
-const buildName = `${projectName}#${
-  process.env.GITHUB_RUN_ID || new Date().toISOString()
-}`;
-const sessionName = 'ClientTest';
-const localIdentifier = `${projectName}-${Date.now().toString(36)}`;
+const buildId = process.env.GITHUB_RUN_ID || new Date().toISOString();
+const localIdentifier = `${pkg.name}-${Date.now()}`;
 const userName = `${process.env.BROWSERSTACK_USERNAME}`;
 const accessKey = `${process.env.BROWSERSTACK_ACCESS_KEY}`;
-const browserName = `${process.env.BROWSERSTACK_BROWSERNAME}`;
+const bsServerUrl = 'https://hub-cloud.browserstack.com/wd/hub';
+const capabilities = {
+  'bstack:options': {
+    os: 'Windows',
+    osVersion: '11',
+    browserVersion: 'latest',
+    consoleLogs: 'info',
+    projectName: pkg.name,
+    buildName: `${pkg.name}#${buildId}`,
+    sessionName: 'ClientTest',
+    local: true,
+    userName,
+    accessKey,
+    localIdentifier,
+  },
+  'browserName': `${process.env.BROWSERSTACK_BROWSERNAME}`,
+};
+const bsLocalOptions = {
+  key: accessKey,
+  verbose: true,
+  forceLocal: true,
+  onlyAutomate: true,
+  localIdentifier,
+};
 
 /** @type {Set<() => Promise<void | unknown>>} */
 const closeFunctions = new Set();
@@ -108,17 +128,7 @@ const startBrowserStackLocal = async (port) => {
     });
   });
   const error = await new Promise((resolve) => {
-    bsLocal.start(
-      {
-        key: accessKey,
-        verbose: true,
-        forceLocal: true,
-        onlyAutomate: true,
-        only: `localhost,${port},0`,
-        localIdentifier,
-      },
-      resolve,
-    );
+    bsLocal.start({ ...bsLocalOptions, only: `localhost,${port},0` }, resolve);
   });
   if (error) {
     throw error;
@@ -139,38 +149,6 @@ const startBrowserStackLocal = async (port) => {
   });
   console.info('BrowserStackLocal is running');
   return bsLocal;
-};
-
-/**
- * @param {number} port
- */
-const getDriver = async (port) => {
-  if (!accessKey) {
-    return await new Builder().forBrowser(Browser.CHROME).build();
-  }
-  await startBrowserStackLocal(port);
-  const serverUrl = new URL('https://hub-cloud.browserstack.com/wd/hub');
-  serverUrl.username = userName;
-  serverUrl.password = accessKey;
-  const capability = {
-    browserName,
-    'bstacks:options': {
-      projectName,
-      buildName,
-      sessionName,
-      local: true,
-      os: 'Windows',
-      osVersion: '10',
-      localIdentifier,
-      userName,
-      accessKey,
-    },
-  };
-  console.info(capability);
-  return await new Builder()
-    .usingServer(`${serverUrl}`)
-    .withCapabilities(capability)
-    .build();
 };
 
 const setup = async () => {
@@ -198,11 +176,19 @@ const setup = async () => {
     }
   });
   const address = server.address();
+  console.info(address);
   if (typeof address === 'string' || address === null) {
     throw new Error('Server address is not available');
   }
   const baseUrl = `http://localhost:${address.port}`;
-  const driver = await getDriver(address.port);
+  const builder = new Builder();
+  if (accessKey) {
+    await startBrowserStackLocal(address.port);
+    builder.usingServer(bsServerUrl).withCapabilities(capabilities);
+  } else {
+    builder.forBrowser(Browser.CHROME);
+  }
+  const driver = await builder.build();
   closeFunctions.add(async () => await driver.quit());
   return { baseUrl, dir, driver, fileEvents };
 };
@@ -230,10 +216,7 @@ const waitMs = async (ms) => {
 const test = async () => {
   assert.equal(typeof middleware, 'function');
   const { baseUrl, dir, driver, fileEvents } = await setup();
-  await fs.promises.writeFile(
-    path.join(dir, 'page.css'),
-    'h1 { color: rgb(255,0,0); }',
-  );
+  await fs.promises.writeFile(path.join(dir, 'page.css'), 'h1{color:#F00;}');
   await fs.promises.writeFile(
     path.join(dir, 'page.html'),
     [
@@ -251,14 +234,11 @@ const test = async () => {
   ]);
   assert.equal(await getColor(driver, 'h1'), 'rgb(255,0,0)');
   await Promise.all([
-    fs.promises.writeFile(
-      path.join(dir, 'page.css'),
-      'h1 { color: rgb(0,0,255); }',
-    ),
+    fs.promises.writeFile(path.join(dir, 'page.css'), 'h1{color:#00F;}'),
     fileEvents.waitForEvent('change', /page\.css$/, 10000),
   ]);
   const startedAt = Date.now();
-  const timeoutMs = 1000;
+  const timeoutMs = 3000;
   while (1) {
     if (timeoutMs < Date.now() - startedAt) {
       throw new Error('Timeout');
