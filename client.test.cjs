@@ -21,16 +21,18 @@ const useBrowserStack = Boolean(userName && accessKey);
 const bsServerUrl = 'https://hub-cloud.browserstack.com/wd/hub';
 const browserName = process.env.BROWSERSTACK_BROWSER_NAME;
 const browserVersion = process.env.BROWSERSTACK_BROWSER_VERSION;
+const clientOs = process.env.BROWSERSTACK_OS;
+const clientOsVersion = process.env.BROWSERSTACK_OS_VERSION;
 
 const capabilities = {
   'bstack:options': {
-    os: 'Windows',
-    osVersion: '11',
+    os: clientOs,
+    osVersion: clientOsVersion,
     browserVersion,
     consoleLogs: 'info',
     projectName: pkg.name,
     buildName: `${pkg.name}#${buildId}`,
-    sessionName: `${os.platform}.${os.arch}.${process.version}`,
+    sessionName: [clientOs, clientOsVersion, process.version].join(' '),
     local: true,
     userName,
     accessKey,
