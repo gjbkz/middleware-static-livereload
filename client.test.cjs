@@ -16,7 +16,9 @@ const buildId = process.env.GITHUB_RUN_ID || new Date().toISOString();
 const localIdentifier = `${pkg.name}-${Date.now()}`;
 const userName = `${process.env.BROWSERSTACK_USERNAME}`;
 const accessKey = `${process.env.BROWSERSTACK_ACCESS_KEY}`;
+const useBrowserStack = Boolean(userName && accessKey);
 const bsServerUrl = 'https://hub-cloud.browserstack.com/wd/hub';
+
 const capabilities = {
   'bstack:options': {
     os: 'Windows',
@@ -33,6 +35,7 @@ const capabilities = {
   },
   'browserName': `${process.env.BROWSERSTACK_BROWSERNAME}`,
 };
+
 const bsLocalOptions = {
   key: accessKey,
   verbose: true,
@@ -43,6 +46,8 @@ const bsLocalOptions = {
 
 /** @type {Set<() => Promise<void | unknown>>} */
 const closeFunctions = new Set();
+/** @type {Set<import('selenium-webdriver').Session>} */
+const sessions = new Set();
 
 const closeAll = async () => {
   for (const closeFunction of closeFunctions) {
@@ -182,13 +187,14 @@ const setup = async () => {
   }
   const baseUrl = `http://localhost:${address.port}`;
   const builder = new Builder();
-  if (accessKey) {
+  if (useBrowserStack) {
     await startBrowserStackLocal(address.port);
     builder.usingServer(bsServerUrl).withCapabilities(capabilities);
   } else {
     builder.forBrowser(Browser.CHROME);
   }
   const driver = await builder.build();
+  sessions.add(await driver.getSession());
   closeFunctions.add(async () => await driver.quit());
   return { baseUrl, dir, driver, fileEvents };
 };
@@ -251,8 +257,38 @@ const test = async () => {
   }
 };
 
-test().then(closeAll, async (error) => {
-  console.error(error);
-  await closeAll();
-  process.exit(1);
-});
+/**
+ * @param {boolean} passed
+ */
+const markResult = async (passed) => {
+  if (!useBrowserStack) {
+    return;
+  }
+  for (const session of sessions) {
+    const endpoint = new URL('https://api.browserstack.com');
+    endpoint.pathname = `/automate/sessions/${session.getId()}.json`;
+    endpoint.username = userName;
+    endpoint.password = accessKey;
+    const res = await fetch(endpoint, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ status: passed ? 'passed' : 'failed' }),
+    });
+    console.log(`${res.status} ${res.statusText}`);
+    console.log(await res.text());
+  }
+};
+
+test()
+  .then(
+    async () => await markResult(true),
+    async (error) => {
+      await markResult(false);
+      throw error;
+    },
+  )
+  .then(closeAll, async (error) => {
+    console.error(error);
+    await closeAll();
+    process.exit(1);
+  });
