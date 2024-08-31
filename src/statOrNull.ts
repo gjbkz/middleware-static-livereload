@@ -1,13 +1,14 @@
-import * as fs from 'fs';
+import type { PathLike, Stats } from 'node:fs';
+import { stat } from 'node:fs/promises';
+import { isErrorWithCode } from './isErrorWithCode.ts';
 
-const ignoreENOENT = (error: unknown) => {
-    if ((error as {code: string}).code === 'ENOENT') {
-        return null;
-    } else {
-        throw error;
+export const statOrNull = async (filePath: PathLike): Promise<Stats | null> => {
+  try {
+    return await stat(filePath);
+  } catch (error) {
+    if (isErrorWithCode(error) && error.code === 'ENOENT') {
+      return null;
     }
-};
-
-export const statOrNull = async (filePath: fs.PathLike): Promise<fs.Stats | null> => {
-    return await fs.promises.stat(filePath).catch(ignoreENOENT);
+    throw error;
+  }
 };

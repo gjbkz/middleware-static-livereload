@@ -1,17 +1,21 @@
-import ava from 'ava';
-import {statOrNull} from './statOrNull';
+import * as assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { statOrNull } from './statOrNull.ts';
 
-ava('directory', async (t) => {
-    const stats = await statOrNull(new URL('.', import.meta.url));
-    t.true(stats && stats.isDirectory());
+test('Directory', async () => {
+  const input = new URL('.', import.meta.url);
+  const stats = await statOrNull(input);
+  assert.equal(stats?.isDirectory(), true);
 });
 
-ava('file', async (t) => {
-    const stats = await statOrNull(new URL(import.meta.url));
-    t.true(stats && stats.isFile());
+test('File', async () => {
+  const input = new URL(import.meta.url);
+  const stats = await statOrNull(input);
+  assert.equal(stats?.isFile(), true);
 });
 
-ava('null', async (t) => {
-    const stats = await statOrNull(new URL(`${import.meta.url}--`));
-    t.is(stats, null);
+test('Non-existent', async () => {
+  const input = new URL('non-existent', import.meta.url);
+  const stats = await statOrNull(input);
+  assert.equal(stats, null);
 });
