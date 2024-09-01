@@ -6,13 +6,12 @@ import * as esbuild from 'esbuild';
 
 const srcDir = new URL('./src/', import.meta.url);
 const destDir = new URL('./lib/', import.meta.url);
-const readdirOptions = { encoding: 'utf-8', recursive: true };
+/** @type {{dependencies: Record<string, string>}} */
 const packageJson = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf-8'),
 );
 const external = [...builtinModules];
 if (typeof packageJson === 'object' && packageJson) {
-  /** @type {dependencies?: Record<string, string>} */
   const { dependencies } = packageJson;
   if (dependencies) {
     external.push(...Object.keys(dependencies));
@@ -20,7 +19,10 @@ if (typeof packageJson === 'object' && packageJson) {
 }
 
 mkdirSync(destDir, { recursive: true });
-for (const name of readdirSync(destDir, readdirOptions)) {
+for (const name of readdirSync(destDir, {
+  encoding: 'utf-8',
+  recursive: true,
+})) {
   unlinkSync(new URL(name, destDir));
 }
 

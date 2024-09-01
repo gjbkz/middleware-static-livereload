@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 /* eslint-disable no-console */
 /* eslint-disable import/unambiguous */
 /* eslint-disable import/no-commonjs */
@@ -13,16 +14,16 @@ const { Builder, Browser } = require('selenium-webdriver');
 const { middleware, LogLevel } = require('./lib/middleware.js');
 const pkg = require('./package.json');
 
-const buildId = process.env.GITHUB_RUN_ID || new Date().toISOString();
+const buildId = process.env['GITHUB_RUN_ID'] || new Date().toISOString();
 const localIdentifier = `${pkg.name}-${Date.now()}`;
-const userName = `${process.env.BROWSERSTACK_USERNAME}`;
-const accessKey = `${process.env.BROWSERSTACK_ACCESS_KEY}`;
+const userName = `${process.env['BROWSERSTACK_USERNAME']}`;
+const accessKey = `${process.env['BROWSERSTACK_ACCESS_KEY']}`;
 const useBrowserStack = Boolean(userName && accessKey);
 const bsServerUrl = 'https://hub-cloud.browserstack.com/wd/hub';
-const browserName = process.env.BROWSERSTACK_BROWSER_NAME;
-const browserVersion = process.env.BROWSERSTACK_BROWSER_VERSION;
-const clientOs = process.env.BROWSERSTACK_OS;
-const clientOsVersion = process.env.BROWSERSTACK_OS_VERSION;
+const browserName = process.env['BROWSERSTACK_BROWSER_NAME'];
+const browserVersion = process.env['BROWSERSTACK_BROWSER_VERSION'];
+const clientOs = process.env['BROWSERSTACK_OS'];
+const clientOsVersion = process.env['BROWSERSTACK_OS_VERSION'];
 
 const capabilities = {
   'bstack:options': {

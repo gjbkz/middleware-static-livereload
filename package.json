@@ -27,6 +27,7 @@
         "build:types": "tsc --project tsconfig.build.json",
         "test": "run-s build:clientScript test:*",
         "test:node": "node --import=@nlib/tsm/register.mjs --test src/*.test.ts",
+        "test:type": "tsc --project tsconfig.js.json",
         "test-client": "node client.test.cjs",
         "version": "run-s version:*",
         "version:changelog": "nlib-changelog --output CHANGELOG.md",

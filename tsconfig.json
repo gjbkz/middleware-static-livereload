@@ -5,6 +5,7 @@
     "moduleResolution": "NodeNext",
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
+    "allowJs": true,
     "resolveJsonModule": true,
     "strict": true,
     "removeComments": true,
