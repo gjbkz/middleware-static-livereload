@@ -38,7 +38,7 @@
     "devDependencies": {
         "@nlib/changelog": "0.3.1",
         "@nlib/eslint-config": "3.20.5",
-        "@nlib/tsm": "0.1.3",
+        "@nlib/tsm": "0.1.4",
         "@types/connect": "3.4.38",
         "@types/jsdom": "21.1.7",
         "@types/node": "22.5.5",
