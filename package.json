@@ -45,7 +45,7 @@
         "@types/node-fetch": "2.6.13",
         "@types/selenium-webdriver": "4.1.28",
         "@typescript-eslint/eslint-plugin": "7.18.0",
-        "@typescript-eslint/parser": "7.18.0",
+        "@typescript-eslint/parser": "8.43.0",
         "browserstack-local": "1.5.8",
         "connect": "3.7.0",
         "esbuild": "0.25.8",
