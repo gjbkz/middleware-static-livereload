@@ -44,12 +44,10 @@
 		"@nlib/tsm": "1.1.0",
 		"@playwright/test": "^1.55.0",
 		"@types/connect": "3.4.38",
-		"@types/jsdom": "21.1.7",
 		"@types/node": "24.4.0",
 		"browserstack-node-sdk": "1.42.6",
 		"connect": "3.7.0",
 		"esbuild": "0.25.9",
-		"jsdom": "27.0.0",
 		"npm-run-all": "4.1.5",
 		"typescript": "5.9.2"
 	},
