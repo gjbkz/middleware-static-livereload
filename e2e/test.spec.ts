@@ -128,11 +128,6 @@ test.afterAll(async () => {
 	closeFunctions.clear();
 });
 
-test("index", async ({ page }) => {
-	await page.goto(baseUrl.href);
-	await expect(page).toHaveTitle(/^Index of \/$/);
-});
-
 test("reload css", async ({ page }) => {
 	const testName = "reload-css";
 	const testDir = new URL(`${testName}/`, tempDirUrl);

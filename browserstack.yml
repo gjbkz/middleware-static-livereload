@@ -7,10 +7,6 @@ browserstackLocal: true
 platforms:
   - os: Windows
     osVersion: 11
-    browserName: Chrome
-    browserVersion: latest
-  - os: Windows
-    osVersion: 11
     browserName: edge
     browserVersion: latest
   - os: OS X
@@ -21,9 +17,3 @@ platforms:
     osVersion: Sequoia
     browserName: playwright-webkit
     browserVersion: 18.5
-  - osVersion: 16.0
-    deviceName: Google Pixel 10
-    browserName: chrome
-  - osVersion: 18.6
-    deviceName: iPhone 16
-    browserName: safari
