@@ -16,9 +16,9 @@
 	"main": "./esm/middleware.js",
 	"exports": {
 		".": {
+			"types": "./types/middleware.d.ts",
 			"import": "./esm/middleware.mjs",
-			"require": "./cjs/middleware.cjs",
-			"types": "./types/middleware.d.ts"
+			"require": "./cjs/middleware.cjs"
 		}
 	},
 	"files": [
