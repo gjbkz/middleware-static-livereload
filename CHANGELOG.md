@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.4.2 (2025-09-15)
+
+### Bug Fixes
+
+- typedef ([357f2fe](https://github.com/gjbkz/middleware-static-livereload/commit/357f2febbd33517420e5622eb7ae2bdde2ddecbb))
+
+
 ## v1.4.1 (2025-09-15)
 
 ### Features
