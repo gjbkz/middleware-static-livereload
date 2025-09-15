@@ -5,6 +5,7 @@
 		"moduleResolution": "Node",
 		"outDir": "cjs",
 		"noEmit": false,
+		"emitDeclarationOnly": true,
 		"allowImportingTsExtensions": false,
 		"rewriteRelativeImportExtensions": true
 	},

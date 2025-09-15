@@ -1,4 +1,3 @@
-//@ts-check
 import { readFileSync, writeFileSync } from "node:fs";
 
 const src = new URL("./src/clientScript.js", import.meta.url);

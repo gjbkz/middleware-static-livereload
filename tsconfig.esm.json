@@ -5,6 +5,7 @@
 		"moduleResolution": "NodeNext",
 		"outDir": "esm",
 		"noEmit": false,
+		"emitDeclarationOnly": true,
 		"allowImportingTsExtensions": false,
 		"rewriteRelativeImportExtensions": true
 	},
