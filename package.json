@@ -31,7 +31,7 @@
 		"build": "run-s build:*",
 		"build:clientScript": "node buildClientScript.ts",
 		"build:typedef": "tsc --project tsconfig.typedef.json",
-		"build:code": "node build.ts esm",
+		"build:code": "node build.ts",
 		"test": "run-s build:clientScript test:*",
 		"test:node": "node --test src/*.test.ts",
 		"test-e2e": "playwright test",
