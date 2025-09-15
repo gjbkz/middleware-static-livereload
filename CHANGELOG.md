@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.4.1 (2025-09-15)
+
+### Features
+
+- implement build script and update package configurations ([415a2d3](https://github.com/gjbkz/middleware-static-livereload/commit/415a2d3ab5118861eeef9b90f5696aeaae8a6cc6))
+
+
 ## v1.4.0 (2025-09-15)
 
 ### Tests
