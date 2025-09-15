@@ -43,20 +43,7 @@ jobs:
             esm
   TestClient:
     needs: Build
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        node: [24.x]
-        capability:
-          - os: Windows
-            osVersion: 11
-            browserName: Chrome
-            browserVersion: latest
-          - os: OS X
-            osVersion: Sequoia
-            browserName: Safari
-            browserVersion: latest
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     environment: test
     steps:
       - uses: actions/checkout@v4
@@ -66,18 +53,14 @@ jobs:
           path: .
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 24.x
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps
-      - run: npx browserstack-node-sdk playwright test
+      - run: npm run test-e2e-bs
         env:
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
           BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-          BROWSERSTACK_OS: ${{ matrix.capability.os }}
-          BROWSERSTACK_OS_VERSION: ${{ matrix.capability.osVersion }}
-          BROWSERSTACK_BROWSER_NAME: ${{ matrix.capability.browserName }}
-          BROWSERSTACK_BROWSER_VERSION: ${{ matrix.capability.browserVersion }}
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
