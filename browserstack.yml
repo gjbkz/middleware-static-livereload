@@ -3,6 +3,7 @@ accessKey: ${BROWSERSTACK_ACCESS_KEY}
 buildName: ${GITHUB_RUN_ID}
 projectName: ${GITHUB_REPOSITORY}
 testObservability: true
+browserstackLocal: true
 platforms:
   - os: Windows
     osVersion: 11
