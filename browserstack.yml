@@ -1,0 +1,19 @@
+userName: ${BROWSERSTACK_USERNAME}
+accessKey: ${BROWSERSTACK_ACCESS_KEY}
+buildName: ${GITHUB_RUN_ID}
+projectName: ${GITHUB_REPOSITORY}
+testObservability: true
+browserstackLocal: true
+platforms:
+  - os: Windows
+    osVersion: 11
+    browserName: edge
+    browserVersion: latest
+  - os: OS X
+    osVersion: Sequoia
+    browserName: chrome
+    browserVersion: latest
+  - os: OS X
+    osVersion: Sequoia
+    browserName: playwright-webkit
+    browserVersion: 18.5
