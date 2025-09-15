@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.4.0 (2025-09-15)
+
+### Tests
+
+- skip test:type ([39dd7b2](https://github.com/gjbkz/middleware-static-livereload/commit/39dd7b27ca69239d69216869d833d689149b4b57))
+
+### Dependency Upgrades
+
+- dedupe ([b2ab1f6](https://github.com/gjbkz/middleware-static-livereload/commit/b2ab1f6fc2dfcd0dd119021b54bfca46a071d7f4))
+- remove unnecessary dependencies ([07f0ccd](https://github.com/gjbkz/middleware-static-livereload/commit/07f0ccd6cf5fdc8977aaf95ceb11b65bb331578e))
+
+
 ## v1.3.0 (2024-09-01)
 
 ### Bug Fixes
