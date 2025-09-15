@@ -32,7 +32,6 @@
 		"test": "run-s build:clientScript test:*",
 		"test:node": "node --import=@nlib/tsm/register.mjs --test src/*.test.ts",
 		"test-e2e": "playwright test",
-		"test-e2e-bs": "browserstack-node-sdk playwright test",
 		"version": "run-s version:*",
 		"version:changelog": "npx @nlib/changelog --output CHANGELOG.md",
 		"version:add": "git add ."
@@ -46,7 +45,6 @@
 		"@playwright/test": "^1.55.0",
 		"@types/connect": "3.4.38",
 		"@types/node": "24.4.0",
-		"browserstack-node-sdk": "1.42.6",
 		"connect": "3.7.0",
 		"esbuild": "0.25.9",
 		"npm-run-all": "4.1.5",
