@@ -1,6 +1,6 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {},
-  "include": ["**/*.mjs", "**/*.cjs"],
-  "exclude": ["lib/**/*"]
+	"extends": "./tsconfig.json",
+	"compilerOptions": {},
+	"include": ["**/*.mjs", "**/*.cjs"],
+	"exclude": ["lib/**/*"]
 }
