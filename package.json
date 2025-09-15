@@ -15,20 +15,22 @@
 	"type": "module",
 	"main": "./esm/middleware.js",
 	"exports": {
-		"import": "./esm/middleware.mjs",
-		"require": "./cjs/middleware.cjs"
+		".": {
+			"import": "./esm/middleware.mjs",
+			"require": "./cjs/middleware.cjs",
+			"types": "./types/middleware.d.ts"
+		}
 	},
 	"files": [
 		"cjs",
 		"esm",
-		"!**/*.test.*"
+		"types"
 	],
 	"scripts": {
 		"lint": "eslint src",
 		"build": "run-s build:*",
 		"build:clientScript": "node buildClientScript.ts",
-		"build:esm-type": "tsc --project tsconfig.esm.json",
-		"build:cjs-type": "tsc --project tsconfig.cjs.json",
+		"build:typedef": "tsc --project tsconfig.typedef.json",
 		"build:code": "node build.ts esm",
 		"test": "run-s build:clientScript test:*",
 		"test:node": "node --test src/*.test.ts",

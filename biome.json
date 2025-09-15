@@ -5,18 +5,10 @@
 			"**",
 			"!cjs",
 			"!esm",
+			"!types",
 			"!test-results",
 			"!playwright-report",
 			"!src/clientScript.ts"
 		]
-	},
-	"formatter": {
-		"enabled": true
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true
-		}
 	}
 }

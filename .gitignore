@@ -5,6 +5,7 @@ lib
 *.log
 esm
 cjs
+types
 
 # Playwright
 /test-results/
