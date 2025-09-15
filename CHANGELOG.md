@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.4.3 (2025-09-15)
+
+### Bug Fixes
+
+- order of exports ([081582d](https://github.com/gjbkz/middleware-static-livereload/commit/081582dfa4a1d53c02024543c009e6d6b46aee55))
+- build script ([492719c](https://github.com/gjbkz/middleware-static-livereload/commit/492719c489e9b74c9c84446a07c3b2672866333a))
+
+
 ## v1.4.2 (2025-09-15)
 
 ### Bug Fixes
