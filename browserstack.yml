@@ -8,24 +8,21 @@ platforms:
     osVersion: 11
     browserName: Chrome
     browserVersion: latest
-  - browserName: Edge
-    os: Windows
+  - os: Windows
     osVersion: 11
-    browserVersion: latest
-  - browserName: Chrome
-    os: OS X
-    osVersion: Sequoia
+    browserName: edge
     browserVersion: latest
   - os: OS X
-    osVersion: Sonoma
-    browserName: playwright-firefox
-  - browserName: playwright-webkit
-    os: OS X
     osVersion: Sequoia
+    browserName: chrome
+    browserVersion: latest
+  - os: OS X
+    osVersion: Sequoia
+    browserName: playwright-webkit
     browserVersion: 18.5
-  - browserName: chrome
-    osVersion: 16.0
+  - osVersion: 16.0
     deviceName: Google Pixel 10
-  - browserName: safari
-    osVersion: 18.6
+    browserName: chrome
+  - osVersion: 18.6
     deviceName: iPhone 16
+    browserName: safari
