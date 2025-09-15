@@ -7,5 +7,5 @@ const dest = new URL("./src/clientScript.ts", import.meta.url);
 const code = readFileSync(src, "utf-8");
 writeFileSync(
 	dest,
-	`export const clientScript = Buffer.from(${JSON.stringify(code)});`,
+	`/* biome-ignore-all lint/suspicious/noTemplateCurlyInString: intended */\nexport const clientScript = Buffer.from(${JSON.stringify(code)});\n`,
 );

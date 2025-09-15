@@ -1,6 +1,22 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
 	"files": {
-		"includes": ["src/**", "*.mjs", "*.cjs", "*.json"]
+		"includes": [
+			"**",
+			"!cjs",
+			"!esm",
+			"!test-results",
+			"!playwright-report",
+			"!src/clientScript.ts"
+		]
+	},
+	"formatter": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true
+		}
 	}
 }
