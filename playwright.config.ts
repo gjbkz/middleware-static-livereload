@@ -48,6 +48,14 @@ export default defineConfig({
 					},
 					timeout: 300000,
 				},
+				{
+					name: "Safari",
+					use: {
+						...devices["Desktop Safari"],
+						headless: false,
+					},
+					timeout: 300000,
+				},
 			],
 
 	/* Run your local dev server before starting the tests */
