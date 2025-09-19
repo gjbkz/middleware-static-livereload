@@ -118,7 +118,7 @@ test.beforeAll(async () => {
 		}
 	});
 	console.info(server.address());
-	baseUrl = new URL(`http://[::]:${port}`);
+	baseUrl = new URL(`http://localhost:${port}`);
 });
 
 test.afterAll(async () => {
