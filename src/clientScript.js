@@ -21,8 +21,6 @@
 		location.reload();
 	};
 	/** @param {Object} event */
-	const onEvent = (event) => console.info(event);
-	/** @param {Object} event */
 	const onError = (event) => console.error(event);
 	const scriptElement = document.querySelector("#middleware-static-livereload");
 	const src = scriptElement && scriptElement.getAttribute("src");
@@ -32,7 +30,6 @@
 	}
 	const eventSource = new EventSource(endpoint);
 	eventSource.addEventListener("error", onError);
-	eventSource.addEventListener("add", onEvent);
 	eventSource.addEventListener("change", onChange);
-	eventSource.addEventListener("unlink", onEvent);
+	globalThis.liveReload = {endpoint, scriptElement, eventSource};
 })();
