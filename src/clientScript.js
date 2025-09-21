@@ -12,7 +12,10 @@
 					const cssUrl = new URL(link.href, location.href);
 					if (changedFileUrl.pathname === cssUrl.pathname) {
 						cssUrl.searchParams.set("reload", Date.now());
-						link.href = cssUrl.href;
+						const cloned = link.cloneNode();
+						cloned.href = cssUrl.href;
+						link.after(cloned);
+						link.remove();
 						return;
 					}
 				}
@@ -20,8 +23,6 @@
 		}
 		location.reload();
 	};
-	/** @param {Object} event */
-	const onEvent = (event) => console.info(event);
 	/** @param {Object} event */
 	const onError = (event) => console.error(event);
 	const scriptElement = document.querySelector("#middleware-static-livereload");
@@ -32,7 +33,6 @@
 	}
 	const eventSource = new EventSource(endpoint);
 	eventSource.addEventListener("error", onError);
-	eventSource.addEventListener("add", onEvent);
 	eventSource.addEventListener("change", onChange);
-	eventSource.addEventListener("unlink", onEvent);
+	globalThis.liveReload = { endpoint, scriptElement, eventSource };
 })();

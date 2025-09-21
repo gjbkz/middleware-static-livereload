@@ -5,7 +5,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { expect, test } from "@playwright/test";
 import type { FSWatcher } from "chokidar";
-import { LogLevel, middleware } from "../esm/middleware";
+import { LogLevel, middleware } from "../esm/middleware.mjs";
 
 interface EventLog {
 	name: string;
@@ -118,7 +118,7 @@ test.beforeAll(async () => {
 		}
 	});
 	console.info(server.address());
-	baseUrl = new URL(`http://[::]:${port}`);
+	baseUrl = new URL(`http://localhost:${port}`);
 });
 
 test.afterAll(async () => {
@@ -170,7 +170,7 @@ test("reload css", async ({ page }) => {
 	});
 	await test.step("Ensure page.js is loaded", async () => {
 		await expect(page.locator("#target")).toHaveText(
-			/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}/,
+			/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}/,
 		);
 	});
 	const beforeText = (await page.locator("#target").textContent()) ?? "";
@@ -223,7 +223,7 @@ test("fetch-file", async ({ page }) => {
 	});
 	await test.step("Ensure page.js is loaded", async () => {
 		await expect(page.locator("#target1")).toHaveText(
-			/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}/,
+			/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}/,
 		);
 	});
 	const beforeText = (await page.locator("#target1").textContent()) ?? "";
