@@ -12,7 +12,10 @@
 					const cssUrl = new URL(link.href, location.href);
 					if (changedFileUrl.pathname === cssUrl.pathname) {
 						cssUrl.searchParams.set("reload", Date.now());
-						link.href = cssUrl.href;
+						const cloned = link.cloneNode();
+						cloned.href = cssUrl.href;
+						link.after(cloned);
+						link.remove();
 						return;
 					}
 				}
@@ -31,5 +34,5 @@
 	const eventSource = new EventSource(endpoint);
 	eventSource.addEventListener("error", onError);
 	eventSource.addEventListener("change", onChange);
-	globalThis.liveReload = {endpoint, scriptElement, eventSource};
+	globalThis.liveReload = { endpoint, scriptElement, eventSource };
 })();
