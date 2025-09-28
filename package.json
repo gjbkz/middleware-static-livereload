@@ -27,7 +27,7 @@
 		"types"
 	],
 	"scripts": {
-		"lint": "eslint src",
+		"lint": "biome check",
 		"build": "run-s build:*",
 		"build:clientScript": "node buildClientScript.ts",
 		"build:typedef": "tsc --project tsconfig.typedef.json",
