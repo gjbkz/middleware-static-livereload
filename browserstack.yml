@@ -13,7 +13,3 @@ platforms:
     osVersion: Sequoia
     browserName: chrome
     browserVersion: latest
-  - os: OS X
-    osVersion: Sequoia
-    browserName: playwright-webkit
-    browserVersion: 18.5
