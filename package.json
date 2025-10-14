@@ -46,7 +46,7 @@
 		"@biomejs/biome": "2.2.4",
 		"@playwright/test": "^1.55.0",
 		"@types/connect": "3.4.38",
-		"@types/node": "24.5.2",
+		"@types/node": "24.7.2",
 		"browserstack-node-sdk": "1.42.7",
 		"connect": "3.7.0",
 		"esbuild": "0.25.10",
