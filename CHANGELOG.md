@@ -1,5 +1,27 @@
 # Changelog
 
+## v1.5.0 (2026-02-22)
+
+### Features
+
+- Add download links for files in directory index ([1d23de4](https://github.com/gjbkz/middleware-static-livereload/commit/1d23de4))
+
+### Bug Fixes
+
+- remove unused event listeners from clientScript (#697) ([7cc1694](https://github.com/gjbkz/middleware-static-livereload/commit/7cc1694))
+
+### Continuous Integration
+
+- update actions/upload-artifact to v6 and actions/download-artifact to v7 ([3773532](https://github.com/gjbkz/middleware-static-livereload/commit/3773532))
+- update actions/checkout to v6 (#703) ([183dbfb](https://github.com/gjbkz/middleware-static-livereload/commit/183dbfb))
+- update actions/setup-node to v6 (#699) ([352bca9](https://github.com/gjbkz/middleware-static-livereload/commit/352bca9))
+
+### Dependency Upgrades
+
+- @biomejs/biome:2.2.4→2.4.4 @playwright/test:1.55.0→1.58.2 @types/node:24.7.2→25.3.0 browserstack-node-sdk:1.42.7→1.49.10 chokidar:4.0.3→5.0.0 esbuild:0.25.10→0.27.3 ([268a3ce](https://github.com/gjbkz/middleware-static-livereload/commit/268a3ce))
+- update typescript to v5.9.3 (#708) ([6510e8e](https://github.com/gjbkz/middleware-static-livereload/commit/6510e8e))
+
+
 ## v1.4.3 (2025-09-15)
 
 ### Bug Fixes
