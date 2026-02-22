@@ -35,10 +35,7 @@
 		"build:code": "node build.ts",
 		"test": "run-s build:clientScript test:*",
 		"test:node": "node --test src/*.test.ts",
-		"test-e2e": "playwright test",
-		"version": "run-s version:*",
-		"version:changelog": "npx @nlib/changelog --output CHANGELOG.md",
-		"version:add": "git add ."
+		"test-e2e": "playwright test"
 	},
 	"dependencies": {
 		"chokidar": "5.0.0"
