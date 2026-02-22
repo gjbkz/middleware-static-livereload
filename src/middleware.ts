@@ -18,8 +18,8 @@ export { LogLevel };
 
 export interface MiddlewareOptions {
 	/**
-	 * Directories which contains the files to be served.
-	 * If it is an array, it is processed as following pseudo code:
+	 * Directories that contain files to be served.
+	 * If it is an array, it is processed according to the following pseudocode:
 	 *   FOREACH documentRoot in the array
 	 *     IF documentRoot has a file at requestedPath
 	 *       RETURN the file
@@ -32,20 +32,20 @@ export interface MiddlewareOptions {
 	baseDir: string;
 	/**
 	 * If it is `false` or `null`, the middleware doesn't watch files.
-	 * Otherwise, the middleware watches the served files and send events
+	 * Otherwise, the middleware watches served files and sends events
 	 * to connected clients when they are updated.
 	 * If you need to do something with the watcher outside this middleware,
 	 * you can pass the watcher object itself.
 	 */
 	watch: FSWatcher | ChokidarOptions | boolean | null;
 	/**
-	 * If this value is `foo.txt`, the middleware respond `/foo.txt` to `GET /`,
+	 * If this value is `foo.txt`, the middleware responds `/foo.txt` to `GET /`,
 	 * `/foo/foo.txt` to `GET /foo/`.
 	 */
 	index: string;
 	/**
 	 * A map from Content-Type to an array of file extensions.
-	 * If you given a map, it extends the default map.
+	 * If you provide a map, it replaces the default map.
 	 */
 	contentTypes: Record<string, Array<string>>;
 	/**
@@ -53,11 +53,11 @@ export interface MiddlewareOptions {
 	 */
 	logLevel: LogLevel;
 	/**
-	 * Streams where the middleware writes message to.
+	 * Streams where the middleware writes messages to.
 	 */
 	stdout: Writable;
 	/**
-	 * Streams where the middleware writes message to.
+	 * Streams where the middleware writes messages to.
 	 */
 	stderr: Writable;
 	/**
@@ -75,7 +75,7 @@ export interface MiddlewareOptions {
 	 */
 	insertAfter: Array<RegExp | string> | RegExp | string;
 	/**
-	 * A pathname for the script enables live reloading.
+	 * The pathname of the script that enables live reloading.
 	 * If the default value conflicts with other middlewares, change this value.
 	 */
 	scriptPath: string;

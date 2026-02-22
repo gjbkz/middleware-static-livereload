@@ -1,7 +1,7 @@
 # middleware-static-livereload
 
-A middleware for [connect](https://github.com/senchalabs/connect) server.
-It injects the autoreload script into text/html files before serving them.
+A middleware for [connect](https://github.com/senchalabs/connect) servers.
+It injects a live-reload script into `text/html` files before serving them.
 
 ## Install
 
@@ -22,55 +22,60 @@ const server = http.createServer(app).listen(3000);
 ## Options
 
 ```typescript
-{
+middleware(options?: Partial<MiddlewareOptions>)
+
+interface MiddlewareOptions {
   /**
-    * Directories which contains the files to be served.
-    * If it is an array, it is processed as following pseudo code:
+    * Directories that contain files to be served.
+    * If it is an array, it is processed according to the following pseudocode:
     *   FOREACH documentRoot in the array
     *     IF documentRoot has a file at requestedPath
     *       RETURN the file
     *   RETURN 404
     * @default process.cwd()
     */
-  documentRoot?: string | Array<string>,
+  documentRoot: PathLike | Array<PathLike>,
+  /**
+    * The base directory where the middleware resolves `documentRoot`.
+    * @default process.cwd()
+    */
+  baseDir: string,
   /**
     * If it is `false` or `null`, the middleware doesn't watch files.
-    * Otherwise, the middleware watches the served files and send events
+    * Otherwise, the middleware watches served files and sends events
     * to connected clients when they are updated.
     * If you need to do something with the watcher outside this middleware,
     * you can pass the watcher object itself.
-    * @default {ignoreInitial:false, useFsEvents:false}
+    * @default { ignoreInitial: false }
     */
-  watch?: chokidar.WatchOptions | chokidar.FSWatcher | boolean | null,
+  watch: ChokidarOptions | FSWatcher | boolean | null,
   /**
-    * If this value is `foo.txt`, the middleware respond `/foo.txt` to `GET /`,
+    * If this value is `foo.txt`, the middleware responds `/foo.txt` to `GET /`,
     * `/foo/foo.txt` to `GET /foo/`.
     * @default 'index.html'
     */
-  index?: string,
+  index: string,
   /**
     * A map from Content-Type to an array of file extensions.
-    * If you given a map, it extends the default map.
-    * @default See [src/defaultContentTypes.ts](src/defaultContentTypes.ts).
+    * If you provide a map, it replaces the default map.
+    * @default See src/middleware.ts defaultOptions.contentTypes
     */
-  contentTypes?: {
-      [type: string]: string | Array<string>,
-  },
+  contentTypes: Record<string, Array<string>>,
   /**
     * 0: debug, 1: info, 2: error, 3: silent
     * @default 1
     */
-  logLevel?: LogLevel,
+  logLevel: LogLevel,
   /**
-    * Streams where the middleware writes message to.
+    * Streams where the middleware writes messages to.
     * @default process.stdout
     */
-  stdout?: NodeJS.WritableStream,
+  stdout: Writable,
   /**
-    * Streams where the middleware writes message to.
+    * Streams where the middleware writes messages to.
     * @default process.stderr
     */
-  stderr?: NodeJS.WritableStream,
+  stderr: Writable,
   /**
     * A pattern or patterns to detect the position before which a <script> tag
     * is inserted.
@@ -78,7 +83,7 @@ const server = http.createServer(app).listen(3000);
     * response will be `abc <script src="..."></script>x def`.
     * @default [/<\/head/i, /<\/body/i, /<meta/i, /<title/i, /<script/i, /<link/i]
     */
-  insertBefore?: string | RegExp | Array<string | RegExp>,
+  insertBefore: string | RegExp | Array<string | RegExp>,
   /**
     * A pattern or patterns to detect the position after which a <script> tag
     * is inserted.
@@ -86,13 +91,23 @@ const server = http.createServer(app).listen(3000);
     * response will be `abc x<script src="..."></script> def`.
     * @default [/<!doctype\s*html\s*>/i]
     */
-  insertAfter?: string | RegExp | Array<string | RegExp>,
+  insertAfter: string | RegExp | Array<string | RegExp>,
   /**
-    * A pathname for the script enables live reloading.
+    * The pathname of the script that enables live reloading.
     * If the default value conflicts with other middlewares, change this value.
     * @default 'middleware-static-livereload.js'
     */
-  scriptPath?: string,
+  scriptPath: string,
+  /**
+    * Character encoding used when injecting the script.
+    * @default 'utf-8'
+    */
+  encoding: BufferEncoding,
+  /**
+    * Options passed to util.inspect for logs.
+    * @default { colors: true, breakLength: 40 }
+    */
+  inspectOptions: InspectOptions,
 }
 ```
 
@@ -100,7 +115,7 @@ const server = http.createServer(app).listen(3000);
 
 The middleware-static-livereload project is licensed under the terms of the Apache 2.0 License.
 
-[NodeJS.Writable]: https://nodejs.org/api/stream.html#stream_class_stream_writable
+[Writable]: https://nodejs.org/api/stream.html#class-streamwritable
 [process.stdout]: https://nodejs.org/api/process.html#process_process_stdout
 [process.stderr]: https://nodejs.org/api/process.html#process_process_stderr
-[util.InspectOptions]: https://nodejs.org/api/util.html#util_util_inspect_object_options
+[InspectOptions]: https://nodejs.org/api/util.html#utilinspectobject-options

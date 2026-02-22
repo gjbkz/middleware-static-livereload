@@ -3,7 +3,7 @@ import { ErrorWithCode } from "./ErrorWithCode.ts";
 import type { ConsoleLike } from "./LibConsole.ts";
 import { splitString } from "./splitString.ts";
 
-const negotiage = (
+const negotiate = (
 	accept: string | undefined,
 	type: string,
 	subtype: string,
@@ -55,7 +55,7 @@ export class ConnectionHandler {
 	}
 
 	public handle(req: IncomingMessage, res: ServerResponse) {
-		if (negotiage(req.headers.accept, "text", "event-stream")) {
+		if (negotiate(req.headers.accept, "text", "event-stream")) {
 			const id = this.eventId++;
 			this.connections.add(res);
 			req.once("close", () => res.end());
@@ -71,7 +71,7 @@ export class ConnectionHandler {
 			res.write(`retry: 3000\r\ndata: #${id}\r\n\r\n`);
 			this.console.info(`connected: #${id} ${req.headers["user-agent"]}`);
 		} else {
-			const message = `Invaild request.headers.accept: ${req.headers.accept}`;
+			const message = `Invalid request.headers.accept: ${req.headers.accept}`;
 			res.statusCode = 400;
 			this.console.error(message);
 			res.end(message);
