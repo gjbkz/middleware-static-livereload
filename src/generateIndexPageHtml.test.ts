@@ -29,7 +29,9 @@ test("generateIndexPageHtml", async () => {
 	const actual = await generateIndexPageHtml(pathToFileURL(dir), "foo");
 	assert.ok(actual.includes('<a href="./file%E3%81%82.txt">fileあ.txt</a>'));
 	assert.ok(
-		actual.includes('<a href="./file%E3%81%82.txt" download="fileあ.txt">Download</a>'),
+		actual.includes(
+			'<a href="./file%E3%81%82.txt" download="fileあ.txt">Download</a>',
+		),
 	);
 	if (file2) {
 		assert.ok(
