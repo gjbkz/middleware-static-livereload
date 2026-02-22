@@ -9,7 +9,9 @@ import { createServer, listenServerSentEvents } from "./server.test.ts";
 const listLinks = (html: string) => {
 	const links: Array<[string | undefined, string | undefined]> = [];
 	for (const match of html.matchAll(/<a[^>]*?href="([^"]+)"[^>]*?>([^<]+)</g)) {
-		links.push([match[1], match[2]]);
+		if (!match[0].includes(" download")) {
+			links.push([match[1], match[2]]);
+		}
 	}
 	return links;
 };
