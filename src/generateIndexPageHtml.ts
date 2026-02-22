@@ -32,23 +32,27 @@ const generate = async function* (dirUrl: URL, relativePath: string) {
 	yield `<title>Index of ${relativePath}</title>`;
 	yield `<style>${css}</style>`;
 	yield "<table>";
-	yield "<tr><th>Name</th><th>Size</th><th>Last modified</th></tr>";
+	yield "<tr><th>Name</th><th>Size</th><th>Last modified</th><th></th></tr>";
 	if (relativePath !== "/") {
-		yield '<tr><td><a href="..">..</a></td><td></td><td></td></tr>';
+		yield '<tr><td><a href="..">..</a></td><td></td><td></td><td></td></tr>';
 	}
 	for (const name of await readdir(dirUrl)) {
 		const filePath = new URL(name, dirUrl);
 		const stats = await stat(filePath);
-		const suffix = stats.isDirectory() ? "/" : "";
+		const isDir = stats.isDirectory();
+		const suffix = isDir ? "/" : "";
 		yield "<tr>";
 		const href = `./${encodeURIComponent(name)}${suffix}`;
 		const hrefText = sanitize(`${name}${suffix}`);
 		yield `  <td><a href="${href}">${hrefText}</a></td>`;
 		yield `  <td class="size">${stats.size}</td>`;
 		yield `  <td><time datetime="${stats.mtime.toISOString()}">${stats.mtime.toLocaleString()}</td>`;
+		yield isDir
+			? "  <td></td>"
+			: `  <td><a href="${href}" download="${sanitize(name)}">Download</a></td>`;
 		yield "</tr>";
 	}
-	yield `<tr><td colspan="3">Created at <time datetime="${new Date().toISOString()}">${new Date().toLocaleString()}</time></td></tr>`;
+	yield `<tr><td colspan="4">Created at <time datetime="${new Date().toISOString()}">${new Date().toLocaleString()}</time></td></tr>`;
 	yield "</table>";
 };
 
