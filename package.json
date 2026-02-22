@@ -28,6 +28,7 @@
 	],
 	"scripts": {
 		"lint": "biome check",
+		"format": "biome check --write",
 		"build": "run-s build:*",
 		"build:clientScript": "node buildClientScript.ts",
 		"build:typedef": "tsc --project tsconfig.typedef.json",

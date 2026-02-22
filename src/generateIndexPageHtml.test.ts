@@ -28,11 +28,22 @@ test("generateIndexPageHtml", async () => {
 	await writeFile(join(dir, dir1, dir1file1), dir1file1);
 	const actual = await generateIndexPageHtml(pathToFileURL(dir), "foo");
 	assert.ok(actual.includes('<a href="./file%E3%81%82.txt">fileあ.txt</a>'));
+	assert.ok(
+		actual.includes(
+			'<a href="./file%E3%81%82.txt" download="fileあ.txt">Download</a>',
+		),
+	);
 	if (file2) {
 		assert.ok(
 			actual.includes('<a href="./file%E3%81%82%3E.txt">fileあ&gt;.txt</a>'),
 		);
+		assert.ok(
+			actual.includes(
+				'<a href="./file%E3%81%82%3E.txt" download="fileあ&gt;.txt">Download</a>',
+			),
+		);
 	}
 	assert.ok(actual.includes('<a href="./dir1/">dir1/</a>'));
+	assert.ok(!actual.includes('<a href="./dir1/" download'));
 	assert.ok(!actual.includes(dir1file1));
 });
