@@ -1,5 +1,12 @@
 import * as assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, stat, unlink, writeFile } from "node:fs/promises";
+import {
+	mkdir,
+	mkdtemp,
+	readFile,
+	stat,
+	unlink,
+	writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -245,14 +252,11 @@ test("fileOperations: text upload success (200)", async (ctx) => {
 		watch: null,
 		fileOperations: { allowTextUpload: true },
 	});
-	const res = await fetch(
-		new URL("/?_mslAction=upload&name=note.txt", url),
-		{
-			method: "POST",
-			headers: { "content-type": "text/plain" },
-			body: "memo content",
-		},
-	);
+	const res = await fetch(new URL("/?_mslAction=upload&name=note.txt", url), {
+		method: "POST",
+		headers: { "content-type": "text/plain" },
+		body: "memo content",
+	});
 	assert.equal(res.status, 200);
 	assert.equal(
 		await readFile(join(rootDir, "note.txt"), "utf-8"),
@@ -273,10 +277,7 @@ test("fileOperations: upload conflict (409)", async (ctx) => {
 		{ method: "POST", body: "new" },
 	);
 	assert.equal(res.status, 409);
-	assert.equal(
-		await readFile(join(rootDir, "existing.txt"), "utf-8"),
-		"old",
-	);
+	assert.equal(await readFile(join(rootDir, "existing.txt"), "utf-8"), "old");
 });
 
 test("fileOperations: upload invalid filename (400)", async (ctx) => {
@@ -287,10 +288,10 @@ test("fileOperations: upload invalid filename (400)", async (ctx) => {
 		fileOperations: { allowUpload: true },
 	});
 	// empty name
-	const res1 = await fetch(
-		new URL("/?_mslAction=upload&name=", url),
-		{ method: "POST", body: "x" },
-	);
+	const res1 = await fetch(new URL("/?_mslAction=upload&name=", url), {
+		method: "POST",
+		body: "x",
+	});
 	assert.equal(res1.status, 400);
 	// path traversal via /
 	const res2 = await fetch(
@@ -316,10 +317,10 @@ test("fileOperations: upload empty body (400)", async (ctx) => {
 		watch: null,
 		fileOperations: { allowUpload: true },
 	});
-	const res = await fetch(
-		new URL("/?_mslAction=upload&name=test.txt", url),
-		{ method: "POST", body: "" },
-	);
+	const res = await fetch(new URL("/?_mslAction=upload&name=test.txt", url), {
+		method: "POST",
+		body: "",
+	});
 	assert.equal(res.status, 400);
 });
 
@@ -330,10 +331,10 @@ test("fileOperations: upload disabled → 404", async (ctx) => {
 		watch: null,
 		fileOperations: { allowDelete: true },
 	});
-	const res = await fetch(
-		new URL("/?_mslAction=upload&name=test.txt", url),
-		{ method: "POST", body: "x" },
-	);
+	const res = await fetch(new URL("/?_mslAction=upload&name=test.txt", url), {
+		method: "POST",
+		body: "x",
+	});
 	assert.equal(res.status, 404);
 });
 

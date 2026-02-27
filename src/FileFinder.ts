@@ -38,7 +38,12 @@ export class FileFinder {
 	private readonly fileOperations: FileOperationsConfig | undefined;
 
 	public constructor(
-		{ baseDir, documentRoot, index, fileOperations }: FileFinderConstructorOptions,
+		{
+			baseDir,
+			documentRoot,
+			index,
+			fileOperations,
+		}: FileFinderConstructorOptions,
 		reserved: Record<string, Buffer | URL | undefined> = {},
 	) {
 		this.tempDir = toDirUrl(
