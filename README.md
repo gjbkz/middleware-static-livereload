@@ -108,6 +108,21 @@ interface MiddlewareOptions {
     * @default { colors: true, breakLength: 40 }
     */
   inspectOptions: InspectOptions,
+  /**
+    * Enables file operations (upload / delete) on directory listing pages.
+    * - `false` (default): disabled — listing is read-only
+    * - `true`: all operations enabled
+    * - object: enable individual operations
+    * @default false
+    */
+  fileOperations: boolean | {
+    /** Allow uploading files via the directory listing page. @default false */
+    allowUpload?: boolean,
+    /** Allow deleting files via the directory listing page. @default false */
+    allowDelete?: boolean,
+    /** Allow creating text files via the directory listing page. @default false */
+    allowTextUpload?: boolean,
+  },
 }
 ```
 
