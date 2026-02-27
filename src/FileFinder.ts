@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ErrorWithCode } from "./ErrorWithCode.ts";
+import type { FileOperationsConfig } from "./generateIndexPageHtml.ts";
 import { generateIndexPageHtml } from "./generateIndexPageHtml.ts";
 import { listItems } from "./listItems.ts";
 import { pathLikeToFileUrl } from "./pathLikeToFileUrl.ts";
@@ -21,6 +22,7 @@ interface FileFinderConstructorOptions {
 	baseDir: string;
 	documentRoot: Array<PathLike> | PathLike;
 	index: string;
+	fileOperations?: FileOperationsConfig;
 }
 
 export class FileFinder {
@@ -33,8 +35,15 @@ export class FileFinder {
 	private readonly reservedPaths: Readonly<Record<string, URL | undefined>> =
 		{};
 
+	private readonly fileOperations: FileOperationsConfig | undefined;
+
 	public constructor(
-		{ baseDir, documentRoot, index }: FileFinderConstructorOptions,
+		{
+			baseDir,
+			documentRoot,
+			index,
+			fileOperations,
+		}: FileFinderConstructorOptions,
 		reserved: Record<string, Buffer | URL | undefined> = {},
 	) {
 		this.tempDir = toDirUrl(
@@ -59,6 +68,7 @@ export class FileFinder {
 			}
 		}
 		this.reservedPaths = reservedPaths;
+		this.fileOperations = fileOperations;
 	}
 
 	public async findFile(pathname: string): Promise<FileFinderResult> {
@@ -129,7 +139,10 @@ export class FileFinder {
 			this.tempDir,
 		);
 		await mkdir(new URL(".", dest), { recursive: true });
-		await writeFile(dest, await generateIndexPageHtml(dirUrl, relativePath));
+		await writeFile(
+			dest,
+			await generateIndexPageHtml(dirUrl, relativePath, this.fileOperations),
+		);
 		return dest;
 	}
 }

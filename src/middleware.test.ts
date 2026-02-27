@@ -1,5 +1,12 @@
 import * as assert from "node:assert/strict";
-import { mkdir, mkdtemp, unlink, writeFile } from "node:fs/promises";
+import {
+	mkdir,
+	mkdtemp,
+	readFile,
+	stat,
+	unlink,
+	writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -154,4 +161,268 @@ test("server sent event: watch only requested files", async (ctx) => {
 		value: ["unlink", "dir/file2.txt"],
 	});
 	sse.abort();
+});
+
+// fileOperations tests
+
+test("fileOperations: disabled by default, upload → 404", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
+	const res = await fetch(new URL("/?_mslAction=upload&name=test.txt", url), {
+		method: "POST",
+		body: "hello",
+	});
+	assert.equal(res.status, 404);
+});
+
+test("fileOperations: disabled by default, delete → 404", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	const url = await createServer(ctx, { documentRoot: [rootDir], watch: null });
+	const res = await fetch(new URL("/?_mslAction=delete", url), {
+		method: "POST",
+		body: "name=test.txt",
+		headers: { "content-type": "application/x-www-form-urlencoded" },
+	});
+	assert.equal(res.status, 404);
+});
+
+test("fileOperations: index page has no forms when disabled", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: false,
+	});
+	const html = await (await fetch(url)).text();
+	assert.ok(!html.includes('id="msl-upload-form"'));
+	assert.ok(!html.includes('id="msl-text-upload-form"'));
+	assert.ok(!html.includes("_mslAction=delete"));
+});
+
+test("fileOperations: index page shows upload forms when enabled", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	await writeFile(join(rootDir, "existing.txt"), "x");
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: true,
+	});
+	const html = await (await fetch(url)).text();
+	assert.ok(html.includes('id="msl-upload-form"'));
+	assert.ok(html.includes('id="msl-text-upload-form"'));
+	assert.ok(html.includes("_mslAction=delete"));
+});
+
+test("fileOperations: allowDelete only, no upload form", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	await writeFile(join(rootDir, "existing.txt"), "x");
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowDelete: true },
+	});
+	const html = await (await fetch(url)).text();
+	assert.ok(!html.includes('id="msl-upload-form"'));
+	assert.ok(!html.includes('id="msl-text-upload-form"'));
+	assert.ok(html.includes("_mslAction=delete"));
+});
+
+test("fileOperations: upload success (200)", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowUpload: true },
+	});
+	const res = await fetch(
+		new URL("/?_mslAction=upload&name=newfile.txt", url),
+		{ method: "POST", body: "hello world" },
+	);
+	assert.equal(res.status, 200);
+	assert.equal(
+		await readFile(join(rootDir, "newfile.txt"), "utf-8"),
+		"hello world",
+	);
+});
+
+test("fileOperations: text upload success (200)", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowTextUpload: true },
+	});
+	const res = await fetch(new URL("/?_mslAction=upload&name=note.txt", url), {
+		method: "POST",
+		headers: { "content-type": "text/plain" },
+		body: "memo content",
+	});
+	assert.equal(res.status, 200);
+	assert.equal(
+		await readFile(join(rootDir, "note.txt"), "utf-8"),
+		"memo content",
+	);
+});
+
+test("fileOperations: upload conflict (409)", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	await writeFile(join(rootDir, "existing.txt"), "old");
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowUpload: true },
+	});
+	const res = await fetch(
+		new URL("/?_mslAction=upload&name=existing.txt", url),
+		{ method: "POST", body: "new" },
+	);
+	assert.equal(res.status, 409);
+	assert.equal(await readFile(join(rootDir, "existing.txt"), "utf-8"), "old");
+});
+
+test("fileOperations: upload invalid filename (400)", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowUpload: true },
+	});
+	// empty name
+	const res1 = await fetch(new URL("/?_mslAction=upload&name=", url), {
+		method: "POST",
+		body: "x",
+	});
+	assert.equal(res1.status, 400);
+	// path traversal via /
+	const res2 = await fetch(
+		new URL(
+			`/?_mslAction=upload&name=${encodeURIComponent("../evil.txt")}`,
+			url,
+		),
+		{ method: "POST", body: "x" },
+	);
+	assert.equal(res2.status, 400);
+	// bare ..
+	const res3 = await fetch(
+		new URL(`/?_mslAction=upload&name=${encodeURIComponent("..")}`, url),
+		{ method: "POST", body: "x" },
+	);
+	assert.equal(res3.status, 400);
+});
+
+test("fileOperations: upload empty body (400)", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowUpload: true },
+	});
+	const res = await fetch(new URL("/?_mslAction=upload&name=test.txt", url), {
+		method: "POST",
+		body: "",
+	});
+	assert.equal(res.status, 400);
+});
+
+test("fileOperations: upload disabled → 404", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowDelete: true },
+	});
+	const res = await fetch(new URL("/?_mslAction=upload&name=test.txt", url), {
+		method: "POST",
+		body: "x",
+	});
+	assert.equal(res.status, 404);
+});
+
+test("fileOperations: delete success (303)", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	await writeFile(join(rootDir, "todelete.txt"), "bye");
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowDelete: true },
+	});
+	const res = await fetch(new URL("/?_mslAction=delete", url), {
+		method: "POST",
+		body: "name=todelete.txt",
+		headers: { "content-type": "application/x-www-form-urlencoded" },
+		redirect: "manual",
+	});
+	assert.equal(res.status, 303);
+	assert.equal(res.headers.get("location"), "/");
+	await assert.rejects(() => stat(join(rootDir, "todelete.txt")));
+});
+
+test("fileOperations: delete not found (404)", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowDelete: true },
+	});
+	const res = await fetch(new URL("/?_mslAction=delete", url), {
+		method: "POST",
+		body: "name=nonexistent.txt",
+		headers: { "content-type": "application/x-www-form-urlencoded" },
+	});
+	assert.equal(res.status, 404);
+});
+
+test("fileOperations: delete directory (400)", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	await mkdir(join(rootDir, "subdir"));
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowDelete: true },
+	});
+	const res = await fetch(new URL("/?_mslAction=delete", url), {
+		method: "POST",
+		body: "name=subdir",
+		headers: { "content-type": "application/x-www-form-urlencoded" },
+	});
+	assert.equal(res.status, 400);
+});
+
+test("fileOperations: delete path traversal (400)", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowDelete: true },
+	});
+	// name with / → 400
+	const res1 = await fetch(new URL("/?_mslAction=delete", url), {
+		method: "POST",
+		body: `name=${encodeURIComponent("../foo.txt")}`,
+		headers: { "content-type": "application/x-www-form-urlencoded" },
+	});
+	assert.equal(res1.status, 400);
+	// bare .. → 400
+	const res2 = await fetch(new URL("/?_mslAction=delete", url), {
+		method: "POST",
+		body: `name=${encodeURIComponent("..")}`,
+		headers: { "content-type": "application/x-www-form-urlencoded" },
+	});
+	assert.equal(res2.status, 400);
+});
+
+test("fileOperations: delete disabled → 404", async (ctx) => {
+	const rootDir = await mkdtemp(join(tmpdir(), `${Date.now()}`));
+	await writeFile(join(rootDir, "test.txt"), "x");
+	const url = await createServer(ctx, {
+		documentRoot: [rootDir],
+		watch: null,
+		fileOperations: { allowUpload: true },
+	});
+	const res = await fetch(new URL("/?_mslAction=delete", url), {
+		method: "POST",
+		body: "name=test.txt",
+		headers: { "content-type": "application/x-www-form-urlencoded" },
+	});
+	assert.equal(res.status, 404);
 });
