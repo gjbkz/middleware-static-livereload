@@ -117,7 +117,7 @@ interface MiddlewareOptions {
     */
   fileOperations: boolean | {
     /** Allow uploading files via the directory listing page. @default false */
-    allowUpload?: boolean,
+    allowFileUpload?: boolean,
     /** Allow deleting files via the directory listing page. @default false */
     allowDelete?: boolean,
     /** Allow creating text files via the directory listing page. @default false */

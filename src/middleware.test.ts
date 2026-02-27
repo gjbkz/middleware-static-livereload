@@ -208,8 +208,7 @@ test("fileOperations: index page shows upload forms when enabled", async (ctx) =
 		fileOperations: true,
 	});
 	const html = await (await fetch(url)).text();
-	assert.ok(html.includes('id="msl-upload-form"'));
-	assert.ok(html.includes('id="msl-text-upload-form"'));
+	assert.ok(html.includes('id="msl-create-form"'));
 	assert.ok(html.includes("_mslAction=delete"));
 });
 
@@ -232,7 +231,7 @@ test("fileOperations: upload success (200)", async (ctx) => {
 	const url = await createServer(ctx, {
 		documentRoot: [rootDir],
 		watch: null,
-		fileOperations: { allowUpload: true },
+		fileOperations: { allowFileUpload: true },
 	});
 	const res = await fetch(
 		new URL("/?_mslAction=upload&name=newfile.txt", url),
@@ -270,7 +269,7 @@ test("fileOperations: upload conflict (409)", async (ctx) => {
 	const url = await createServer(ctx, {
 		documentRoot: [rootDir],
 		watch: null,
-		fileOperations: { allowUpload: true },
+		fileOperations: { allowFileUpload: true },
 	});
 	const res = await fetch(
 		new URL("/?_mslAction=upload&name=existing.txt", url),
@@ -285,7 +284,7 @@ test("fileOperations: upload invalid filename (400)", async (ctx) => {
 	const url = await createServer(ctx, {
 		documentRoot: [rootDir],
 		watch: null,
-		fileOperations: { allowUpload: true },
+		fileOperations: { allowFileUpload: true },
 	});
 	// empty name
 	const res1 = await fetch(new URL("/?_mslAction=upload&name=", url), {
@@ -315,7 +314,7 @@ test("fileOperations: upload empty body (400)", async (ctx) => {
 	const url = await createServer(ctx, {
 		documentRoot: [rootDir],
 		watch: null,
-		fileOperations: { allowUpload: true },
+		fileOperations: { allowFileUpload: true },
 	});
 	const res = await fetch(new URL("/?_mslAction=upload&name=test.txt", url), {
 		method: "POST",
@@ -417,7 +416,7 @@ test("fileOperations: delete disabled → 404", async (ctx) => {
 	const url = await createServer(ctx, {
 		documentRoot: [rootDir],
 		watch: null,
-		fileOperations: { allowUpload: true },
+		fileOperations: { allowFileUpload: true },
 	});
 	const res = await fetch(new URL("/?_mslAction=delete", url), {
 		method: "POST",

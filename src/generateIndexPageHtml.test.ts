@@ -30,7 +30,7 @@ test("generateIndexPageHtml", async () => {
 	assert.ok(actual.includes('<a href="./file%E3%81%82.txt">fileあ.txt</a>'));
 	assert.ok(
 		actual.includes(
-			'<a href="./file%E3%81%82.txt" download="fileあ.txt">Download</a>',
+			'<a class="msl-btn" href="./file%E3%81%82.txt" download="fileあ.txt">Download</a>',
 		),
 	);
 	if (file2) {
@@ -39,7 +39,7 @@ test("generateIndexPageHtml", async () => {
 		);
 		assert.ok(
 			actual.includes(
-				'<a href="./file%E3%81%82%3E.txt" download="fileあ&gt;.txt">Download</a>',
+				'<a class="msl-btn" href="./file%E3%81%82%3E.txt" download="fileあ&gt;.txt">Download</a>',
 			),
 		);
 	}

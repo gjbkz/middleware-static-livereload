@@ -93,7 +93,7 @@ export interface MiddlewareOptions {
 	fileOperations?:
 		| boolean
 		| {
-				allowUpload?: boolean;
+				allowFileUpload?: boolean;
 				allowDelete?: boolean;
 				allowTextUpload?: boolean;
 		  };
@@ -144,13 +144,17 @@ const normalizeFileOperations = (
 	opt: MiddlewareOptions["fileOperations"],
 ): FileOperationsConfig => {
 	if (!opt) {
-		return { allowUpload: false, allowDelete: false, allowTextUpload: false };
+		return {
+			allowFileUpload: false,
+			allowDelete: false,
+			allowTextUpload: false,
+		};
 	}
 	if (opt === true) {
-		return { allowUpload: true, allowDelete: true, allowTextUpload: true };
+		return { allowFileUpload: true, allowDelete: true, allowTextUpload: true };
 	}
 	return {
-		allowUpload: opt.allowUpload ?? false,
+		allowFileUpload: opt.allowFileUpload ?? false,
 		allowDelete: opt.allowDelete ?? false,
 		allowTextUpload: opt.allowTextUpload ?? false,
 	};
@@ -310,7 +314,7 @@ export class MiddlewareStaticLivereload {
 		const ops = normalizeFileOperations(this.options.fileOperations);
 		const action = url.searchParams.get("_mslAction");
 		if (action === "upload") {
-			if (!ops.allowUpload && !ops.allowTextUpload) {
+			if (!ops.allowFileUpload && !ops.allowTextUpload) {
 				res.statusCode = 404;
 				res.end("Not Found");
 				return;
