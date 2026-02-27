@@ -45,7 +45,7 @@
 		"@playwright/test": "1.58.2",
 		"@types/connect": "3.4.38",
 		"@types/node": "25.3.0",
-		"browserstack-node-sdk": "1.49.10",
+		"browserstack-node-sdk": "1.49.11",
 		"connect": "3.7.0",
 		"esbuild": "0.27.3",
 		"npm-run-all2": "8.0.4",
