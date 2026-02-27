@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.5.3 (2026-02-27)
+
+### Features
+
+- Add fileOperations option for upload and delete on directory listing pages (#714) ([7bd3c27](https://github.com/gjbkz/middleware-static-livereload/commit/7bd3c27f0d570db498e39ec1b8f73225ce191b6d))
+
+
 ## v1.5.2 (2026-02-22)
 
 ### Features
