@@ -47,7 +47,7 @@
 		"@types/node": "25.3.0",
 		"browserstack-node-sdk": "1.49.10",
 		"connect": "3.7.0",
-		"esbuild": "0.28.1",
+		"esbuild": "0.28.2",
 		"npm-run-all2": "8.0.4",
 		"typescript": "5.9.3"
 	},
