@@ -48,7 +48,7 @@
 		"browserstack-node-sdk": "1.49.10",
 		"connect": "3.7.0",
 		"esbuild": "0.28.1",
-		"npm-run-all2": "8.0.4",
+		"npm-run-all2": "9.0.3",
 		"typescript": "5.9.3"
 	},
 	"renovate": {
