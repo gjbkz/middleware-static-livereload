@@ -1,20 +1,43 @@
+# Release and recovery: https://github.com/nlibjs/actions#release-procedure
+# npm Trusted Publisher: gjbkz/middleware-static-livereload, release.yml, environment: deployment.
+# Stage requires deployment approval when environment protection is enabled.
+name: Release
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Operation
+        type: choice
+        options: [verify, stage]
+        default: verify
+        required: true
+      tag:
+        description: "Published Release tag for retry, e.g. v1.2.3"
+        type: string
+        default: ""
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.event.release.tag_name || inputs.tag || github.ref }}
+  cancel-in-progress: false
 jobs:
-  Publish:
-    runs-on: ubuntu-latest
-    environment: deployment
+  Verify:
+    if: github.event_name == 'workflow_dispatch' && inputs.action == 'verify'
     permissions:
       contents: read
+    uses: nlibjs/actions/.github/workflows/npm-release.yml@f965d0820e389c43df3e383a8113e42baa036cb3
+    with:
+      action: verify
+  Stage:
+    if: (github.event_name == 'release' && !github.event.release.prerelease) || inputs.action == 'stage'
+    permissions:
+      contents: read
+      actions: read
       id-token: write
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24.x
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - run: npx @nlib/cleanup-package-json --file package.json
-      - run: npm publish --provenance
+    uses: nlibjs/actions/.github/workflows/npm-release.yml@f965d0820e389c43df3e383a8113e42baa036cb3
+    with:
+      action: stage
+      tag: ${{ github.event.release.tag_name || inputs.tag }}
+      environment: deployment
