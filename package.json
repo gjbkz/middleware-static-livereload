@@ -55,5 +55,10 @@
 		"extends": [
 			"github>nlibjs/renovate-config"
 		]
+	},
+	"overrides": {
+		"get-uri": {
+			"basic-ftp": "6.2.3"
+		}
 	}
 }
