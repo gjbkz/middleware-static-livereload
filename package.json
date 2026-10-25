@@ -38,7 +38,7 @@
 		"test-e2e": "playwright test"
 	},
 	"dependencies": {
-		"chokidar": "5.0.0"
+		"chokidar": "6.0.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.8",
