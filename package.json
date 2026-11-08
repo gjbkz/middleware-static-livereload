@@ -41,13 +41,13 @@
 		"chokidar": "5.0.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.5.8",
-		"@playwright/test": "1.58.2",
+		"@biomejs/biome": "2.6.5",
+		"@playwright/test": "1.65.0",
 		"@types/connect": "3.4.38",
-		"@types/node": "25.3.0",
-		"browserstack-node-sdk": "1.49.10",
+		"@types/node": "25.9.9",
+		"browserstack-node-sdk": "1.77.0",
 		"connect": "3.7.0",
-		"esbuild": "0.28.1",
+		"esbuild": "0.28.2",
 		"npm-run-all2": "8.0.4",
 		"typescript": "5.9.3"
 	},
@@ -58,7 +58,7 @@
 	},
 	"overrides": {
 		"get-uri": {
-			"basic-ftp": "6.2.3"
+			"basic-ftp": "6.2.6"
 		}
 	}
 }
