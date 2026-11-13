@@ -12,10 +12,10 @@ npm install middleware-static-livereload
 ## Usage
 
 ```javascript
-const http = require('http');
-const connect = require('connect');
+const http = require("http");
+const connect = require("connect");
 const app = connect();
-app.use(require('middleware-static-livereload').middleware());
+app.use(require("middleware-static-livereload").middleware());
 const server = http.createServer(app).listen(3000);
 ```
 
