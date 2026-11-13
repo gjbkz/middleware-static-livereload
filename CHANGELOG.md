@@ -6,7 +6,6 @@
 
 - Add fileOperations option for upload and delete on directory listing pages (#714) ([7bd3c27](https://github.com/gjbkz/middleware-static-livereload/commit/7bd3c27f0d570db498e39ec1b8f73225ce191b6d))
 
-
 ## v1.5.2 (2026-02-22)
 
 ### Features
@@ -28,7 +27,6 @@
 - @biomejs/biome:2.2.4→2.4.4 @playwright/test:1.55.0→1.58.2 @types/node:24.7.2→25.3.0 browserstack-node-sdk:1.42.7→1.49.10 chokidar:4.0.3→5.0.0 esbuild:0.25.10→0.27.3 ([268a3ce](https://github.com/gjbkz/middleware-static-livereload/commit/268a3ce))
 - update typescript to v5.9.3 (#708) ([6510e8e](https://github.com/gjbkz/middleware-static-livereload/commit/6510e8e))
 
-
 ## v1.4.3 (2025-09-15)
 
 ### Bug Fixes
@@ -36,20 +34,17 @@
 - order of exports ([081582d](https://github.com/gjbkz/middleware-static-livereload/commit/081582dfa4a1d53c02024543c009e6d6b46aee55))
 - build script ([492719c](https://github.com/gjbkz/middleware-static-livereload/commit/492719c489e9b74c9c84446a07c3b2672866333a))
 
-
 ## v1.4.2 (2025-09-15)
 
 ### Bug Fixes
 
 - typedef ([357f2fe](https://github.com/gjbkz/middleware-static-livereload/commit/357f2febbd33517420e5622eb7ae2bdde2ddecbb))
 
-
 ## v1.4.1 (2025-09-15)
 
 ### Features
 
 - implement build script and update package configurations ([415a2d3](https://github.com/gjbkz/middleware-static-livereload/commit/415a2d3ab5118861eeef9b90f5696aeaae8a6cc6))
-
 
 ## v1.4.0 (2025-09-15)
 
@@ -61,7 +56,6 @@
 
 - dedupe ([b2ab1f6](https://github.com/gjbkz/middleware-static-livereload/commit/b2ab1f6fc2dfcd0dd119021b54bfca46a071d7f4))
 - remove unnecessary dependencies ([07f0ccd](https://github.com/gjbkz/middleware-static-livereload/commit/07f0ccd6cf5fdc8977aaf95ceb11b65bb331578e))
-
 
 ## v1.3.0 (2024-09-01)
 
@@ -110,7 +104,6 @@
 - @nlib/eslint-config:3.17.30→3.18.0 @types/node:17.0.31→17.0.35 @types/selenium-webdriver:4.0.19→4.1.0 @typescript-eslint/eslint-plugin:5.22.0→5.25.0 @typescript-eslint/parser:5.22.0→5.25.0 browserstack-local:1.5.0→1.5.1 eslint:8.14.0→8.15.0 node-fetch:2.6.7→3.2.4 ([f31ab88](https://github.com/gjbkz/middleware-static-livereload/commit/f31ab88e34dc26370041efec5783fc42bba9140d))
 - @nlib/eslint-config:3.17.29→3.17.30 @types/node:16.11.27→17.0.31 @types/selenium-webdriver:4.0.18→4.0.19 @typescript-eslint/eslint-plugin:4.33.0→5.22.0 @typescript-eslint/parser:4.33.0→5.22.0 ava:3.15.0→4.2.0 browserstack-local:1.4.9→1.5.0 eslint:7.32.0→8.14.0 lint-staged:11.2.6→12.4.1 selenium-webdriver:4.1.1→4.1.2 ts-node:10.5.0→10.7.0 typescript:4.6.3→4.6.4 ([d1743d9](https://github.com/gjbkz/middleware-static-livereload/commit/d1743d93c451e5f6a4f6afdc91ffd5e66ba45056))
 
-
 ## v1.2.21 (2021-09-08)
 
 ### Features
@@ -126,7 +119,6 @@
 
 - @nlib/eslint-config:3.17.24→3.17.25 @nlib/githooks:0.0.5→0.1.0 @types/node:16.7.10→16.7.13 @typescript-eslint/eslint-plugin:4.30.0→4.31.0 @typescript-eslint/parser:4.30.0→4.31.0 ([e91534f](https://github.com/gjbkz/middleware-static-livereload/commit/e91534f205f6174151438ab9d247e03869f6e271))
 - remove some packages ([daf533c](https://github.com/gjbkz/middleware-static-livereload/commit/daf533c12da172434bfcae54c7615bbad72dc500))
-
 
 ## v1.2.20 (2021-09-04)
 
@@ -151,9 +143,7 @@
 - @nlib/eslint-config:3.17.21→3.17.22 lint-staged:10.5.4→11.0.0 (#215) ([23baa68](https://github.com/gjbkz/middleware-static-livereload/commit/23baa68eaf8bcbfc716f437f6d9268462e1b23df))
 - dedupe ([b38c123](https://github.com/gjbkz/middleware-static-livereload/commit/b38c12397400e8dd1031c74dfbba8aca6e350c81))
 
-
 ## v1.2.19 (2021-05-01)
-
 
 ## v1.2.18 (2021-04-06)
 
@@ -161,7 +151,6 @@
 
 - remove event-source-polyfill (#197) ([71c68d2](https://github.com/gjbkz/middleware-static-livereload/commit/71c68d2c36d7b1885effa1161ec8182807859730))
 - upgrade dependencies (#193) ([4224072](https://github.com/gjbkz/middleware-static-livereload/commit/422407208541c90ce0df1949f5fa2a66c9309980))
-
 
 ## v1.2.17 (2020-12-20)
 
@@ -173,13 +162,11 @@
 
 - upgrade dependencies (#138) ([8ea8405](https://github.com/gjbkz/middleware-static-livereload/commit/8ea840577f47dfbcf4603f3020bdc332dabd82eb))
 
-
 ## v1.2.16 (2020-11-10)
 
 ### Tests
 
 - set timeout ([d5c7ca4](https://github.com/gjbkz/middleware-static-livereload/commit/d5c7ca49fc45bcfe3c50109274e69833402202da))
-
 
 ## v1.2.15 (2020-11-10)
 
@@ -209,7 +196,6 @@
 - pin dependencies ([e6c0326](https://github.com/gjbkz/middleware-static-livereload/commit/e6c0326c7e57d5a520af5c1bcab359a374cd1950))
 - setup some nlib tools ([f3178b6](https://github.com/gjbkz/middleware-static-livereload/commit/f3178b652674b348ef903d6c779e78c21eb873d6))
 
-
 ## v1.2.14 (2020-06-22)
 
 ### Tests
@@ -225,13 +211,11 @@
 - fix eslint errors ([89902c2](https://github.com/gjbkz/middleware-static-livereload/commit/89902c261a33efa7295a1ca466b287639bfb1662))
 - fix eslint errors ([3988a24](https://github.com/gjbkz/middleware-static-livereload/commit/3988a240ae178ae0535e7bdba4e5f0a7541e4a3c))
 
-
 ## v1.2.13 (2019-12-09)
 
 ### Features
 
 - set stabilityThreshold ([0c1e40d](https://github.com/gjbkz/middleware-static-livereload/commit/0c1e40d365bd75b68f8e3e629d6ac78e7b68b2ed))
-
 
 ## v1.2.12 (2019-12-09)
 
@@ -239,9 +223,7 @@
 
 - fix an eslint error ([26ec3ac](https://github.com/gjbkz/middleware-static-livereload/commit/26ec3ac9951fe2fe423f5ded90fe1ada52a09b64))
 
-
 ## v1.2.11 (2019-12-09)
-
 
 ## v1.2.10 (2019-12-08)
 
@@ -253,19 +235,15 @@
 
 - fix eslint and type errors ([8db59d4](https://github.com/gjbkz/middleware-static-livereload/commit/8db59d430d97c41f95fbffe3923a4969404e3812))
 
-
 ## v1.2.9 (2019-11-14)
 
 ### Code Refactoring
 
 - fix eslint errors ([66b3fb6](https://github.com/gjbkz/middleware-static-livereload/commit/66b3fb6e25c59d428c48136a08db84d9bddf3fd1))
 
-
 ## v1.2.8 (2019-10-21)
 
-
 ## v1.2.7 (2019-09-06)
-
 
 ## v1.2.6 (2019-08-22)
 
@@ -278,13 +256,11 @@
 - fix the logic error ([f0d0764](https://github.com/gjbkz/middleware-static-livereload/commit/f0d0764d4ef67d92984b2745ff3e444f7412433b))
 - fix eslint errors ([ff9a34d](https://github.com/gjbkz/middleware-static-livereload/commit/ff9a34da75b951446553de30b63a97ec096d8be8))
 
-
 ## v1.2.5 (2019-07-29)
 
 ### Bug Fixes
 
 - upgrade dependencies ([c271d06](https://github.com/gjbkz/middleware-static-livereload/commit/c271d066910a1cee06fb5b9918cbf881ceb8e25c))
-
 
 ## v1.2.4 (2019-06-28)
 
@@ -298,7 +274,6 @@
 ### Code Refactoring
 
 - remove the end method from console ([759e1d5](https://github.com/gjbkz/middleware-static-livereload/commit/759e1d5ed743c07cd4c75c19b810f2d3ae451b10))
-
 
 ## v1.2.3 (2019-06-27)
 
@@ -317,13 +292,11 @@
 
 - update the options section ([b0aaa58](https://github.com/gjbkz/middleware-static-livereload/commit/b0aaa5874dd95de02ae5e6067259bb7142dad42b))
 
-
 ## v1.2.2 (2019-06-11)
 
 ### Bug Fixes
 
 - license ([25dd6ff](https://github.com/gjbkz/middleware-static-livereload/commit/25dd6ff3aa2d49addbc3ccbd9994f82c56836f6e))
-
 
 ## v1.2.1 (2019-06-11)
 
@@ -331,13 +304,11 @@
 
 - event-source-polyfill ([0c2399e](https://github.com/gjbkz/middleware-static-livereload/commit/0c2399e0008840ddbb2db2725e7afc4d8d818722))
 
-
 ## v1.2.0 (2019-06-11)
 
 ### Features
 
 - remove default export (#16) ([a0e2713](https://github.com/gjbkz/middleware-static-livereload/commit/a0e27138e3d7154996753156e53ee23036396e60))
-
 
 ## v1.1.0 (2019-06-11)
 
@@ -345,17 +316,12 @@
 
 - add index generator (#15) ([03276b3](https://github.com/gjbkz/middleware-static-livereload/commit/03276b312b9ea5e44aa5d953af1bb82767d3a49a))
 
-
 ## v1.0.0 (2019-06-11)
 
 ### Features
 
 - server sent events (breaking) (#12) ([6f4f846](https://github.com/gjbkz/middleware-static-livereload/commit/6f4f84687599b55818e150964b7ba91c9fdac5fb))
 
-
 ## v0.0.5 (2018-04-12)
 
-
 ## v0.0.4 (2017-05-09)
-
-
